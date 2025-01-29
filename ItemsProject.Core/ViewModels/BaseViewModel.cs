@@ -34,7 +34,6 @@ namespace ItemsProject.Core.ViewModels
             // Messages
             _tokens.Add(messenger.Subscribe<AddedItemMessage>(OnAddedItemMessage));
             _tokens.Add(messenger.Subscribe<AddedFolderMessage>(OnAddedFolderMessage));
-			_tokens.Add(messenger.Subscribe<RemovedItemFromFolderMessage>(OnRemovedItemFromFolder));
 
 			// Commands
             openAddItemWindowCommand = new MvxCommand(OpenAddItemWindow);
@@ -76,12 +75,6 @@ namespace ItemsProject.Core.ViewModels
         {
             Folders.Add(addedFolderMessage.NewFolder);
         }
-
-		private void OnRemovedItemFromFolder(RemovedItemFromFolderMessage removedItemFromFolderMessage)
-		{
-			_allFolderItems = removedItemFromFolderMessage.UpdatedAllFolderItems;
-			FolderItems = _dataService.UpdateFolderItems(_allFolderItems, FolderItems);
-		}
 
 
         // VALIDATIONS

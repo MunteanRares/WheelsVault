@@ -70,6 +70,5 @@ namespace ItemsProject.Core.Services
 
             return itemToRemove;
         }
-
     }
 }

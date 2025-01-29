@@ -9,5 +9,7 @@ namespace ItemsProject.Core.Data
         public List<ItemModel> GetItemsByFolderId(int folderId);
         public ItemModel CreateNewItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName);
         public FolderModel CreateNewFolder(string folderName);
+        public ItemModel GetItemById(int itemId);
+        public void DeleteItemById(int itemId);
     }
 }

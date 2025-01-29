@@ -77,36 +77,51 @@
                 <TextBox Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" Grid.Column="0" Width="200" Height="30" HorizontalAlignment="Left" Margin="10 0 0 0"/>
             </StackPanel>
             
-            <Button Grid.Column="1" Background="#0B5351" Height="30" IsEnabled="{Binding CanPressAddItem}" Width="160" HorizontalAlignment="Right" Margin="0 0 15 0" mvx:Bi.nd="Command openAddItemWindowCommand">+Add Item</Button>
+            <Button Grid.Column="1" Background="#0B5351" Height="30" IsEnabled="{Binding CanPressAddItem}" Width="160" HorizontalAlignment="Right" Margin="0 0 25 0" mvx:Bi.nd="Command openAddItemWindowCommand">+Add Item</Button>
 
             <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding FolderItems}" SelectedItem="{Binding SelectedItem}" BorderThickness="0" Background="#092327">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Vertical">
+                        <DockPanel>
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto"/>
                                     <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
                                 </Grid.RowDefinitions>
 
-                                <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
-                                    <TextBlock HorizontalAlignment="Left" Margin="0 0 10 0"  Text="{Binding ModelName}"/>
-                                    <TextBlock HorizontalAlignment="Left" Text="{Binding ModelReleaseDate}"/>
+                                <StackPanel HorizontalAlignment="Left" Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
+                                    <TextBlock Margin="0 0 10 0"  Text="{Binding ModelName}"/>
+                                    <TextBlock Text="{Binding ModelReleaseDate}"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
                                     <TextBlock Margin="0 0 10 0" Text="Series:"/>
                                     <TextBlock Text="{Binding CollectionName}"/>
                                 </StackPanel>
+                                <Border Grid.Row="2" Width="200" Margin="0 5 0 20" BorderBrush="#3a4f52" BorderThickness="1"/>
                             </Grid>
-                            <Border Width="200" Margin="0 5 0 5" BorderBrush="#3a4f52" BorderThickness="1"></Border>
-                        </StackPanel>
+
+                            <Button 
+                                Command="{Binding DataContext.DeleteItemFromFolderCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:IMvxWpfView}}}"
+                                CommandParameter="{Binding .}"
+                                Margin="0 0 10 0" Height="30"
+                                Background="#FF4136" Content="Delete"
+                                DockPanel.Dock="Right" Grid.Column="2"
+                                Grid.Row="0" HorizontalAlignment="Right">
+                            </Button>
+                        </DockPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

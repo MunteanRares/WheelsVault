@@ -72,6 +72,8 @@
     <Build Include="Store Procedures\spFolders_CreateFolder.sql" />
     <Build Include="Store Procedures\spFolders_GetLast.sql" />
     <Build Include="Store Procedures\spItems_GetAll.sql" />
+    <Build Include="Store Procedures\spItems_GetById.sql" />
+    <Build Include="Store Procedures\spItems_RemoveById.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ItemsProjectDB.refactorlog" />

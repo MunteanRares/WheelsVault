@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Input;
+using ItemsProject.Core.Commands;
 using ItemsProject.Core.Data;
 using ItemsProject.Core.Messages;
 using ItemsProject.Core.Models;
@@ -19,7 +21,7 @@ namespace ItemsProject.Core.ViewModels
 		private readonly List<MvxSubscriptionToken> _tokens = new List<MvxSubscriptionToken>();
 
 		private List<ItemModel> _allFolderItems = new List<ItemModel>();
-        private List<ItemModel> _searchResult	 = new List<ItemModel>();
+        private List<ItemModel> _searchResult = new List<ItemModel>();
 
         public BaseViewModel(IDatabaseData db, IDataService dataService, IMvxNavigationService navigation, IMvxMessenger messenger)
         {
@@ -32,15 +34,18 @@ namespace ItemsProject.Core.ViewModels
             // Messages
             _tokens.Add(messenger.Subscribe<AddedItemMessage>(OnAddedItemMessage));
             _tokens.Add(messenger.Subscribe<AddedFolderMessage>(OnAddedFolderMessage));
+			_tokens.Add(messenger.Subscribe<RemovedItemFromFolderMessage>(OnRemovedItemFromFolder));
 
 			// Commands
             openAddItemWindowCommand = new MvxCommand(OpenAddItemWindow);
 			openAddFolderWindowCommand = new MvxCommand(OpenAddFolderWindow);
-        }
+			DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems, messenger);
+		}
 
 		// COMMANDS
 		public IMvxCommand openAddItemWindowCommand { get; set; }
         public IMvxCommand openAddFolderWindowCommand { get; set; }
+		public ICommand DeleteItemFromFolderCommand { get; set; }
 
         public void OpenAddItemWindow()
 		{
@@ -51,6 +56,12 @@ namespace ItemsProject.Core.ViewModels
 		public void OpenAddFolderWindow()
 		{
 			_navigation.Navigate<AddFolderViewModel>();
+		}
+
+		public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
+		{
+			_allFolderItems = updatedItems;
+			FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
 		}
 
 
@@ -65,6 +76,13 @@ namespace ItemsProject.Core.ViewModels
         {
             Folders.Add(addedFolderMessage.NewFolder);
         }
+
+		private void OnRemovedItemFromFolder(RemovedItemFromFolderMessage removedItemFromFolderMessage)
+		{
+			_allFolderItems = removedItemFromFolderMessage.UpdatedAllFolderItems;
+			FolderItems = _dataService.UpdateFolderItems(_allFolderItems, FolderItems);
+		}
+
 
         // VALIDATIONS
         public bool CanPressAddItem => SelectedFolder != null;

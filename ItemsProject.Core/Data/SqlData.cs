@@ -51,5 +51,16 @@ namespace ItemsProject.Core.Data
             return output;
         }
 
+        public ItemModel GetItemById(int itemId)
+        {
+            ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetById", new { itemId }, connectionStringName, true).First();
+            return output;
+        }
+
+        public void DeleteItemById(int itemId)
+        {
+            _db.SaveData("dbo.spItems_RemoveById", new { itemId }, connectionStringName, true);
+        }
+
     }
 }

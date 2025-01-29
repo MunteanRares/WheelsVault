@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -54,12 +55,20 @@ namespace ItemsProject.Core.Services
         public ObservableCollection<ItemModel> UpdateFolderItems(List<ItemModel> iterateList, ObservableCollection<ItemModel> folderItems)
         {
             folderItems.Clear();
-            foreach (var item in iterateList)
+            foreach (ItemModel item in iterateList)
             {
                 folderItems.Add(item);
             }
 
             return folderItems;
+        }
+
+        public ItemModel RemoveItemFromFolder(int itemId)
+        {
+            ItemModel itemToRemove = _db.GetItemById(itemId);
+            _db.DeleteItemById(itemId);
+
+            return itemToRemove;
         }
 
     }

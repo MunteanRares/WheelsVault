@@ -39,7 +39,7 @@ namespace ItemsProject.Core.ViewModels
 			// Commands
             openAddItemWindowCommand = new MvxCommand(OpenAddItemWindow);
 			openAddFolderWindowCommand = new MvxCommand(OpenAddFolderWindow);
-			DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems, messenger);
+			DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
 		}
 
 		// COMMANDS

@@ -51,6 +51,9 @@ namespace ItemsProject.Core.ViewModels
             _navigation.Close(this);
         }
 
+        // VALIDATIONS
+        public bool CanAddItem => ModelName?.Length > 0 && ModelReleaseDate?.Length > 0 && CollectionName?.Length > 0;
+
 
         // PROPERTIES
         private int _selectedFolderId;
@@ -71,6 +74,7 @@ namespace ItemsProject.Core.ViewModels
             set 
             { 
                 SetProperty(ref _modelName, value);
+                RaisePropertyChanged(() => CanAddItem);
             }
         }
 
@@ -82,6 +86,7 @@ namespace ItemsProject.Core.ViewModels
             set
             {
                 SetProperty(ref _modelReleaseDate, value);
+                RaisePropertyChanged(() => CanAddItem);
             }
         }
 
@@ -93,6 +98,7 @@ namespace ItemsProject.Core.ViewModels
             set 
             { 
                 SetProperty(ref _collectionName, value);
+                RaisePropertyChanged(() => CanAddItem);
             }
         }
     }

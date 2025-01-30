@@ -6,65 +6,147 @@
     xmlns:local="clr-namespace:ItemsProject.Wpf"
     StartupUri="MainWindow.xaml">
     <views:MvxApplication.Resources>
-        <Style TargetType="Button">
-            <Setter Property="Padding" Value="2 0"></Setter>
-            <Setter Property="BorderThickness" Value="0"></Setter>
-            <Setter Property="Background" Value="#0B5351"></Setter>
-            <Style.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="3"></Setter>
-                </Style>
-            </Style.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#E0E9F2" />
         </Style>
+
+        <Style TargetType="ToolTip">
+            <Setter Property="Background" Value="#288ef2"/>
+            <Setter Property="BorderBrush" Value="#4ECDC4"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Placement" Value="Mouse" />
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToolTip">
+                        <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="6" Padding="10 5">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center" 
+                                      SnapsToDevicePixels="True" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="BorderlessButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          TextElement.Foreground="{TemplateBinding Foreground}"/>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="Background" Value="#1A64b5f6"/>
+                            </Trigger>
+                                                        
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#1Ac1e1fb"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="Button">
+            <Style.Setters>
+                <Setter Property="Background" Value="#F28C28"></Setter>
+                <Setter Property="Foreground" Value="#09203F "></Setter>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="FontSize" Value="20"/>
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Border MaxHeight="40" MaxWidth="160" Padding="{TemplateBinding Padding}" 
+                                        Background="{TemplateBinding Background}" CornerRadius="6" BorderThickness="2 0 2 4">
+                                    <Border.BorderBrush>
+                                        <SolidColorBrush Color="#A45A00" Opacity="1"/>
+                                    </Border.BorderBrush>
+                                    <ContentPresenter  HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                                      TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                </Border>
+                            </Grid>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.5"/>
+                                </Trigger>
+
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                    <Setter Property="Background" Value="#D97710"/>
+                                </Trigger>
+
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Background" Value="#FFB900"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+        </Style>
+
         <Style TargetType="TextBox">
             <Style.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="3"/>
                 </Style>
             </Style.Resources>
+
+            <Setter Property="Background" Value="#E0E9F2"/>
         </Style>
 
         <Style TargetType="{x:Type ListViewItem}">
             <Style.Setters>
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                <Setter Property="Margin" Value="0 5 0 0"/>
+                <Setter Property="Margin" Value="10 5 10 0"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListViewItem}">
-                            <Grid Background="{TemplateBinding Background}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                <ContentPresenter Margin="15 0 15 0"/>
-                            </Grid>
+                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                    <ContentPresenter Margin="10 5 8 5"/>
+                                </Grid>
+                            </Border>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
-
-
             </Style.Setters>
 
             <Style.Triggers>
+
+
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#22393d"></Setter>
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <SolidColorBrush Color="#64b5f6" Opacity="0.1"/>
+                        </Setter.Value>
+                    </Setter>
                 </Trigger>
 
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="#3a4f52" />
+                    <Setter Property="Background" Value="#288ef2"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
-
-
-        <Style x:Key="lblDesign" TargetType="Label">
-            <Setter Property="FontFamily" Value="SourceCodePro-Regular.ttf #Source Code Pro "/>
-        </Style>
-
-
-        <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#ced3d4" />
-            <!-- Set font color -->
-        </Style>
-
-        <!-- Optional: Apply to all Controls (Button, Label, etc.) -->
-       
 
 
     </views:MvxApplication.Resources>

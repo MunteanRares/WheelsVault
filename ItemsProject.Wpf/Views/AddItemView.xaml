@@ -39,6 +39,13 @@
         <TextBlock Grid.Column="0" Margin="0 30 0 0" Grid.Row="3" Text="Collection"></TextBlock>
         <TextBox Text="{Binding CollectionName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" Margin="15 0 0 0" Grid.Column="1" Grid.Row="3" Height="28" Width="180" VerticalAlignment="Bottom" HorizontalAlignment="Left"></TextBox>
         <Button mvx:Bi.nd="Command cancelCommand" FontSize="18" Margin="15 0 15 40" Content="Cancel" Grid.Column="0" Grid.Row="5"></Button>
-        <Button mvx:Bi.nd="Command addItemCommand" FontSize="18" Margin="15 0 15 40" Content="Add Car" Grid.Column="1" Grid.Row="5"></Button>
+        <Button mvx:Bi.nd="Command addItemCommand"
+                FontSize="18" 
+                Margin="15 0 15 40"
+                Content="Add Car"
+                IsEnabled="{Binding CanAddItem}"
+                Grid.Column="1"
+                Grid.Row="5"/>
+                
     </Grid>
 </views:MvxWindow>

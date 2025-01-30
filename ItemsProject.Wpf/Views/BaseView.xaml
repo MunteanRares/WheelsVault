@@ -8,59 +8,134 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:local="clr-namespace:ItemsProject.Wpf.Views"
         mc:Ignorable="d" 
-        FontSize="20"
-        FontFamily="pack://application:,,,/ItemsProject.Wpf;component/Fonts/#Source Code Pro"
-        Background="#092327"
+        FontSize="22"
+        Background="#09203F"
+        FontFamily="pack://application:,,,/ItemsProject.Wpf;component/Fonts/#Fredoka Medium"   
         d:DesignHeight="1080" d:DesignWidth="1920">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.15*"/>
+            <ColumnDefinition Width="0.15*" MinWidth="250"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.2*"/>
+            <RowDefinition Height="0.15*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0"
-                   Grid.Column="0"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   FontSize="30"
-                   Text="HotWheels Collection Manager"
-                   Grid.ColumnSpan="2"></TextBlock>
 
-        <Border Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" BorderThickness="0 0 0 2" BorderBrush="#00A9A5"></Border>
+        <Grid Grid.Row="0" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <TextBlock Grid.Row="0"
+               Grid.Column="0"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Bottom"
+               Margin="20 0 0 0"
+               FontSize="38"
+               Text="HotWheels Collection Manager">
+
+            </TextBlock>
+            <TextBlock Grid.Row="1"
+               Grid.Column="0"
+               Text="An App Made by Muntean Rares"
+               VerticalAlignment="Top"
+               FontSize="20"
+               Margin="20 0 0 0"
+               Opacity="0.6">
+
+            </TextBlock>
+        </Grid>
         
 
-        <Grid Grid.Row="1" Grid.Column="0">
+        <Border Grid.Column="1" Grid.Row="0" BorderThickness="0 0 0 2" BorderBrush="#A1A1A1" Opacity="0.8"></Border>
+
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.Background>
+                <SolidColorBrush Color="#06162c" Opacity="0.7"/>
+            </Grid.Background>
+        </Grid>
+        
+        <Grid x:Name="actualGridWidth" Grid.Row="1" Grid.Column="0">
+            <Grid.Background>
+                <SolidColorBrush Color="#06162c" Opacity="0.7"/>
+            </Grid.Background>
+
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.1*"/>
+                <RowDefinition Height="0.1*" MinHeight="90"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" BorderThickness="0 0 2 0" BorderBrush="#00A9A5"/>
+            <Button MinHeight="40" Margin="0 30 0 0" mvx:Bi.nd="Command openAddFolderWindowCommand">
+                <TextBlock Foreground="#23384b" Text="+Add Folder">
+                </TextBlock>
+            </Button>
 
-            <Button mvx:Bi.nd="Command openAddFolderWindowCommand" Content="+Add Folder" MaxHeight="30" MaxWidth="160"></Button>
-
-            <ListView BorderThickness="0" BorderBrush="#00A9A5"
+            <ListView Margin="0 20 0 0" BorderThickness="0"
                       ItemsSource="{Binding Folders}"
                       SelectedItem="{Binding SelectedFolder}"
-                      Background="#092327" Grid.Row="1"
-                      Grid.Column="0">
+                      Grid.Row="1"
+                      Grid.Column="0"
+                      Background="Transparent">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"></TextBlock>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Width="170"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="WrapWithOverflow"
+                                       Grid.Column="0" Text="{Binding Name}"
+                                       ToolTip="{Binding Name}" ToolTipService.InitialShowDelay="100"/>
+
+                            <Button BorderThickness="0"
+                                    Grid.Column="1" Background="Transparent" HorizontalAlignment="Right">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="Gray"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Grid>
+                                                        <Border MaxHeight="40" MaxWidth="160" Padding="{TemplateBinding Padding}" 
+                                                                Background="{TemplateBinding Background}" CornerRadius="6" BorderThickness="2 0 2 4">
+                                                            <TextBlock Name="TextBlock" FontSize="18" Text="&#xf1f8;" 
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               FontFamily="pack://application:,,,/Fonts/#Font Awesome 6 Free Solid"
+                                                               Foreground="{TemplateBinding Foreground}" />
+                                                        </Border>
+                                                    </Grid>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Foreground" Value="#d73b3e" />
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
 
-        <Grid Grid.Row="2" Grid.Column="1">
+        <Grid Margin="40 15 0 0" Grid.Row="2" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.1*"/>
                 <RowDefinition Height="*"/>
@@ -70,30 +145,66 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Margin="15 0 0 0" Orientation="Horizontal">
                 <Border Height="30">
-                    <TextBlock Margin="20 5 0 0" Text="Search..." VerticalAlignment="Center"/>
+                    <TextBlock Margin="0 5 0 0" Text="Search..." VerticalAlignment="Center"/>
                 </Border>
-                <TextBox Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" Grid.Column="0" Width="200" Height="30" HorizontalAlignment="Left" Margin="10 0 0 0"/>
+                <TextBox Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         FontSize="20"
+                         Padding="2"
+                         Grid.Column="0"
+                         MaxWidth="400"
+                         Width="200"
+                         Height="30"
+                         HorizontalAlignment="Stretch" Margin="8 0 0 0"/>
             </StackPanel>
-            
-            <Button Grid.Column="1" Background="#0B5351" Height="30" IsEnabled="{Binding CanPressAddItem}" Width="160" HorizontalAlignment="Right" Margin="0 0 25 0" mvx:Bi.nd="Command openAddItemWindowCommand">+Add Item</Button>
 
-            <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding FolderItems}" SelectedItem="{Binding SelectedItem}" BorderThickness="0" Background="#092327">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+            <Button 
+                Grid.Column="1"
+                IsEnabled="{Binding CanPressAddItem}"
+                Width="160"
+                HorizontalAlignment="Right"
+                Margin="0 0 25 0"
+                mvx:Bi.nd="Command openAddItemWindowCommand">
+                <TextBlock Foreground="#23384b" Text="+Add Item">
+                </TextBlock>
+            </Button>
+
+            <ListView Grid.Row="1"
+                      Grid.Column="0"
+                      Grid.ColumnSpan="2"
+                      ItemsSource="{Binding FolderItems}"
+                      SelectedItem="{Binding SelectedItem}"
+                      Background="Transparent"
+                      BorderThickness="0"
+                      Margin="0 20 0 0">
+
+                <ListView.Resources>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Style.Setters>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Margin" Value="0 5 0 0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                        <Grid Background="{TemplateBinding Background}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                            <ContentPresenter Margin="15 15 15 15"/>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style.Setters>
                     </Style>
-                </ListView.ItemContainerStyle>
+                </ListView.Resources>
 
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <DockPanel>
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto"/>
@@ -107,19 +218,21 @@
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
-                                    <TextBlock Margin="0 0 10 0" Text="Series:"/>
-                                    <TextBlock Text="{Binding CollectionName}"/>
+                                    <TextBlock Margin="0 6 10 0" Text="Series:"/>
+                                    <TextBlock Margin="0 6 0 0" Text="{Binding CollectionName}"/>
                                 </StackPanel>
-                                <Border Grid.Row="2" Width="200" Margin="0 5 0 20" BorderBrush="#3a4f52" BorderThickness="1"/>
+                                
                             </Grid>
 
                             <Button 
+                                Style="{StaticResource BorderlessButton}"
                                 Command="{Binding DataContext.DeleteItemFromFolderCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:IMvxWpfView}}}"
-                                CommandParameter="{Binding .}"
-                                Margin="0 0 10 0" Height="30"
-                                Background="#FF4136" Content="Delete"
+                                CommandParameter="{Binding .}"                                
+                                Margin="0 0 10 0" Height="40"
                                 DockPanel.Dock="Right" Grid.Column="2"
                                 Grid.Row="0" HorizontalAlignment="Right">
+                                <TextBlock FontWeight="Bold" Padding="15 0" Text="Delete" Foreground="#d73b3e">
+                                </TextBlock>
                             </Button>
                         </DockPanel>
                     </DataTemplate>

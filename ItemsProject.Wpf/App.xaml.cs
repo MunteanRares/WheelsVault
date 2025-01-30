@@ -14,6 +14,11 @@ namespace ItemsProject.Wpf
         {
             this.RegisterSetupType<Setup>();
         }
+
+        private void Style_Opened(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
 }

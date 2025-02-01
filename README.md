@@ -5,7 +5,7 @@ A straightforward WPF app built with C# using the **MVVM Cross framework** and *
 ## Features  
 - **Add, Edit, Delete**: Easily manage cars in your collection.  
 - **Quick Search**: Find cars instantly with a simple search.  
-- **Organize**: Track details like car name, year, and condition.
+- **Organize**: Track details like car name, year, and HW series.
 
 ## Technologies Used  
 - **WPF**: For the desktop application UI.  

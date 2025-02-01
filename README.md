@@ -12,3 +12,4 @@ A straightforward WPF app built with C# using the **MVVM Cross framework** and *
 - **C#**: Core programming language.  
 - **MVVM Cross**: For data binding and implementing the MVVM pattern.  
 - **Dependency Injection**: For better app structure and testability.
+- **Database Integration**: For Storing Data (locally).

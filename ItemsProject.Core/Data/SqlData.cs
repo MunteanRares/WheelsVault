@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
@@ -57,10 +58,20 @@ namespace ItemsProject.Core.Data
             return output;
         }
 
-        public void DeleteItemById(int itemId)
+        public void DeleteItem(int itemId, int folderId, string modelName, string modelReleaseDate, string collectionName)
         {
-            _db.SaveData("dbo.spItems_RemoveById", new { itemId }, connectionStringName, true);
+            _db.SaveData("dbo.spItems_Remove", new { itemId, folderId, modelName, modelReleaseDate, collectionName }, connectionStringName, true);
         }
 
+        public FolderModel GetFolderById(int folderId)
+        {
+            FolderModel output = _db.LoadData<FolderModel, dynamic>("dbo.spFolders_GetById", new { folderId }, connectionStringName, true).First();
+            return output;
+        }
+
+        public void RemoveFolderById(int folderId)
+        {
+            _db.SaveData("dbo.spFolders_Remove", new { folderId }, connectionStringName, true);
+        }
     }
 }

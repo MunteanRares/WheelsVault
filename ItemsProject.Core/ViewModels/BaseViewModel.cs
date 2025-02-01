@@ -39,12 +39,14 @@ namespace ItemsProject.Core.ViewModels
             openAddItemWindowCommand = new MvxCommand(OpenAddItemWindow);
 			openAddFolderWindowCommand = new MvxCommand(OpenAddFolderWindow);
 			DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
+			DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
 		}
 
 		// COMMANDS
 		public IMvxCommand openAddItemWindowCommand { get; set; }
         public IMvxCommand openAddFolderWindowCommand { get; set; }
 		public ICommand DeleteItemFromFolderCommand { get; set; }
+		public ICommand DeleteFolderCommand {  get; set; }
 
         public void OpenAddItemWindow()
 		{
@@ -61,6 +63,12 @@ namespace ItemsProject.Core.ViewModels
 		{
 			_allFolderItems = updatedItems;
 			FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
+		}
+
+
+		public void ExecuteFolderRemoved(List<FolderModel> updatedFolders)
+		{
+			Folders = _dataService.UpdateFolders(updatedFolders, Folders);
 		}
 
 
@@ -83,7 +91,7 @@ namespace ItemsProject.Core.ViewModels
 
         // PROPERTIES
         public ObservableCollection<ItemModel> FolderItems { get; set; }
-        public ObservableCollection<FolderModel> Folders { get; }
+        public ObservableCollection<FolderModel> Folders { get; set; }
 		
 
 		private ItemModel _selectedItem;

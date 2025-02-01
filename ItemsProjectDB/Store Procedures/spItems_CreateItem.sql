@@ -7,7 +7,21 @@
 AS
 begin
 	set nocount on;
-	insert into dbo.Items (folderId, modelName, collectionName, modelReleaseDate) 
-	values (@FolderId, @ModelName, @CollectionName, @ModelReleaseDate)
+
+	declare @TopFolderId int;
+	set @TopFolderId = (select top 1 Id from dbo.Folders)
+
+	if @FolderId != @TopFolderId
+	begin
+		insert into dbo.Items (folderId, modelName, collectionName, modelReleaseDate) 
+		values (@FolderId, @ModelName, @CollectionName, @ModelReleaseDate),
+			   (@TopFolderId, @ModelName, @CollectionName, @ModelReleaseDate);
+	end
+
+	else
+	begin
+		insert into dbo.Items (folderId, modelName, collectionName, modelReleaseDate) 
+		values (@FolderId, @ModelName, @CollectionName, @ModelReleaseDate);
+	end
 
 end

@@ -9,10 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Fonts\Comfortaa-Bold.ttf" />
     <None Remove="Fonts\Font Awesome 6 Free-Solid-900.otf" />
     <None Remove="Fonts\Fredoka-Medium.ttf" />
-    <None Remove="Fonts\Fredoka-SemiBold.ttf" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,14 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Fonts\Comfortaa-Bold.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Fonts\Font Awesome 6 Free-Solid-900.otf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Fonts\Fredoka-Medium.ttf" />
-    <Resource Include="Fonts\Fredoka-SemiBold.ttf" />
   </ItemGroup>
 
 </Project>

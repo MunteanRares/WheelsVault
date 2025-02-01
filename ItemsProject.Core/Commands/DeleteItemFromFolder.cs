@@ -27,9 +27,15 @@ namespace ItemsProject.Core.Commands
         }
 
         public override void Execute(object? parameter)
-        {
+        {   
+            ItemModel valuePassedInFromButton = parameter as ItemModel;
             var allFolderItems = _getFolderItems();
-            ItemModel itemToRemoveCopy = _dataService.RemoveItemFromFolder(((ItemModel)parameter).Id);
+            ItemModel itemToRemoveCopy = _dataService.RemoveItemFromFolder(valuePassedInFromButton.Id,
+                                                                           valuePassedInFromButton.FolderId,
+                                                                           valuePassedInFromButton.ModelName,
+                                                                           valuePassedInFromButton.ModelReleaseDate,
+                                                                           valuePassedInFromButton.CollectionName);
+
             ItemModel itemToRemove = allFolderItems.Where(i => i.Id == itemToRemoveCopy.Id).FirstOrDefault();
 
             allFolderItems.Remove(itemToRemove);

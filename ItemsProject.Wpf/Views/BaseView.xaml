@@ -75,7 +75,7 @@
             </Grid.ColumnDefinitions>
 
             <Button MinHeight="40" Margin="0 30 0 0" mvx:Bi.nd="Command openAddFolderWindowCommand">
-                <TextBlock Foreground="#23384b" Text="+Add Folder">
+                <TextBlock Foreground="#09203F" Text="+Add Folder">
                 </TextBlock>
             </Button>
 
@@ -100,7 +100,9 @@
                                        Grid.Column="0" Text="{Binding Name}"
                                        ToolTip="{Binding Name}" ToolTipService.InitialShowDelay="100"/>
 
-                            <Button BorderThickness="0"
+                            <Button Command="{Binding DataContext.DeleteFolderCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:IMvxWpfView}}}"
+                                    CommandParameter="{Binding}"
+                                    BorderThickness="0"
                                     Grid.Column="1" Background="Transparent" HorizontalAlignment="Right">
                                 <Button.Style>
                                     <Style TargetType="Button">
@@ -166,7 +168,7 @@
                 HorizontalAlignment="Right"
                 Margin="0 0 25 0"
                 mvx:Bi.nd="Command openAddItemWindowCommand">
-                <TextBlock Foreground="#23384b" Text="+Add Item">
+                <TextBlock Foreground="#09203F" Text="+Add Item">
                 </TextBlock>
             </Button>
 

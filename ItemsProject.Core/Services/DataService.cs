@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
@@ -23,14 +25,12 @@ namespace ItemsProject.Core.Services
         {
             List<ItemModel> allFolderItems = new List<ItemModel>();
 
-            if (selectedFolder.Name == "All Cars")
+            if (selectedFolder == null)
             {
-                allFolderItems = _db.GetAllItems();
+                return allFolderItems;
             }
-            else
-            {
-                allFolderItems = _db.GetItemsByFolderId(selectedFolder.Id);
-            }
+
+            allFolderItems = _db.GetItemsByFolderId(selectedFolder.Id);
 
             return allFolderItems;
         }
@@ -63,12 +63,31 @@ namespace ItemsProject.Core.Services
             return folderItems;
         }
 
-        public ItemModel RemoveItemFromFolder(int itemId)
+        public ItemModel RemoveItemFromFolder(int itemId, int folderId, string modelName, string modelReleaseDate, string collectionName)
         {
             ItemModel itemToRemove = _db.GetItemById(itemId);
-            _db.DeleteItemById(itemId);
+            _db.DeleteItem(itemId, folderId, modelName, modelReleaseDate, collectionName);
 
             return itemToRemove;
+        }
+
+        public FolderModel RemoveFolder(int folderId)
+        {
+            FolderModel folderToRemove = _db.GetFolderById(folderId);
+            _db.RemoveFolderById(folderId);
+
+            return folderToRemove;
+        }
+
+        public ObservableCollection<FolderModel> UpdateFolders(List<FolderModel> updatedFolders, ObservableCollection<FolderModel> folders)
+        {
+            folders.Clear();
+            foreach (FolderModel folder in updatedFolders)
+            {
+                folders.Add(folder);
+            }
+
+            return folders;
         }
     }
 }

@@ -20,18 +20,18 @@ namespace ItemsProject.Core.ViewModels
     public class BaseViewModel : MvxViewModel
     {
 		private readonly IDatabaseData _db;
-		private readonly IMvxNavigationService _navigation;
+		private readonly IMvxNavigationService _nav;
 		private readonly IDataService _dataService;
 		private readonly List<MvxSubscriptionToken> _tokens = new List<MvxSubscriptionToken>();
 
 		private List<ItemModel> _allFolderItems = new List<ItemModel>();
         private List<ItemModel> _searchResult = new List<ItemModel>();
 
-		public BaseViewModel(IDatabaseData db, IDataService dataService, IMvxNavigationService navigation, IMvxMessenger messenger)
+		public BaseViewModel(IMvxNavigationService nav, IDatabaseData db, IDataService dataService, IMvxMessenger messenger)
 		{
 			_db = db;
-			_navigation = navigation;
 			_dataService = dataService;
+			_nav = nav;
 
 			Folders = new ObservableCollection<FolderModel>(_db.GetAllFolderItems());
 			FolderItems = new ObservableCollection<ItemModel>();
@@ -42,10 +42,10 @@ namespace ItemsProject.Core.ViewModels
 			_tokens.Add(messenger.Subscribe<CanRemoveFolderMessage>(OnRemoveFolderMessage));
 
 			// Commands
-			OpenAddItemWindowCommand = new OpenAddItemWindow(dataService, () => SelectedFolder, ClearSearchText);
-			OpenAddFolderWindowCommand = new OpenAddFolderWindow(dataService);
+			OpenAddItemWindowCommand = new OpenAddItemWindow(_nav, () => SelectedFolder, ClearSearchText);
+			OpenAddFolderWindowCommand = new OpenAddFolderWindow(_nav);
 			DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
-			DeleteFolderConfirmationCommand = new OpenConfirmationWindow(dataService, DeleteFolderConfirmationMessage, "Delete Confirmation", "");
+			DeleteFolderConfirmationCommand = new OpenConfirmationWindow(_nav, DeleteFolderConfirmationMessage, "Delete Confirmation", "");
 			DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
 		}
 
@@ -133,7 +133,7 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
-		private FolderModel _selectedFolder = new FolderModel();
+		private FolderModel _selectedFolder;
 		public FolderModel SelectedFolder
 		{
 			get { return _selectedFolder; }

@@ -29,9 +29,18 @@ namespace ItemsProject.Core
 
             IConfiguration configuration = builder.Build();
 
+            // Interfaces + Implementations
             Mvx.IoCProvider.RegisterType<ISqlDataAccess, SqlDataAccess>();
             Mvx.IoCProvider.RegisterType<IDatabaseData, SqlData>();
             Mvx.IoCProvider.RegisterType<IDataService, DataService>();
+
+            // ViewModels
+            Mvx.IoCProvider.RegisterType<BaseViewModel>();
+            Mvx.IoCProvider.RegisterType<AddFolderViewModel>();
+            Mvx.IoCProvider.RegisterType<CustomMessageBoxViewModel>();
+            Mvx.IoCProvider.RegisterType<AddItemViewModel>();
+
+            // Config
             Mvx.IoCProvider.RegisterSingleton(configuration);
 
             RegisterAppStart<BaseViewModel>();

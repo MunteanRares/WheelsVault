@@ -13,15 +13,15 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands
 {
     public class OpenAddFolderWindow : CommandBase
    {
-        private readonly IDataService _dataService;
-        public OpenAddFolderWindow(IDataService dataService)
+        private readonly IMvxNavigationService _nav;
+        public OpenAddFolderWindow(IMvxNavigationService nav)
         {
-            _dataService = dataService;
+            _nav = nav;
         }
 
         public override void Execute(object? parameter)
         {
-            _dataService.NavigateAddFolderViewModel();
+            _nav.Navigate<AddFolderViewModel>();
         }
     }
 }

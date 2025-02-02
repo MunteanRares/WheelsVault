@@ -13,7 +13,9 @@ using ItemsProject.Core.Data;
 using ItemsProject.Core.Messages;
 using ItemsProject.Core.Models;
 using ItemsProject.Core.ViewModels;
+using MvvmCross;
 using MvvmCross.Navigation;
+using MvvmCross.Plugin.Messenger;
 using MvvmCross.ViewModels;
 
 namespace ItemsProject.Core.Services
@@ -22,10 +24,12 @@ namespace ItemsProject.Core.Services
     {
         private readonly IDatabaseData _db;
         private readonly IMvxNavigationService _navigationService;
-        public DataService(IDatabaseData db, IMvxNavigationService navigationService)
+        private readonly IMvxMessenger _messenger;
+        public DataService(IDatabaseData db, IMvxNavigationService navigationService, IMvxMessenger messenger)
         {
             _db = db;
             _navigationService = navigationService;
+            _messenger = messenger;
         }
 
         public List<ItemModel> LoadItemsForFolder(FolderModel selectedFolder)
@@ -89,6 +93,13 @@ namespace ItemsProject.Core.Services
             return itemToRemove;
         }
 
+        public void AddItem(int folderId, string modelName, string modelReleaseDate, string collectionName)
+        {
+            ItemModel newItem = _db.CreateNewItem(folderId, modelName, modelReleaseDate, collectionName);
+            var message = new AddedItemMessage(Mvx.IoCProvider.Resolve<AddItemViewModel>(), newItem);
+            _messenger.Publish(message);
+        }
+
         public FolderModel RemoveFolder(int folderId)
         {
             FolderModel folderToRemove = _db.GetFolderById(folderId);
@@ -108,21 +119,6 @@ namespace ItemsProject.Core.Services
         public void NavigateAddFolderViewModel()
         {
             _navigationService.Navigate<AddFolderViewModel>();
-        }
-
-        public void NavigateAddItemViewModel(FolderModel folderToAddTo)
-        {
-            _navigationService.Navigate<AddItemViewModel, FolderModel>(folderToAddTo);
-        }
-
-        public void CloseWindow(IMvxViewModel viewModel)
-        {
-            _navigationService.Close(viewModel);
-        }
-
-        public void NavigatToCustomMessageBoxViewModel(MessageBoxModel parameters)
-        {
-            _navigationService.Navigate<CustomMessageBoxViewModel, MessageBoxModel>(parameters);
         }
     }
 }

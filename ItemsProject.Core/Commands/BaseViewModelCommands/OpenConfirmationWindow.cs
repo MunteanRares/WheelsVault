@@ -17,17 +17,17 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands
 {
     public class OpenConfirmationWindow : CommandBase
     {
-        private readonly IDataService _dataService;
         private readonly Func<string, string> _getMessage;
         private readonly string _title;
         private readonly string _iconSource;
+        private readonly IMvxNavigationService _nav;
 
-        public OpenConfirmationWindow(IDataService dataService, Func<string, string> getMessage, string title, string iconSource)
+        public OpenConfirmationWindow(IMvxNavigationService nav, Func<string, string> getMessage, string title, string iconSource)
         {
-            _dataService = dataService;
             _getMessage = getMessage;
             _title = title;
             _iconSource = iconSource;
+            _nav = nav;
         }
 
         public override void Execute(object? parameter)
@@ -47,7 +47,7 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands
                     FolderToDelete = folder
                 };
 
-                _dataService.NavigatToCustomMessageBoxViewModel(parameters);
+                _nav.Navigate<CustomMessageBoxViewModel, MessageBoxModel>(parameters);
             }
         }
     }

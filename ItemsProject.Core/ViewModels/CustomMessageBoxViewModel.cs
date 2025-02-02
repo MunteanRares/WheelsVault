@@ -1,33 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MvvmCross.Commands;
-using MvvmCross.Navigation;
-using MvvmCross;
-using MvvmCross.ViewModels;
+﻿using MvvmCross.ViewModels;
 using System.Windows.Input;
 using ItemsProject.Core.Commands.CustomMessageBoxCommands;
-using Xceed.Wpf.Toolkit;
-using DevExpress.Data;
 using ItemsProject.Core.Models;
 using MvvmCross.Plugin.Messenger;
 using ItemsProject.Core.Messages;
 using ItemsProject.Core.Services;
+using ItemsProject.Core.Commands;
+using MvvmCross.Navigation;
 
 namespace ItemsProject.Core.ViewModels
 {
     public class CustomMessageBoxViewModel : MvxViewModel<MessageBoxModel>
     {
         private readonly IMvxMessenger _messenger;
-        private readonly IDataService _dataService;
-        public CustomMessageBoxViewModel(IMvxMessenger messenger, IDataService dataService)
+        private readonly IMvxNavigationService _nav;
+        public CustomMessageBoxViewModel(IMvxNavigationService nav, IMvxMessenger messenger)
         {
             _messenger = messenger; 
-            _dataService = dataService;
+            _nav = nav;
 
-            ConfirmCommand = new Confirm(CloseConfirmWindow);
+            ConfirmCommand = new MessageBoxConfirm(CloseConfirmWindow);
             CancelCommand = new Cancel(CloseCancelWindow);
         }
 
@@ -48,12 +40,12 @@ namespace ItemsProject.Core.ViewModels
         {
             var message = new CanRemoveFolderMessage(this, result, FolderToDelete);
             _messenger.Publish(message);
-            _dataService.CloseWindow(this);
+            _nav.Close(this);
         }
 
         public void CloseCancelWindow(bool result)
         {
-            _dataService.CloseWindow(this);
+            _nav.Close(this);
         }
 
         // PROPERTIES

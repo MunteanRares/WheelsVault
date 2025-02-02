@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Threading.Tasks;
-using DevExpress.Utils;
-using ItemsProject.Core.Data;
-using ItemsProject.Core.Models;
+﻿using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;
 
 namespace ItemsProject.Core.Commands.BaseViewModelCommands

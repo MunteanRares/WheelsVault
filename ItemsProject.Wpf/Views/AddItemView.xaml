@@ -38,10 +38,10 @@
 
         <TextBlock Grid.Column="0" Margin="0 30 0 0" Grid.Row="3" Text="Collection"></TextBlock>
         <TextBox Text="{Binding CollectionName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" Margin="15 0 0 0" Grid.Column="1" Grid.Row="3" Height="28" Width="180" VerticalAlignment="Bottom" HorizontalAlignment="Left"></TextBox>
-        <Button mvx:Bi.nd="Command cancelCommand" FontSize="18" Margin="15 0 15 40" Grid.Column="0" Grid.Row="5">
+        <Button Command="{Binding CancelCommand}" FontSize="18" Margin="15 0 15 40" Grid.Column="0" Grid.Row="5">
             <TextBlock Text="Cancel" Foreground="#09203F"></TextBlock>
         </Button>
-        <Button mvx:Bi.nd="Command addItemCommand"
+        <Button Command="{Binding AddItemCommand}"
                 Margin="15 0 15 40"
                 IsEnabled="{Binding CanAddItem}"
                 Grid.Column="1"

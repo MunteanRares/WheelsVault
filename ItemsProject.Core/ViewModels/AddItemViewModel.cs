@@ -5,50 +5,47 @@ using MvvmCross.Navigation;
 using MvvmCross.Plugin.Messenger;
 using MvvmCross.ViewModels;
 using ItemsProject.Core.Messages;
+using System.Windows.Input;
+using ItemsProject.Core.Services;
+using ItemsProject.Core.Commands;
+using ItemsProject.Core.Commands.AddItemViewModelCommands;
+using MvvmCross;
 
 namespace ItemsProject.Core.ViewModels
 {
     public class AddItemViewModel : MvxViewModel<FolderModel>
     {
-        private readonly IDatabaseData _db;
-        private readonly IMvxNavigationService _navigation;
-        private readonly IMvxMessenger _messenger;
+        private readonly IDataService _dataService;
+        private readonly IMvxNavigationService _nav;
 
-        public AddItemViewModel(IDatabaseData db, IMvxNavigationService navigation, IMvxMessenger messenger)
+        public AddItemViewModel(IMvxNavigationService nav, IDataService dataService)
         {
-            _db = db;
-            _navigation = navigation;
-            _messenger = messenger;
-            cancelCommand = new MvxCommand(Cancel);
-            addItemCommand = new MvxCommand(AddItem);
+            _dataService = dataService;
+            _nav = nav;
+
+            CancelCommand = new Cancel(CloseWindow);
+            AddItemCommand = new AddItemConfirm(ConfirmAddItem);
         }
 
-        // Recieving params from other ViewModels
         public override void Prepare(FolderModel parameter)
         {
             SelectedFolderId = parameter.Id;
         }
 
-        // Commands Declaration
-        public IMvxCommand cancelCommand { get; set; }
-        public IMvxCommand addItemCommand { get; set; }
+        // COMMANDS
+        public ICommand CancelCommand { get; }
+        public ICommand AddItemCommand { get; }
 
         // Commands Functionalities
-        public void Cancel()
+        public void CloseWindow()
         {
-            _navigation.Close(this);
+            _nav.Close(this);
         }
 
-        public void AddItem()
+        public void ConfirmAddItem()
         {
-            ItemModel newItem = _db.CreateNewItem(SelectedFolderId, ModelName, ModelReleaseDate, CollectionName);
-            var message = new AddedItemMessage(
-                this,
-                newItem
-            );
-
-            _messenger.Publish(message);
-            _navigation.Close(this);
+            _dataService.AddItem(SelectedFolderId, ModelName, ModelReleaseDate, CollectionName);
+            _nav.Close(this);
         }
 
         // VALIDATIONS

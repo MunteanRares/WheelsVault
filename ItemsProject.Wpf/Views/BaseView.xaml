@@ -12,6 +12,7 @@
         Background="#09203F"
         FontFamily="pack://application:,,,/ItemsProject.Wpf;component/Fonts/#Fredoka Medium"   
         d:DesignHeight="1080" d:DesignWidth="1920">
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.15*" MinWidth="250"/>
@@ -74,7 +75,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Button MinHeight="40" Margin="0 30 0 0" mvx:Bi.nd="Command openAddFolderWindowCommand">
+            <Button MinHeight="40" Margin="0 30 0 0" mvx:Bi.nd="Command OpenAddFolderWindowCommand">
                 <TextBlock Foreground="#09203F" Text="+Add Folder">
                 </TextBlock>
             </Button>
@@ -82,6 +83,7 @@
             <ListView Margin="0 20 0 0" BorderThickness="0"
                       ItemsSource="{Binding Folders}"
                       SelectedItem="{Binding SelectedFolder}"
+                      AlternationCount="99"
                       Grid.Row="1"
                       Grid.Column="0"
                       Background="Transparent">
@@ -100,14 +102,15 @@
                                        Grid.Column="0" Text="{Binding Name}"
                                        ToolTip="{Binding Name}" ToolTipService.InitialShowDelay="100"/>
 
-                            <Button Command="{Binding DataContext.DeleteFolderCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:IMvxWpfView}}}"
-                                    CommandParameter="{Binding}"
+                            <Button Command="{Binding DataContext.DeleteFolderConfirmationCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:IMvxWpfView}}}"
+                                    CommandParameter="{Binding}"                                    
                                     BorderThickness="0"
                                     Grid.Column="1" Background="Transparent" HorizontalAlignment="Right">
                                 <Button.Style>
                                     <Style TargetType="Button">
                                         <Setter Property="Background" Value="Transparent" />
                                         <Setter Property="Foreground" Value="Gray"/>
+                                        <Setter Property="Visibility" Value="Visible"/>
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="Button">
@@ -124,10 +127,20 @@
                                                         <Trigger Property="IsMouseOver" Value="True">
                                                             <Setter Property="Foreground" Value="#d73b3e" />
                                                         </Trigger>
+
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter Property="Foreground" Value="Transparent"/>
+                                                        </Trigger>
                                                     </ControlTemplate.Triggers>
                                                 </ControlTemplate>
                                             </Setter.Value>
                                         </Setter>
+
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=(ItemsControl.AlternationIndex)}" Value="0">
+                                                <Setter Property="Visibility" Value="Hidden"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
                                     </Style>
                                 </Button.Style>
                             </Button>
@@ -167,7 +180,7 @@
                 Width="160"
                 HorizontalAlignment="Right"
                 Margin="0 0 25 0"
-                mvx:Bi.nd="Command openAddItemWindowCommand">
+                mvx:Bi.nd="Command OpenAddItemWindowCommand">
                 <TextBlock Foreground="#09203F" Text="+Add Item">
                 </TextBlock>
             </Button>

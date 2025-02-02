@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Threading.Tasks;
 using DevExpress.Utils;
 using ItemsProject.Core.Data;
 using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;
 
-namespace ItemsProject.Core.Commands
+namespace ItemsProject.Core.Commands.BaseViewModelCommands
 {
     public class DeleteFolder : CommandBase
     {
@@ -24,9 +25,11 @@ namespace ItemsProject.Core.Commands
 
         public override void Execute(object? parameter)
         {
+            FolderModel passedInFolder = parameter as FolderModel;
+
             var allFolders = _getAllFolders();
-            FolderModel folderToRemoveCopy = _dataService.RemoveFolder(((FolderModel)parameter).Id);
-            FolderModel folderToRemove =  allFolders.Where(i => i.Id == folderToRemoveCopy.Id).First();
+            FolderModel folderToRemoveCopy = _dataService.RemoveFolder(passedInFolder.Id);
+            FolderModel folderToRemove = allFolders.Where(i => i.Id == folderToRemoveCopy.Id).First();
 
             allFolders.Remove(folderToRemove);
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DevExpress.Utils.Serializing.Helpers;
 using ItemsProject.Core.Data;
 using ItemsProject.Core.Databases;
 using ItemsProject.Core.Messages;
@@ -31,11 +32,10 @@ namespace ItemsProject.Core
             Mvx.IoCProvider.RegisterType<ISqlDataAccess, SqlDataAccess>();
             Mvx.IoCProvider.RegisterType<IDatabaseData, SqlData>();
             Mvx.IoCProvider.RegisterType<IDataService, DataService>();
+            Mvx.IoCProvider.RegisterType<IMessageBoxService>();
             Mvx.IoCProvider.RegisterSingleton(configuration);
 
             RegisterAppStart<BaseViewModel>();
         }
-
-        
     }
 }

@@ -9,7 +9,7 @@ using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;
 using MvvmCross.Plugin.Messenger;
 
-namespace ItemsProject.Core.Commands
+namespace ItemsProject.Core.Commands.BaseViewModelCommands
 {
     public class DeleteItemFromFolder : CommandBase
     {
@@ -27,7 +27,7 @@ namespace ItemsProject.Core.Commands
         }
 
         public override void Execute(object? parameter)
-        {   
+        {
             ItemModel valuePassedInFromButton = parameter as ItemModel;
             var allFolderItems = _getFolderItems();
             ItemModel itemToRemoveCopy = _dataService.RemoveItemFromFolder(valuePassedInFromButton.Id,

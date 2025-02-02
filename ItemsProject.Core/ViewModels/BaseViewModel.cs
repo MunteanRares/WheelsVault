@@ -1,15 +1,18 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
+using System.Windows;
 using ItemsProject.Core.Commands;
 using ItemsProject.Core.Data;
 using ItemsProject.Core.Messages;
 using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;
-using Microsoft.Identity.Client.Extensibility;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.Plugin.Messenger;
 using MvvmCross.ViewModels;
+using DevExpress.Utils.Filtering.Internal;
+using ItemsProject.Core.Commands.BaseViewModelCommands;
+using MvvmCross.Base;
 
 namespace ItemsProject.Core.ViewModels
 {
@@ -18,60 +21,49 @@ namespace ItemsProject.Core.ViewModels
 		private readonly IDatabaseData _db;
 		private readonly IMvxNavigationService _navigation;
 		private readonly IDataService _dataService;
+		private readonly IMessageBoxService _messageBoxService;
 		private readonly List<MvxSubscriptionToken> _tokens = new List<MvxSubscriptionToken>();
 
 		private List<ItemModel> _allFolderItems = new List<ItemModel>();
         private List<ItemModel> _searchResult = new List<ItemModel>();
 
-        public BaseViewModel(IDatabaseData db, IDataService dataService, IMvxNavigationService navigation, IMvxMessenger messenger)
-        {
+		public BaseViewModel(IDatabaseData db, IDataService dataService, IMvxNavigationService navigation, IMvxMessenger messenger, IMessageBoxService messageBoxService)
+		{
 			_db = db;
 			_navigation = navigation;
 			_dataService = dataService;
-            Folders = new ObservableCollection<FolderModel>(_db.GetAllFolderItems());
+			_messageBoxService = messageBoxService;
+
+			Folders = new ObservableCollection<FolderModel>(_db.GetAllFolderItems());
 			FolderItems = new ObservableCollection<ItemModel>();
 
-            // Messages
-            _tokens.Add(messenger.Subscribe<AddedItemMessage>(OnAddedItemMessage));
-            _tokens.Add(messenger.Subscribe<AddedFolderMessage>(OnAddedFolderMessage));
+			// Messages
+			_tokens.Add(messenger.Subscribe<AddedItemMessage>(OnAddedItemMessage));
+			_tokens.Add(messenger.Subscribe<AddedFolderMessage>(OnAddedFolderMessage));
+			_tokens.Add(messenger.Subscribe<CanRemoveFolderMessage>(OnRemoveFolderMessage));
 
 			// Commands
-            openAddItemWindowCommand = new MvxCommand(OpenAddItemWindow);
-			openAddFolderWindowCommand = new MvxCommand(OpenAddFolderWindow);
+			OpenAddItemWindowCommand = new OpenAddItemWindow(dataService, () => SelectedFolder, ClearSearchText);
+			OpenAddFolderWindowCommand = new OpenAddFolderWindow(dataService);
 			DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
+			DeleteFolderConfirmationCommand = new OpenConfirmationWindow(_navigation, $"Are you sure you want to delete this folder?", "Confirm Deletion", "");
 			DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
 		}
 
-		// COMMANDS
-		public IMvxCommand openAddItemWindowCommand { get; set; }
-        public IMvxCommand openAddFolderWindowCommand { get; set; }
-		public ICommand DeleteItemFromFolderCommand { get; set; }
-		public ICommand DeleteFolderCommand {  get; set; }
-
-        public void OpenAddItemWindow()
-		{
-			SearchText = string.Empty;
-			_navigation.Navigate<AddItemViewModel, FolderModel>(SelectedFolder);
+        public override void ViewDestroy(bool viewFinishing = true)
+        {
+            base.ViewDestroy(viewFinishing);
+			UnsubscribeMessages();
         }
 
-		public void OpenAddFolderWindow()
-		{
-			_navigation.Navigate<AddFolderViewModel>();
-		}
+        // COMMANDS
+        public ICommand OpenAddItemWindowCommand { get; }
+		public ICommand OpenAddFolderWindowCommand { get; }
+		public ICommand DeleteItemFromFolderCommand { get; }
+		public ICommand DeleteFolderConfirmationCommand { get; }
+		public ICommand DeleteFolderCommand { get; }
 
-		public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
-		{
-			_allFolderItems = updatedItems;
-			FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
-		}
-
-
-		public void ExecuteFolderRemoved(List<FolderModel> updatedFolders)
-		{
-			Folders = _dataService.UpdateFolders(updatedFolders, Folders);
-		}
-
-
+        
         // MESSAGES
         private void OnAddedItemMessage(AddedItemMessage addedItemMessage)
         {
@@ -84,14 +76,43 @@ namespace ItemsProject.Core.ViewModels
             Folders.Add(addedFolderMessage.NewFolder);
         }
 
+        private void OnRemoveFolderMessage(CanRemoveFolderMessage message)
+        {
+			_dataService.ExecuteDeleteFolderCommand(message, DeleteFolderCommand);
+        }
+
+        // FUNCTIONS
+        private void UnsubscribeMessages()
+        {
+            foreach (MvxSubscriptionToken token in _tokens)
+            {
+                token.Dispose();
+            }
+            _tokens.Clear();
+        }
+
+        public void ClearSearchText()
+        {
+            SearchText = string.Empty;
+        }
+
+        public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
+        {
+            _allFolderItems = updatedItems;
+            FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
+        }
+
+        public void ExecuteFolderRemoved(List<FolderModel> updatedFolders)
+        {
+            Folders = _dataService.UpdateFolders(updatedFolders, Folders);
+        }
 
         // VALIDATIONS
         public bool CanPressAddItem => SelectedFolder != null;
 
-
-        // PROPERTIES
-        public ObservableCollection<ItemModel> FolderItems { get; set; }
-        public ObservableCollection<FolderModel> Folders { get; set; }
+		// PROPERTIES
+		public ObservableCollection<ItemModel> FolderItems { get; private set; }
+        public ObservableCollection<FolderModel> Folders { get; private set; }
 		
 
 		private ItemModel _selectedItem;

@@ -8,17 +8,24 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using ItemsProject.Core.Data;
+using ItemsProject.Core.Messages;
 using ItemsProject.Core.Models;
+using ItemsProject.Core.ViewModels;
+using MvvmCross.Navigation;
+using MvvmCross.ViewModels;
 
 namespace ItemsProject.Core.Services
 {
     public class DataService : IDataService
     {
         private readonly IDatabaseData _db;
-        public DataService(IDatabaseData db)
+        private readonly IMvxNavigationService _navigationService;
+        public DataService(IDatabaseData db, IMvxNavigationService navigationService)
         {
             _db = db;
+            _navigationService = navigationService;
         }
 
         public List<ItemModel> LoadItemsForFolder(FolderModel selectedFolder)
@@ -63,6 +70,17 @@ namespace ItemsProject.Core.Services
             return folderItems;
         }
 
+        public ObservableCollection<FolderModel> UpdateFolders(List<FolderModel> updatedFolders, ObservableCollection<FolderModel> folders)
+        {
+            folders.Clear();
+            foreach (FolderModel folder in updatedFolders)
+            {
+                folders.Add(folder);
+            }
+
+            return folders;
+        }
+
         public ItemModel RemoveItemFromFolder(int itemId, int folderId, string modelName, string modelReleaseDate, string collectionName)
         {
             ItemModel itemToRemove = _db.GetItemById(itemId);
@@ -79,15 +97,27 @@ namespace ItemsProject.Core.Services
             return folderToRemove;
         }
 
-        public ObservableCollection<FolderModel> UpdateFolders(List<FolderModel> updatedFolders, ObservableCollection<FolderModel> folders)
+        public void ExecuteDeleteFolderCommand(CanRemoveFolderMessage message, ICommand deleteCommand)
         {
-            folders.Clear();
-            foreach (FolderModel folder in updatedFolders)
+            if (message.CanRemoveFolder == true)
             {
-                folders.Add(folder);
+                deleteCommand.Execute(message.FolderToDelete);
             }
+        }
 
-            return folders;
+        public void NavigateAddFolderViewModel()
+        {
+            _navigationService.Navigate<AddFolderViewModel>();
+        }
+
+        public void NavigateAddItemViewModel(FolderModel folderToAddTo)
+        {
+            _navigationService.Navigate<AddItemViewModel, FolderModel>(folderToAddTo);
+        }
+
+        public void CloseWindow(IMvxViewModel viewModel)
+        {
+            _navigationService.Close(viewModel);
         }
     }
 }

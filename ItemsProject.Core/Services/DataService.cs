@@ -119,5 +119,10 @@ namespace ItemsProject.Core.Services
         {
             _navigationService.Close(viewModel);
         }
+
+        public void NavigatToCustomMessageBoxViewModel(MessageBoxModel parameters)
+        {
+            _navigationService.Navigate<CustomMessageBoxViewModel, MessageBoxModel>(parameters);
+        }
     }
 }

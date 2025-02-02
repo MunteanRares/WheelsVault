@@ -1,9 +1,4 @@
-﻿using ItemsProject.Core.Databases;
-using ItemsProject.Core.Messages;
-using ItemsProject.Core.ViewModels;
-using ItemsProject.Wpf.MessageBoxes;
-using Microsoft.Extensions.Logging;
-using MvvmCross;
+﻿using Microsoft.Extensions.Logging;
 using MvvmCross.Platforms.Wpf.Core;
 using MvvmCross.ViewModels;
 using Serilog;
@@ -16,7 +11,6 @@ namespace ItemsProject.WPF
         protected override void InitializeApp(IMvxApplication app)
         {
             base.InitializeApp(app);
-            Mvx.IoCProvider.RegisterType<IMessageBoxService, MessageBoxService>();
         }
 
         protected override ILoggerProvider CreateLogProvider()

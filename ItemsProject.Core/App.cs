@@ -32,7 +32,6 @@ namespace ItemsProject.Core
             Mvx.IoCProvider.RegisterType<ISqlDataAccess, SqlDataAccess>();
             Mvx.IoCProvider.RegisterType<IDatabaseData, SqlData>();
             Mvx.IoCProvider.RegisterType<IDataService, DataService>();
-            Mvx.IoCProvider.RegisterType<IMessageBoxService>();
             Mvx.IoCProvider.RegisterSingleton(configuration);
 
             RegisterAppStart<BaseViewModel>();

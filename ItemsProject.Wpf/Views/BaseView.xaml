@@ -189,7 +189,7 @@
                       Grid.Column="0"
                       Grid.ColumnSpan="2"
                       ItemsSource="{Binding FolderItems}"
-                      SelectedItem="{Binding SelectedItem}"
+                      SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                       Background="Transparent"
                       BorderThickness="0"
                       Margin="0 20 0 0">

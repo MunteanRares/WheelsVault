@@ -13,6 +13,7 @@ using MvvmCross.ViewModels;
 using DevExpress.Utils.Filtering.Internal;
 using ItemsProject.Core.Commands.BaseViewModelCommands;
 using MvvmCross.Base;
+using DevExpress.Utils.KeyboardHandler;
 
 namespace ItemsProject.Core.ViewModels
 {
@@ -21,18 +22,16 @@ namespace ItemsProject.Core.ViewModels
 		private readonly IDatabaseData _db;
 		private readonly IMvxNavigationService _navigation;
 		private readonly IDataService _dataService;
-		private readonly IMessageBoxService _messageBoxService;
 		private readonly List<MvxSubscriptionToken> _tokens = new List<MvxSubscriptionToken>();
 
 		private List<ItemModel> _allFolderItems = new List<ItemModel>();
         private List<ItemModel> _searchResult = new List<ItemModel>();
 
-		public BaseViewModel(IDatabaseData db, IDataService dataService, IMvxNavigationService navigation, IMvxMessenger messenger, IMessageBoxService messageBoxService)
+		public BaseViewModel(IDatabaseData db, IDataService dataService, IMvxNavigationService navigation, IMvxMessenger messenger)
 		{
 			_db = db;
 			_navigation = navigation;
 			_dataService = dataService;
-			_messageBoxService = messageBoxService;
 
 			Folders = new ObservableCollection<FolderModel>(_db.GetAllFolderItems());
 			FolderItems = new ObservableCollection<ItemModel>();
@@ -46,8 +45,15 @@ namespace ItemsProject.Core.ViewModels
 			OpenAddItemWindowCommand = new OpenAddItemWindow(dataService, () => SelectedFolder, ClearSearchText);
 			OpenAddFolderWindowCommand = new OpenAddFolderWindow(dataService);
 			DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
-			DeleteFolderConfirmationCommand = new OpenConfirmationWindow(_navigation, $"Are you sure you want to delete this folder?", "Confirm Deletion", "");
+			DeleteFolderConfirmationCommand = new OpenConfirmationWindow(dataService, DeleteFolderConfirmationMessage, "Delete Confirmation", "");
 			DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
+		}
+
+		public string DeleteFolderConfirmationMessage(string folderName)
+		{
+			string output = string.Empty;
+			output = $"Are you sure you want to delete {folderName} folder?";
+            return output;
 		}
 
         public override void ViewDestroy(bool viewFinishing = true)
@@ -107,6 +113,8 @@ namespace ItemsProject.Core.ViewModels
             Folders = _dataService.UpdateFolders(updatedFolders, Folders);
         }
 
+
+
         // VALIDATIONS
         public bool CanPressAddItem => SelectedFolder != null;
 
@@ -125,7 +133,7 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
-		private FolderModel _selectedFolder;
+		private FolderModel _selectedFolder = new FolderModel();
 		public FolderModel SelectedFolder
 		{
 			get { return _selectedFolder; }

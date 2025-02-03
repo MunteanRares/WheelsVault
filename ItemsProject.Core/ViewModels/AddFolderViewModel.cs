@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ItemsProject.Core.Data;
+﻿using ItemsProject.Core.Data;
 using ItemsProject.Core.Messages;
-using ItemsProject.Core.Models;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.Plugin.Messenger;

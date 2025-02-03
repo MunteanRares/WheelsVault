@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics.Tracing;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using ItemsProject.Core.Data;
 using ItemsProject.Core.Messages;
@@ -16,7 +7,7 @@ using ItemsProject.Core.ViewModels;
 using MvvmCross;
 using MvvmCross.Navigation;
 using MvvmCross.Plugin.Messenger;
-using MvvmCross.ViewModels;
+
 
 namespace ItemsProject.Core.Services
 {

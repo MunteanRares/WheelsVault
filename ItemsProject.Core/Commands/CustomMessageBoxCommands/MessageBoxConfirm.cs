@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DevExpress.Utils.Filtering.Internal;
-using ItemsProject.Core.ViewModels;
-using MvvmCross;
-using MvvmCross.Navigation;
+﻿
+
 
 namespace ItemsProject.Core.Commands.CustomMessageBoxCommands
 {

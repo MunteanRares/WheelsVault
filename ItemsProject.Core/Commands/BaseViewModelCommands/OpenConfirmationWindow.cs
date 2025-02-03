@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using DevExpress.Data.Async.Helpers;
-using DevExpress.DirectX.Common.Direct2D;
-using ItemsProject.Core.Models;
-using ItemsProject.Core.Services;
+﻿using ItemsProject.Core.Models;
 using ItemsProject.Core.ViewModels;
-using MvvmCross.Base;
 using MvvmCross.Navigation;
 
 namespace ItemsProject.Core.Commands.BaseViewModelCommands

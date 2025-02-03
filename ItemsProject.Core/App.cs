@@ -1,20 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DevExpress.Utils.Serializing.Helpers;
-using ItemsProject.Core.Data;
+﻿using ItemsProject.Core.Data;
 using ItemsProject.Core.Databases;
-using ItemsProject.Core.Messages;
 using ItemsProject.Core.Services;
 using ItemsProject.Core.ViewModels;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using MvvmCross;
 using MvvmCross.IoC;
-using MvvmCross.Navigation;
-using MvvmCross.Presenters;
 using MvvmCross.ViewModels;
 
 namespace ItemsProject.Core

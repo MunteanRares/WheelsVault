@@ -4,7 +4,6 @@ using ItemsProject.Core.Commands.CustomMessageBoxCommands;
 using ItemsProject.Core.Models;
 using MvvmCross.Plugin.Messenger;
 using ItemsProject.Core.Messages;
-using ItemsProject.Core.Services;
 using ItemsProject.Core.Commands;
 using MvvmCross.Navigation;
 

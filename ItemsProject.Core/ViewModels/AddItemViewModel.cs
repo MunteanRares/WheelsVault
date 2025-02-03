@@ -1,15 +1,11 @@
-﻿using ItemsProject.Core.Data;
-using ItemsProject.Core.Models;
-using MvvmCross.Commands;
+﻿using ItemsProject.Core.Models;
 using MvvmCross.Navigation;
-using MvvmCross.Plugin.Messenger;
 using MvvmCross.ViewModels;
-using ItemsProject.Core.Messages;
 using System.Windows.Input;
 using ItemsProject.Core.Services;
 using ItemsProject.Core.Commands;
 using ItemsProject.Core.Commands.AddItemViewModelCommands;
-using MvvmCross;
+
 
 namespace ItemsProject.Core.ViewModels
 {

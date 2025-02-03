@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ItemsProject.Core.Data;
-using ItemsProject.Core.Messages;
-using ItemsProject.Core.Models;
+﻿using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;
-using MvvmCross.Plugin.Messenger;
+
 
 namespace ItemsProject.Core.Commands.BaseViewModelCommands
 {

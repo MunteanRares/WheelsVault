@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using ItemsProject.Core.Models;
-using ItemsProject.Core.Services;
+﻿using ItemsProject.Core.Models;
 using ItemsProject.Core.ViewModels;
 using MvvmCross.Navigation;
 

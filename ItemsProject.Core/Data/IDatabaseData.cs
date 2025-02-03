@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using ItemsProject.Core.Models;
+﻿using ItemsProject.Core.Models;
 
 namespace ItemsProject.Core.Data
 {

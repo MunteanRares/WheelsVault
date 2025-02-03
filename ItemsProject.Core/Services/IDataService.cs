@@ -2,8 +2,7 @@
 using System.Windows.Input;
 using ItemsProject.Core.Messages;
 using ItemsProject.Core.Models;
-using ItemsProject.Core.ViewModels;
-using MvvmCross.ViewModels;
+
 
 namespace ItemsProject.Core.Services
 {

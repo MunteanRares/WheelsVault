@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
-using ItemsProject.Core.Databases;
+﻿using ItemsProject.Core.Databases;
 using ItemsProject.Core.Helper_Methods.String_Manipulation;
 using ItemsProject.Core.Models;
 

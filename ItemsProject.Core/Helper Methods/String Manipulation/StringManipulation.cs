@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using MvvmCross.Binding.Combiners;
+﻿
+
 
 namespace ItemsProject.Core.Helper_Methods.String_Manipulation
 {

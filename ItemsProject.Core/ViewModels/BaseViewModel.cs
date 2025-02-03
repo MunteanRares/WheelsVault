@@ -1,19 +1,14 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System.Windows;
-using ItemsProject.Core.Commands;
 using ItemsProject.Core.Data;
 using ItemsProject.Core.Messages;
 using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;
-using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.Plugin.Messenger;
 using MvvmCross.ViewModels;
-using DevExpress.Utils.Filtering.Internal;
 using ItemsProject.Core.Commands.BaseViewModelCommands;
-using MvvmCross.Base;
-using DevExpress.Utils.KeyboardHandler;
+
 
 namespace ItemsProject.Core.ViewModels
 {

@@ -8,12 +8,13 @@
             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
             xmlns:local="clr-namespace:ItemsProject.Wpf.Views"
             mc:Ignorable="d" 
-            Height="500" Width="400"
+            ResizeMode="NoResize"
+            Width="342" Height="400"
             Title="Add Your Item"
             Background="#09203F"
             FontSize="20"
-            FontFamily="pack://application:,,,/ItemsProject.Wpf;component/Fonts/#Fredoka Medium"
-            d:DesignHeight="500" d:DesignWidth="400" WindowStartupLocation="CenterScreen">
+            FontFamily="pack://application:,,,/ItemsProject.Wpf;component/Assets/Fonts/#Fredoka Medium"
+            d:DesignHeight="400" d:DesignWidth="342" WindowStartupLocation="CenterScreen">
     <Grid Margin="15 0 0 0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
@@ -38,11 +39,11 @@
 
         <TextBlock Grid.Column="0" Margin="0 30 0 0" Grid.Row="3" Text="Collection"></TextBlock>
         <TextBox Text="{Binding CollectionName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" Margin="15 0 0 0" Grid.Column="1" Grid.Row="3" Height="28" Width="180" VerticalAlignment="Bottom" HorizontalAlignment="Left"></TextBox>
-        <Button Command="{Binding CancelCommand}" FontSize="18" Margin="15 0 15 40" Grid.Column="0" Grid.Row="5">
+        <Button Command="{Binding CancelCommand}" Margin="10 0 10 20" Grid.Column="0" Grid.Row="5">
             <TextBlock Text="Cancel" Foreground="#09203F"></TextBlock>
         </Button>
         <Button Command="{Binding AddItemCommand}"
-                Margin="15 0 15 40"
+                Margin="10 0 10 20"
                 IsEnabled="{Binding CanAddItem}"
                 Grid.Column="1"
                 Grid.Row="5">

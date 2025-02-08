@@ -14,12 +14,10 @@ namespace ItemsProject.Core.Services
     public class DataService : IDataService
     {
         private readonly IDatabaseData _db;
-        private readonly IMvxNavigationService _navigationService;
         private readonly IMvxMessenger _messenger;
         public DataService(IDatabaseData db, IMvxNavigationService navigationService, IMvxMessenger messenger)
         {
             _db = db;
-            _navigationService = navigationService;
             _messenger = messenger;
         }
 
@@ -105,11 +103,6 @@ namespace ItemsProject.Core.Services
             {
                 deleteCommand.Execute(message.FolderToDelete);
             }
-        }
-
-        public void NavigateAddFolderViewModel()
-        {
-            _navigationService.Navigate<AddFolderViewModel>();
         }
     }
 }

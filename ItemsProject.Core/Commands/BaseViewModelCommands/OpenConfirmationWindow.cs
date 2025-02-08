@@ -1,5 +1,6 @@
 ﻿using ItemsProject.Core.Models;
 using ItemsProject.Core.ViewModels;
+using MvvmCross;
 using MvvmCross.Navigation;
 
 namespace ItemsProject.Core.Commands.BaseViewModelCommands
@@ -10,17 +11,21 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands
         private readonly string _title;
         private readonly string _iconSource;
         private readonly IMvxNavigationService _nav;
+        private readonly Action _changeWindowState;
 
-        public OpenConfirmationWindow(IMvxNavigationService nav, Func<string, string> getMessage, string title, string iconSource)
+        public OpenConfirmationWindow(IMvxNavigationService nav, Func<string, string> getMessage, string title, string iconSource, Action changeWindowState)
         {
             _getMessage = getMessage;
             _title = title;
             _iconSource = iconSource;
             _nav = nav;
+            _changeWindowState = changeWindowState;
         }
 
         public override void Execute(object? parameter)
         {
+            _changeWindowState();
+
             if ((FolderModel?)parameter == null)
             {
                 throw new ArgumentNullException(nameof(parameter));

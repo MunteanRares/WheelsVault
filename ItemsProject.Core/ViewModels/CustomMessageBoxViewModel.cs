@@ -23,7 +23,7 @@ namespace ItemsProject.Core.ViewModels
         }
 
         public override void Prepare(MessageBoxModel parameter)
-        {
+        {   
             Message = parameter.Message;
             Title = parameter.Title;
             IconSource = parameter.IconSource;
@@ -37,8 +37,8 @@ namespace ItemsProject.Core.ViewModels
         // FUNCTIONS
         public void CloseConfirmWindow(bool result)
         {
-            var message = new CanRemoveFolderMessage(this, result, FolderToDelete);
-            _messenger.Publish(message);
+            CanRemoveFolderMessage folderMessage = new CanRemoveFolderMessage(this, result, FolderToDelete);
+            _messenger.Publish(folderMessage);
             _nav.Close(this);
         }
 
@@ -71,7 +71,11 @@ namespace ItemsProject.Core.ViewModels
         private string _iconSource;
         public string IconSource
         {
-            get { return _iconSource; }
+            get 
+            {
+                return  _iconSource;
+            }
+
             set
             {
                 SetProperty(ref _iconSource, value);
@@ -84,6 +88,5 @@ namespace ItemsProject.Core.ViewModels
             get { return _folderToDelete; }
             set { SetProperty(ref _folderToDelete, value); }
         }
-
     }
 }

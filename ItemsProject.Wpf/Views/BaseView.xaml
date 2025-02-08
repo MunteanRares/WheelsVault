@@ -6,16 +6,22 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:conv="clr-namespace:ItemsProject.Wpf.Converters"
         xmlns:local="clr-namespace:ItemsProject.Wpf.Views"
         mc:Ignorable="d" 
         FontSize="22"
         Background="#09203F"
-        FontFamily="pack://application:,,,/ItemsProject.Wpf;component/Fonts/#Fredoka Medium"   
-        d:DesignHeight="1080" d:DesignWidth="1920">
+        FontFamily="pack://application:,,,/ItemsProject.Wpf;component/Assets/Fonts/#Fredoka Medium"        
+        d:DesignHeight="1080" d:DesignWidth="1920" IsHitTestVisible="{Binding IsWindowEnabled}">
+
+    <views:MvxWpfView.Resources>
+        <conv:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
+        <conv:BooleanInverseConverter x:Key="BooleanInverseConverter"/>
+    </views:MvxWpfView.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.15*" MinWidth="250"/>
+            <ColumnDefinition Width="0.15*" MinWidth="260"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -75,14 +81,14 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Button MinHeight="40" Margin="0 30 0 0" mvx:Bi.nd="Command OpenAddFolderWindowCommand">
+            <Button MinHeight="40" FontSize="20" Margin="0 30 0 0" mvx:Bi.nd="Command OpenAddFolderWindowCommand">
                 <TextBlock Foreground="#09203F" Text="+Add Folder">
                 </TextBlock>
             </Button>
 
             <ListView Margin="0 20 0 0" BorderThickness="0"
                       ItemsSource="{Binding Folders}"
-                      SelectedItem="{Binding SelectedFolder}"
+                      SelectedItem="{Binding SelectedFolder, Mode=TwoWay}"
                       AlternationCount="99"
                       Grid.Row="1"
                       Grid.Column="0"
@@ -94,32 +100,97 @@
                                 <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Width="170"
+                            <TextBlock Name="OriginalFolderName"
+                                       Width="155"
+                                       Margin="2 1 0 0"
                                        TextTrimming="CharacterEllipsis"
                                        TextWrapping="WrapWithOverflow"
                                        Grid.Column="0" Text="{Binding Name}"
                                        ToolTip="{Binding Name}" ToolTipService.InitialShowDelay="100"/>
 
-                            <Button Command="{Binding DataContext.DeleteFolderConfirmationCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:IMvxWpfView}}}"
-                                    CommandParameter="{Binding}"                                    
-                                    BorderThickness="0"
-                                    Grid.Column="1" Background="Transparent" HorizontalAlignment="Right">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox x:Name="EditFolderNameTextBox" 
+                                         Text="{Binding Name, Mode=TwoWay}"
+                                         Height="{Binding ElementName=OriginalFolderName, Path=ActualHeight}"
+                                         Width="{Binding ElementName=OriginalFolderName, Path=ActualWidth}"
+                                         HorizontalAlignment="Center"
+                                         VerticalAlignment="Center"
+                                         Visibility="{Binding IsEditing,
+                                                              Converter={StaticResource BooleanVisibilityConverter}}"
+                                         IsVisibleChanged="EditFolderNameTextBox_IsVisibleChanged"
+                                         LostFocus="TextBox_LostFocus"
+                                         PreviewKeyDown="EditFolderNameTextBox_PreviewKeyDown"/>
+                                                    
+                            </StackPanel>
+
+                            <Button Name="EditFolderIconBtn"
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding DataContext.EditModeFoldersCommand, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=DataContext}"
+                                    IsEnabled="{Binding IsEditing,
+                                                Converter={StaticResource BooleanInverseConverter}}"
+                                    Grid.Column="1"
+                                    Margin="0 0 8 0">
                                 <Button.Style>
                                     <Style TargetType="Button">
                                         <Setter Property="Background" Value="Transparent" />
-                                        <Setter Property="Foreground" Value="Gray"/>
+                                        <Setter Property="Foreground" Value="#A0A0A0"/>
                                         <Setter Property="Visibility" Value="Visible"/>
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="Button">
                                                     <Grid>
-                                                        <Border MaxHeight="40" MaxWidth="160" Padding="{TemplateBinding Padding}" 
+                                                        <Border Padding="{TemplateBinding Padding}" 
+                                                            Background="{TemplateBinding Background}" CornerRadius="6" BorderThickness="2 0 2 4">
+                                                            <TextBlock Name="TextBlock" FontSize="18" Text="&#xf044;" 
+                                                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                       FontFamily="pack://application:,,,/Assets/Fonts/#Font Awesome 6 Free Solid"
+                                                                       Foreground="{TemplateBinding Foreground}" />         
+                                                        </Border>
+                                                    </Grid>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Foreground" Value="#28a745" />
+                                                        </Trigger>
+
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter Property="Foreground" Value="#28a745" />
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=(ItemsControl.AlternationIndex)}" Value="0">
+                                                <Setter Property="Visibility" Value="Hidden"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                            <Button Name="DeleteFolderIconBtn" Command="{Binding DataContext.DeleteFolderConfirmationCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:IMvxWpfView}}}"
+                                    CommandParameter="{Binding}"                                    
+                                    BorderThickness="0"
+                                    Grid.Column="2" HorizontalAlignment="Right">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="#A0A0A0"/>
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Grid>
+                                                        <Border Padding="{TemplateBinding Padding}" 
                                                                 Background="{TemplateBinding Background}" CornerRadius="6" BorderThickness="2 0 2 4">
                                                             <TextBlock Name="TextBlock" FontSize="18" Text="&#xf1f8;" 
                                                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                               FontFamily="pack://application:,,,/Fonts/#Font Awesome 6 Free Solid"
+                                                               FontFamily="pack://application:,,,/Assets/Fonts/#Font Awesome 6 Free Solid"
                                                                Foreground="{TemplateBinding Foreground}" />
                                                         </Border>
                                                     </Grid>
@@ -175,6 +246,7 @@
             </StackPanel>
 
             <Button 
+                FontSize="20"
                 Grid.Column="1"
                 IsEnabled="{Binding CanPressAddItem}"
                 Width="160"

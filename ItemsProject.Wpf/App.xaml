@@ -11,7 +11,7 @@
         </Style>
 
         <Style TargetType="ToolTip">
-            <Setter Property="Background" Value="#288ef2"/>
+            <Setter Property="Background" Value="#556D7E"/>
             <Setter Property="BorderBrush" Value="#4ECDC4"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="5"/>
@@ -78,8 +78,13 @@
                                     <Border.BorderBrush>
                                         <SolidColorBrush Color="#A45A00" Opacity="1"/>
                                     </Border.BorderBrush>
-                                    <ContentPresenter  HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                                      TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                    <Border MaxHeight="38" MaxWidth="160" CornerRadius="6" Margin="-2 0 -2 -1" BorderThickness="2 0 2 2.5">
+                                        <Border.BorderBrush>
+                                            <SolidColorBrush Color="#A45A00"/>
+                                        </Border.BorderBrush>
+                                        <ContentPresenter  HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                                             TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                    </Border>
                                 </Border>
                             </Grid>
 
@@ -143,7 +148,7 @@
                 </Trigger>
 
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="#288ef2"/>
+                    <Setter Property="Background" Value="#2F4E6D"/>
                 </Trigger>
             </Style.Triggers>
         </Style>

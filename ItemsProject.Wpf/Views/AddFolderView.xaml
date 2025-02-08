@@ -12,8 +12,9 @@
     Height="250"
     Width="300"
     FontSize="18"
+    ResizeMode="NoResize"
     Background="#09203F"
-    FontFamily="pack://application:,,,/ItemsProject.Wpf;component/Fonts/#Fredoka Medium"
+    FontFamily="pack://application:,,,/ItemsProject.Wpf;component/Assets/Fonts/#Fredoka Medium"
     d:DesignHeight="250" d:DesignWidth="300" WindowStartupLocation="CenterScreen">
     <Grid Margin="15">
         <Grid.ColumnDefinitions>

@@ -8,6 +8,10 @@ using MvvmCross.Navigation;
 using MvvmCross.Plugin.Messenger;
 using MvvmCross.ViewModels;
 using ItemsProject.Core.Commands.BaseViewModelCommands;
+using System.Runtime.CompilerServices;
+using System.Runtime;
+using DevExpress.Data;
+using Microsoft.VisualBasic;
 
 
 namespace ItemsProject.Core.ViewModels
@@ -35,19 +39,21 @@ namespace ItemsProject.Core.ViewModels
 			_tokens.Add(messenger.Subscribe<AddedItemMessage>(OnAddedItemMessage));
 			_tokens.Add(messenger.Subscribe<AddedFolderMessage>(OnAddedFolderMessage));
 			_tokens.Add(messenger.Subscribe<CanRemoveFolderMessage>(OnRemoveFolderMessage));
+			_tokens.Add(messenger.Subscribe<ChangeWindowStateMessage>(OnChangeWindowStateMessage));
 
 			// Commands
 			OpenAddItemWindowCommand = new OpenAddItemWindow(_nav, () => SelectedFolder, ClearSearchText);
 			OpenAddFolderWindowCommand = new OpenAddFolderWindow(_nav);
 			DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
-			DeleteFolderConfirmationCommand = new OpenConfirmationWindow(_nav, DeleteFolderConfirmationMessage, "Delete Confirmation", "");
+			DeleteFolderConfirmationCommand = new OpenConfirmationWindow(_nav, DeleteFolderConfirmationMessage, "Confirm Deletion", "pack://application:,,,/Assets/Icons/question-mark.png", SetWindowStateToFalse);
 			DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
+			EditModeFoldersCommand = new EditModeFolders(EditModeFolders);
 		}
 
 		public string DeleteFolderConfirmationMessage(string folderName)
 		{
 			string output = string.Empty;
-			output = $"Are you sure you want to delete {folderName} folder?";
+			output = $"Are you sure you want to delete the '{folderName}' folder?";
             return output;
 		}
 
@@ -63,7 +69,7 @@ namespace ItemsProject.Core.ViewModels
 		public ICommand DeleteItemFromFolderCommand { get; }
 		public ICommand DeleteFolderConfirmationCommand { get; }
 		public ICommand DeleteFolderCommand { get; }
-
+		public ICommand EditModeFoldersCommand { get; }
         
         // MESSAGES
         private void OnAddedItemMessage(AddedItemMessage addedItemMessage)
@@ -82,6 +88,11 @@ namespace ItemsProject.Core.ViewModels
 			_dataService.ExecuteDeleteFolderCommand(message, DeleteFolderCommand);
         }
 
+		private void OnChangeWindowStateMessage(ChangeWindowStateMessage changeWindowStateMessage)
+		{
+			IsWindowEnabled = changeWindowStateMessage.ChangeWindowState;
+		}
+
         // FUNCTIONS
         private void UnsubscribeMessages()
         {
@@ -89,6 +100,7 @@ namespace ItemsProject.Core.ViewModels
             {
                 token.Dispose();
             }
+
             _tokens.Clear();
         }
 
@@ -108,7 +120,26 @@ namespace ItemsProject.Core.ViewModels
             Folders = _dataService.UpdateFolders(updatedFolders, Folders);
         }
 
+		public void EditModeFolders(FolderModel selectedFolder, bool value)
+		{
+            SelectedFolder = selectedFolder;
+            selectedFolder.IsEditing = value;
+        }
 
+		public void OnLostFocusStopEdit()
+		{
+            SelectedFolder.IsEditing = false;
+		}
+
+		public void SetWindowStateToFalse()
+		{
+			IsWindowEnabled = false;
+		}
+
+		public FolderModel GetCurrentSelectedFolder()
+		{
+			return SelectedFolder;
+		}
 
         // VALIDATIONS
         public bool CanPressAddItem => SelectedFolder != null;
@@ -155,5 +186,16 @@ namespace ItemsProject.Core.ViewModels
                 FolderItems = _dataService.UpdateFolderItems(_searchResult, FolderItems);
             }
 		}
+
+		private bool _isWindowEnabled = true;
+		public bool IsWindowEnabled
+        {
+			get { return _isWindowEnabled; }
+			set 
+			{
+				SetProperty(ref _isWindowEnabled, value);
+			}
+		}
+
 	}
 }

@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Icons\acutal.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +14,10 @@
     <None Remove="Assets\Fonts\Fredoka-Medium.ttf" />
     <None Remove="Assets\Icons\question-mark.png" />
     <None Remove="Assets\Icons\warning-sign.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Icons\acutal.ico" />
   </ItemGroup>
 
   <ItemGroup>

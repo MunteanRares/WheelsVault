@@ -14,5 +14,6 @@ namespace ItemsProject.Core.Data
         void RemoveFolderById(int folderId);
         FolderModel GetFolderById(int folderId);
         void EditFolderName(string folderName, int folderId);
+        public void EditItem(int itemId, string newName, string newReleaseDate, string newCollectionName);
     }
 }

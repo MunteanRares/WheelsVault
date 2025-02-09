@@ -109,5 +109,10 @@ namespace ItemsProject.Core.Services
         {
             _db.EditFolderName(folderName, folderId);
         }
+
+        public void EditItem(int itemId, string newName, string newReleaseDate, string newCollectionName)
+        {
+            _db.EditItem(itemId, newName, newReleaseDate, newCollectionName);
+        }
     }
 }

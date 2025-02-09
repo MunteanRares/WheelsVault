@@ -18,5 +18,6 @@ namespace ItemsProject.Core.Services
         void ExecuteDeleteFolderCommand(CanRemoveFolderMessage message, ICommand command);
         
         void EditFolderName(string folderName, int folderId);
+        void EditItem(int itemId, string newName, string newReleaseDate, string newCollectionName);
     }
 }

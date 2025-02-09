@@ -71,5 +71,10 @@ namespace ItemsProject.Core.Data
         {
             _db.SaveData("dbo.spFolders_EditName", new { folderName, folderId }, connectionStringName, true);
         }
+
+        public void EditItem(int itemId, string newName, string newReleaseDate, string newCollectionName)
+        {
+            _db.SaveData("dbo.spItems_EditItem", new { itemId, newName, newReleaseDate, newCollectionName}, connectionStringName, true);
+        }
     }
 }

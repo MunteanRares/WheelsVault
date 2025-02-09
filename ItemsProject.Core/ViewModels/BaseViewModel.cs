@@ -10,6 +10,7 @@ using MvvmCross.ViewModels;
 using ItemsProject.Core.Commands.BaseViewModelCommands;
 using ItemsProject.Core.Commands.General;
 using System.Diagnostics.Contracts;
+using ItemsProject.Core.Helper_Methods.String_Manipulation;
 
 
 namespace ItemsProject.Core.ViewModels
@@ -46,9 +47,12 @@ namespace ItemsProject.Core.ViewModels
 			DeleteFolderConfirmationCommand = new OpenConfirmationWindow(_nav, DeleteFolderConfirmationMessage, "Confirm Deletion", "pack://application:,,,/Assets/Icons/question-mark.png", SetWindowStateToFalse);
 			DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
 			EditModeFoldersCommand = new EditModeFolders(EditModeFolders);
-			OnLostFocusCommand = new OnLostFocus(CancelFolderEdit);
-			EditSaveCommand = new EditSave(_dataService, () => EditingName, SaveFolderEdit);
-		}
+			CancelFolderEditCommand = new CancelFolderEdit(CancelFolderEdit);
+			CancelItemEditCommand = new CancelItemEdit(CancelItemEdit);
+			SaveEditFolderCommand = new SaveEditFolder(_dataService, () => EditingFolderName, SaveFolderEdit);
+			EditItemFromFolderCommand = new EditItemFromFolder(EditModeItems);
+			SaveEditItemCommand = new SaveEditItem(_dataService, () => EditingItemName, () => EditingItemReleaseDate, () => EditingItemCollectionName, SaveItemEdit);
+        }
 
         // COMMANDS
         public ICommand OpenAddItemWindowCommand { get; }
@@ -57,9 +61,12 @@ namespace ItemsProject.Core.ViewModels
 		public ICommand DeleteFolderConfirmationCommand { get; }
 		public ICommand DeleteFolderCommand { get; }
 		public ICommand EditModeFoldersCommand { get; }
-		public ICommand OnLostFocusCommand { get; }
-		public ICommand EditSaveCommand { get; }
-        
+		public ICommand CancelFolderEditCommand { get; }
+		public ICommand CancelItemEditCommand { get; }	
+		public ICommand SaveEditFolderCommand { get; }
+		public ICommand EditItemFromFolderCommand { get; }
+		public ICommand SaveEditItemCommand { get; }
+
         // MESSAGES
         private void OnAddedItemMessage(AddedItemMessage addedItemMessage)
         {
@@ -121,6 +128,7 @@ namespace ItemsProject.Core.ViewModels
             IsWindowEnabled = false;
         }
 
+        // FUNCTIONS - FOLDER EDITING
         public void EditModeFolders(FolderModel selectedFolder, bool value)
 		{	
 			if (value)
@@ -134,19 +142,53 @@ namespace ItemsProject.Core.ViewModels
 
 		public void BeginFolderEdit(FolderModel selectedFolder)
 		{
-			EditingName = selectedFolder.Name;
+			EditingFolderName = selectedFolder.Name;
 		}
 
 		public void CancelFolderEdit(string initFolderName)
 		{
-			EditingName = initFolderName;
+			EditingFolderName = initFolderName;
             SelectedFolder.IsEditing = false;
 		}
 
 		public void SaveFolderEdit()
 		{
-			SelectedFolder.Name = EditingName;
+			SelectedFolder.Name = EditingFolderName.Capitalize();
 			SelectedFolder.IsEditing = false;
+		}
+
+		// FUNCTIONS - ITEM EDITING
+		public void EditModeItems(ItemModel selectedItem, bool value)
+		{
+            if (value)
+            {
+				BeginItemEdit(selectedItem);
+            }
+			SelectedItem = selectedItem;
+			selectedItem.IsEditing = value;
+        }
+
+		public void BeginItemEdit(ItemModel selectedItem)
+		{
+			EditingItemName = selectedItem.ModelName;
+            EditingItemReleaseDate = selectedItem.ModelReleaseDate;
+            EditingItemCollectionName = selectedItem.CollectionName;
+        }
+
+		public void CancelItemEdit(ItemModel initialItem)
+		{
+			EditingItemName = initialItem.ModelName;
+            EditingItemReleaseDate = initialItem.ModelReleaseDate;
+            EditingItemCollectionName = initialItem.CollectionName;			
+			SelectedItem.IsEditing = false;
+		}
+
+		public void SaveItemEdit()
+		{
+			SelectedItem.ModelName = EditingItemName.Capitalize();
+			SelectedItem.ModelReleaseDate = EditingItemReleaseDate;
+			SelectedItem.CollectionName = EditingItemCollectionName.ToUpper();
+			SelectedItem.IsEditing = false;
 		}
 
         // VALIDATIONS
@@ -205,16 +247,47 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
-		private string _editingName;
-
-		public string EditingName
+		private string _editingFolderName;
+		public string EditingFolderName
 		{
-			get { return _editingName; }
+			get { return _editingFolderName; }
 			set 
 			{
-				SetProperty(ref _editingName, value);
+				SetProperty(ref _editingFolderName, value);
 			}
 		}
+
+		private string _editingItemName;
+		public string EditingItemName
+		{
+			get { return _editingItemName; }
+			set 
+			{
+				SetProperty(ref _editingItemName, value);
+			}
+		}
+
+
+		private string _editingItemReleaseDate;
+		public string EditingItemReleaseDate
+        {
+			get { return _editingItemReleaseDate; }
+			set 
+			{ 
+				SetProperty(ref _editingItemReleaseDate, value);
+			}
+		}
+
+		private string _editingItemCollectionName;
+		public string EditingItemCollectionName
+		{
+			get { return _editingItemCollectionName; }
+			set 
+			{ 
+				SetProperty(ref _editingItemCollectionName, value);	
+			}
+		}
+
 
 
 		// WHEN CLOSING APP

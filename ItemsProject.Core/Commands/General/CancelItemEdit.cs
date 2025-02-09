@@ -7,18 +7,18 @@ using ItemsProject.Core.Models;
 
 namespace ItemsProject.Core.Commands.General
 {
-    public class OnLostFocus : CommandBase
+    public class CancelItemEdit : CommandBase
     {
-        private readonly Action<string> _onLostFocusAction;
+        private readonly Action<ItemModel> _stopItemEditing;
 
-        public OnLostFocus(Action<string> onLostFocusAction)
+        public CancelItemEdit(Action<ItemModel> stopItemEditing)
         {
-            _onLostFocusAction = onLostFocusAction;
+            _stopItemEditing = stopItemEditing;
         }
 
         public override void Execute(object? parameter)
         {
-            _onLostFocusAction((string)parameter);
+            _stopItemEditing((ItemModel)parameter);
         }
     }
 }

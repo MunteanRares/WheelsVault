@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Icons\acutal.ico</ApplicationIcon>
+    <AssemblyName>WheelsVault</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

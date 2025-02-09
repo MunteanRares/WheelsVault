@@ -288,8 +288,6 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
-
-
 		// WHEN CLOSING APP
 		public override void ViewDestroy(bool viewFinishing = true)
         {

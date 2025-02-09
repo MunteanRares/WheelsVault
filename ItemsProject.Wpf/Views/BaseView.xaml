@@ -12,7 +12,7 @@
         mc:Ignorable="d" 
         FontSize="22"
         Background="#09203F"
-        FontFamily="pack://application:,,,/ItemsProject.Wpf;component/Assets/Fonts/#Fredoka Medium"        
+        FontFamily="pack://application:,,,/WheelsVault;component/Assets/Fonts/#Fredoka Medium"        
         d:DesignHeight="1080" d:DesignWidth="1920" IsHitTestVisible="{Binding IsWindowEnabled}">
 
     <views:MvxWpfView.Resources>

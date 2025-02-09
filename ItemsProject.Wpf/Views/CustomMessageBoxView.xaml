@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         Title="{Binding Title}" Height="200" Width="400"
-        FontFamily="pack://application:,,,/ItemsProject.Wpf;component/Assets/Fonts/#Fredoka Medium"
+        FontFamily="pack://application:,,,/WheelsVault;component/Assets/Fonts/#Fredoka Medium"
         FontSize="18"
         Background="#fff"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="ToolWindow">

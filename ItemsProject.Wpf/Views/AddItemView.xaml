@@ -13,7 +13,7 @@
             Title="Add Your Item"
             Background="#09203F"
             FontSize="20"
-            FontFamily="pack://application:,,,/ItemsProject.Wpf;component/Assets/Fonts/#Fredoka Medium"
+            FontFamily="pack://application:,,,/WheelsVault;component/Assets/Fonts/#Fredoka Medium"
             d:DesignHeight="400" d:DesignWidth="342" WindowStartupLocation="CenterScreen">
     <Grid Margin="15 0 0 0">
         <Grid.ColumnDefinitions>

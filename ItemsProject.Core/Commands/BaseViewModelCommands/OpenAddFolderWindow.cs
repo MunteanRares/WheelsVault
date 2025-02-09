@@ -1,4 +1,5 @@
-﻿using ItemsProject.Core.ViewModels;
+﻿using ItemsProject.Core.Commands.General;
+using ItemsProject.Core.ViewModels;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 

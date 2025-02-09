@@ -1,7 +1,4 @@
-﻿
-
-
-namespace ItemsProject.Core.Commands
+﻿namespace ItemsProject.Core.Commands.General
 {
     public class Cancel : CommandBase
     {

@@ -1,6 +1,8 @@
 ﻿
 
 
+using ItemsProject.Core.Commands.General;
+
 namespace ItemsProject.Core.Commands.CustomMessageBoxCommands
 {
     public class MessageBoxConfirm : CommandBase

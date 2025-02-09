@@ -139,7 +139,7 @@
 
 
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Cursor" Value="Hand"/>
+
                     <Setter Property="Background">
                         <Setter.Value>
                             <SolidColorBrush Color="#64b5f6" Opacity="0.1"/>

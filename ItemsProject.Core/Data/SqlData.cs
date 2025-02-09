@@ -66,5 +66,10 @@ namespace ItemsProject.Core.Data
         {
             _db.SaveData("dbo.spFolders_Remove", new { folderId }, connectionStringName, true);
         }
+
+        public void EditFolderName(string folderName, int folderId)
+        {
+            _db.SaveData("dbo.spFolders_EditName", new { folderName, folderId }, connectionStringName, true);
+        }
     }
 }

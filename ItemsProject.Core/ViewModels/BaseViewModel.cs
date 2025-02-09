@@ -8,10 +8,8 @@ using MvvmCross.Navigation;
 using MvvmCross.Plugin.Messenger;
 using MvvmCross.ViewModels;
 using ItemsProject.Core.Commands.BaseViewModelCommands;
-using System.Runtime.CompilerServices;
-using System.Runtime;
-using DevExpress.Data;
-using Microsoft.VisualBasic;
+using ItemsProject.Core.Commands.General;
+using System.Diagnostics.Contracts;
 
 
 namespace ItemsProject.Core.ViewModels
@@ -48,20 +46,9 @@ namespace ItemsProject.Core.ViewModels
 			DeleteFolderConfirmationCommand = new OpenConfirmationWindow(_nav, DeleteFolderConfirmationMessage, "Confirm Deletion", "pack://application:,,,/Assets/Icons/question-mark.png", SetWindowStateToFalse);
 			DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
 			EditModeFoldersCommand = new EditModeFolders(EditModeFolders);
+			OnLostFocusCommand = new OnLostFocus(CancelFolderEdit);
+			EditSaveCommand = new EditSave(_dataService, () => EditingName, SaveFolderEdit);
 		}
-
-		public string DeleteFolderConfirmationMessage(string folderName)
-		{
-			string output = string.Empty;
-			output = $"Are you sure you want to delete the '{folderName}' folder?";
-            return output;
-		}
-
-        public override void ViewDestroy(bool viewFinishing = true)
-        {
-            base.ViewDestroy(viewFinishing);
-			UnsubscribeMessages();
-        }
 
         // COMMANDS
         public ICommand OpenAddItemWindowCommand { get; }
@@ -70,6 +57,8 @@ namespace ItemsProject.Core.ViewModels
 		public ICommand DeleteFolderConfirmationCommand { get; }
 		public ICommand DeleteFolderCommand { get; }
 		public ICommand EditModeFoldersCommand { get; }
+		public ICommand OnLostFocusCommand { get; }
+		public ICommand EditSaveCommand { get; }
         
         // MESSAGES
         private void OnAddedItemMessage(AddedItemMessage addedItemMessage)
@@ -109,6 +98,13 @@ namespace ItemsProject.Core.ViewModels
             SearchText = string.Empty;
         }
 
+        public string DeleteFolderConfirmationMessage(string folderName)
+        {
+            string output = string.Empty;
+            output = $"Are you sure you want to delete the '{folderName}' folder?";
+            return output;
+        }
+
         public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
         {
             _allFolderItems = updatedItems;
@@ -120,25 +116,37 @@ namespace ItemsProject.Core.ViewModels
             Folders = _dataService.UpdateFolders(updatedFolders, Folders);
         }
 
-		public void EditModeFolders(FolderModel selectedFolder, bool value)
-		{
+        public void SetWindowStateToFalse()
+        {
+            IsWindowEnabled = false;
+        }
+
+        public void EditModeFolders(FolderModel selectedFolder, bool value)
+		{	
+			if (value)
+			{
+                BeginFolderEdit(selectedFolder);
+            }
+
             SelectedFolder = selectedFolder;
             selectedFolder.IsEditing = value;
         }
 
-		public void OnLostFocusStopEdit()
+		public void BeginFolderEdit(FolderModel selectedFolder)
 		{
+			EditingName = selectedFolder.Name;
+		}
+
+		public void CancelFolderEdit(string initFolderName)
+		{
+			EditingName = initFolderName;
             SelectedFolder.IsEditing = false;
 		}
 
-		public void SetWindowStateToFalse()
+		public void SaveFolderEdit()
 		{
-			IsWindowEnabled = false;
-		}
-
-		public FolderModel GetCurrentSelectedFolder()
-		{
-			return SelectedFolder;
+			SelectedFolder.Name = EditingName;
+			SelectedFolder.IsEditing = false;
 		}
 
         // VALIDATIONS
@@ -197,5 +205,23 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
-	}
+		private string _editingName;
+
+		public string EditingName
+		{
+			get { return _editingName; }
+			set 
+			{
+				SetProperty(ref _editingName, value);
+			}
+		}
+
+
+		// WHEN CLOSING APP
+		public override void ViewDestroy(bool viewFinishing = true)
+        {
+            base.ViewDestroy(viewFinishing);
+            UnsubscribeMessages();
+        }
+    }
 }

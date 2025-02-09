@@ -104,5 +104,10 @@ namespace ItemsProject.Core.Services
                 deleteCommand.Execute(message.FolderToDelete);
             }
         }
+
+        public void EditFolderName(string folderName, int folderId)
+        {
+            _db.EditFolderName(folderName, folderId);
+        }
     }
 }

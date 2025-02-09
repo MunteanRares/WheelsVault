@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace ItemsProject.Core.Commands
+namespace ItemsProject.Core.Commands.General
 {
     public abstract class CommandBase : ICommand
     {

@@ -2,6 +2,7 @@
         xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
         xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
         x:Class="ItemsProject.Wpf.Views.BaseView"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -108,22 +109,78 @@
                                        Margin="2 1 0 0"
                                        TextTrimming="CharacterEllipsis"
                                        TextWrapping="WrapWithOverflow"
-                                       Grid.Column="0" Text="{Binding Name}"
+                                       Grid.Column="0" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                        ToolTip="{Binding Name}" ToolTipService.InitialShowDelay="100"/>
 
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" Width="155">
                                 <TextBox x:Name="EditFolderNameTextBox" 
-                                         Text="{Binding Name, Mode=TwoWay}"
+                                         Text="{Binding DataContext.EditingName, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          Height="{Binding ElementName=OriginalFolderName, Path=ActualHeight}"
-                                         Width="{Binding ElementName=OriginalFolderName, Path=ActualWidth}"
+                                         Width="120"
                                          HorizontalAlignment="Center"
                                          VerticalAlignment="Center"
                                          Visibility="{Binding IsEditing,
                                                               Converter={StaticResource BooleanVisibilityConverter}}"
-                                         IsVisibleChanged="EditFolderNameTextBox_IsVisibleChanged"
-                                         LostFocus="TextBox_LostFocus"
-                                         PreviewKeyDown="EditFolderNameTextBox_PreviewKeyDown"/>
-                                                    
+                                         IsVisibleChanged="EditFolderNameTextBox_IsVisibleChanged">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding
+                                            Key="Esc"
+                                            Command="{Binding DataContext.OnLostFocusCommand, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
+                                            CommandParameter="{Binding Name}"/>
+                                    </TextBox.InputBindings>
+                                    
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="LostFocus">
+                                            <i:InvokeCommandAction Command="{Binding DataContext.OnLostFocusCommand,
+                                                                             RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
+                                                                   CommandParameter="{Binding Name}"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </TextBox>
+
+                                <Button Name="SaveEditBtnIcon"
+                                        Focusable="False"
+                                        HorizontalAlignment="Right"
+                                        Command="{Binding DataContext.EditSaveCommand, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
+                                        CommandParameter="{Binding .}"
+                                        Visibility="{Binding IsEditing,
+                                                    Converter={StaticResource BooleanVisibilityConverter}}"
+                                        Margin="4 0 8 0">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="Foreground" Value="#4CAF50"/>
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Grid>
+                                                            <Border Padding="{TemplateBinding Padding}" 
+                                                                    Background="{TemplateBinding Background}" CornerRadius="6" BorderThickness="2 0 2 4">
+                                                                <TextBlock Name="TextBlock" FontSize="20" Text="&#xf00c;" 
+                                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                               FontFamily="pack://application:,,,/Assets/Fonts/#Font Awesome 6 Free Solid"
+                                                                               Foreground="{TemplateBinding Foreground}" />
+                                                            </Border>
+                                                        </Grid>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Cursor" Value="Hand"/>
+                                                                <Setter Property="Foreground" Value="#388E3C" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=(ItemsControl.AlternationIndex)}" Value="0">
+                                                    <Setter Property="Visibility" Value="Hidden"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
                             </StackPanel>
 
                             <Button Name="EditFolderIconBtn"
@@ -153,11 +210,12 @@
                                                     </Grid>
                                                     <ControlTemplate.Triggers>
                                                         <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Foreground" Value="#28a745" />
+                                                            <Setter Property="Cursor" Value="Hand"/>
+                                                            <Setter Property="Foreground" Value="#0078D7" />
                                                         </Trigger>
 
                                                         <Trigger Property="IsEnabled" Value="False">
-                                                            <Setter Property="Foreground" Value="#28a745" />
+                                                            <Setter Property="Foreground" Value="#0078D7" />
                                                         </Trigger>
                                                     </ControlTemplate.Triggers>
                                                 </ControlTemplate>
@@ -196,6 +254,7 @@
                                                     </Grid>
                                                     <ControlTemplate.Triggers>
                                                         <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Cursor" Value="Hand"/>
                                                             <Setter Property="Foreground" Value="#d73b3e" />
                                                         </Trigger>
 

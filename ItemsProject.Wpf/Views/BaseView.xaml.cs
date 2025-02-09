@@ -18,28 +18,11 @@ namespace ItemsProject.Wpf.Views
             InitializeComponent();
         }
 
-        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            BaseViewModel viewModel = (BaseViewModel)ViewModel;
-            viewModel.OnLostFocusStopEdit();
-        }
-
         private void EditFolderNameTextBox_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            BaseViewModel viewModel = (BaseViewModel)ViewModel;
-
             TextBox editTextBox = (TextBox)sender;
             Keyboard.Focus(editTextBox);
             editTextBox.CaretIndex = editTextBox.Text.Length;
-        }
-
-        private void EditFolderNameTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            BaseViewModel viewModel = (BaseViewModel)ViewModel;
-            if (e.Key == Key.Escape)
-            {
-                viewModel.OnLostFocusStopEdit();
-            }
         }
     }
 }

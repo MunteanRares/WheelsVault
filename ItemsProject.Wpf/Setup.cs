@@ -8,11 +8,6 @@ namespace ItemsProject.WPF
 {
     public class Setup : MvxWpfSetup<Core.App>
     {
-        protected override void InitializeApp(IMvxApplication app)
-        {
-            base.InitializeApp(app);
-        }
-
         protected override ILoggerProvider CreateLogProvider()
         {
             return new SerilogLoggerProvider();

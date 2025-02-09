@@ -16,14 +16,14 @@ namespace ItemsProject.Wpf.Converters
             }
             else
             {
-                return Visibility.Collapsed;
+                return Visibility.Hidden;
             }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             Visibility visibility = (Visibility)value;
-            if (visibility == Visibility.Collapsed)
+            if (visibility == Visibility.Hidden)
             {
                 return true;
             }

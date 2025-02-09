@@ -13,5 +13,6 @@ namespace ItemsProject.Core.Data
         public void DeleteItem(int itemId, int folderId, string modelName, string modelReleaseDate, string collectionName);
         void RemoveFolderById(int folderId);
         FolderModel GetFolderById(int folderId);
+        void EditFolderName(string folderName, int folderId);
     }
 }

@@ -3,7 +3,7 @@ using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System.Windows.Input;
 using ItemsProject.Core.Services;
-using ItemsProject.Core.Commands;
+using ItemsProject.Core.Commands.General;
 using ItemsProject.Core.Commands.AddItemViewModelCommands;
 
 

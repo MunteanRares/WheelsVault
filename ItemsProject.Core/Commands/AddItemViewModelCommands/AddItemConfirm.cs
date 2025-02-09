@@ -1,6 +1,8 @@
 ﻿
 
 
+using ItemsProject.Core.Commands.General;
+
 namespace ItemsProject.Core.Commands.AddItemViewModelCommands
 {
     public class AddItemConfirm : CommandBase

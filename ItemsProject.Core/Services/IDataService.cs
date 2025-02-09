@@ -17,5 +17,6 @@ namespace ItemsProject.Core.Services
         ObservableCollection<FolderModel> UpdateFolders(List<FolderModel> updatedFolders, ObservableCollection<FolderModel> folders);
         void ExecuteDeleteFolderCommand(CanRemoveFolderMessage message, ICommand command);
         
+        void EditFolderName(string folderName, int folderId);
     }
 }

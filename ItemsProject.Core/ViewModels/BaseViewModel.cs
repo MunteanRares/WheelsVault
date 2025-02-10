@@ -46,12 +46,13 @@ namespace ItemsProject.Core.ViewModels
 			DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
 			DeleteFolderConfirmationCommand = new OpenConfirmationWindow(_nav, DeleteFolderConfirmationMessage, "Confirm Deletion", "pack://application:,,,/Assets/Icons/question-mark.png", SetWindowStateToFalse);
 			DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
-			EditModeFoldersCommand = new EditModeFolders(EditModeFolders);
-			CancelFolderEditCommand = new CancelFolderEdit(CancelFolderEdit);
-			CancelItemEditCommand = new CancelItemEdit(CancelItemEdit);
+			EditModeFoldersCommand = new EditModeFolders(ChangeFolderEditMode);
+			CancelFolderEditCommand = new CancelFolderEdit(CancelFolderEditing);
+			CancelItemEditCommand = new CancelItemEdit(CancelItemEditing);
 			SaveEditFolderCommand = new SaveEditFolder(_dataService, () => EditingFolderName, SaveFolderEdit);
 			EditItemFromFolderCommand = new EditItemFromFolder(EditModeItems);
 			SaveEditItemCommand = new SaveEditItem(_dataService, () => EditingItemName, () => EditingItemReleaseDate, () => EditingItemCollectionName, SaveItemEdit);
+			SortByDateAddedCommand = new SortByDateAdded();
         }
 
         // COMMANDS
@@ -66,6 +67,7 @@ namespace ItemsProject.Core.ViewModels
 		public ICommand SaveEditFolderCommand { get; }
 		public ICommand EditItemFromFolderCommand { get; }
 		public ICommand SaveEditItemCommand { get; }
+		public ICommand SortByDateAddedCommand { get; }
 
         // MESSAGES
         private void OnAddedItemMessage(AddedItemMessage addedItemMessage)
@@ -128,27 +130,51 @@ namespace ItemsProject.Core.ViewModels
             IsWindowEnabled = false;
         }
 
-        // FUNCTIONS - FOLDER EDITING
-        public void EditModeFolders(FolderModel selectedFolder, bool value)
-		{	
-			if (value)
-			{
-                BeginFolderEdit(selectedFolder);
+        public void ChangeEditMode<T>(T passedModel, bool isEditing, Action<T> setEditAction, Action<T, bool> setEditingFlag)
+        {
+            if (isEditing)
+            {
+                setEditAction(passedModel);
             }
 
-            SelectedFolder = selectedFolder;
-            selectedFolder.IsEditing = value;
+            setEditingFlag(passedModel, isEditing);
         }
 
-		public void BeginFolderEdit(FolderModel selectedFolder)
+        public void CancelEdit<T>(T model, Action<T> revertEditAction, Action<bool> setEditingFlag)
+        {
+            revertEditAction(model);
+            setEditingFlag(false);
+        }
+
+        // FUNCTIONS - FOLDER EDITING
+		public void ChangeFolderEditMode(FolderModel passedFolder, bool isEditing)
 		{
-			EditingFolderName = selectedFolder.Name;
+			ChangeEditMode<FolderModel>(
+				passedFolder,
+				isEditing,
+				model => 
+				{ 
+					EditingFolderName = model.Name; 
+				}, 
+				(model, isEditing) => 
+				{
+					SelectedFolder = model;
+					model.IsEditing = isEditing;
+				});
 		}
 
-		public void CancelFolderEdit(string initFolderName)
+        public void CancelFolderEditing(FolderModel passedFolderModel)
 		{
-			EditingFolderName = initFolderName;
-            SelectedFolder.IsEditing = false;
+			CancelEdit<FolderModel>(
+				passedFolderModel,
+				model =>
+				{
+					EditingFolderName = model.Name;
+				},
+				(flag) =>
+				{
+					SelectedFolder.IsEditing = flag;
+				});
 		}
 
 		public void SaveFolderEdit()
@@ -175,12 +201,21 @@ namespace ItemsProject.Core.ViewModels
             EditingItemCollectionName = selectedItem.CollectionName;
         }
 
-		public void CancelItemEdit(ItemModel initialItem)
+		public void CancelItemEditing(ItemModel passedItemModel)
 		{
-			EditingItemName = initialItem.ModelName;
-            EditingItemReleaseDate = initialItem.ModelReleaseDate;
-            EditingItemCollectionName = initialItem.CollectionName;			
-			SelectedItem.IsEditing = false;
+			CancelEdit<ItemModel>(
+				passedItemModel,
+				model =>
+				{
+					EditingItemName = model.ModelName;
+					EditingItemReleaseDate = model.ModelReleaseDate;
+					EditingItemCollectionName = model.CollectionName;
+				},
+				(flag) =>
+				{
+					SelectedItem.IsEditing = flag;
+				}
+			);
 		}
 
 		public void SaveItemEdit()
@@ -192,12 +227,28 @@ namespace ItemsProject.Core.ViewModels
 		}
 
         // VALIDATIONS
-        public bool CanPressAddItem => SelectedFolder != null;
+        public bool IsFolderSelected => SelectedFolder != null;
 
 		// PROPERTIES
 		public ObservableCollection<ItemModel> FolderItems { get; private set; }
         public ObservableCollection<FolderModel> Folders { get; private set; }
-		
+		public ObservableCollection<string> SortOptions { get; private set; } = new ObservableCollection<string>
+		{
+			"Date Added",
+			"A-Z",
+			"Z-A"
+		};
+
+		private string _selectedSortOption;
+		public string SelectedSortOption
+		{
+			get { return _selectedSortOption; }
+			set 
+			{ 
+				SetProperty(ref _selectedSortOption, value );
+				FolderItems = _dataService.SortItems(SelectedSortOption, _allFolderItems, FolderItems);
+			}
+		}
 
 		private ItemModel _selectedItem;
 		public ItemModel? SelectedItem
@@ -216,8 +267,9 @@ namespace ItemsProject.Core.ViewModels
 			set
 			{ 
 				SetProperty(ref _selectedFolder, value);
-				RaisePropertyChanged(() => CanPressAddItem);
+				RaisePropertyChanged(() => IsFolderSelected);
 				SelectedItem = null;
+				SelectedSortOption = null;
 				_allFolderItems =_dataService.LoadItemsForFolder(SelectedFolder);
 				_searchResult = _dataService.FilterItems(SearchText, _allFolderItems);
                 FolderItems = _dataService.UpdateFolderItems(_searchResult, FolderItems);

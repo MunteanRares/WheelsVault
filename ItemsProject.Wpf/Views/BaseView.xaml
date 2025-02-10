@@ -88,12 +88,14 @@
                 </TextBlock>
             </Button>
 
-            <ListView Margin="0 20 0 0" BorderThickness="0"
+            <ListView Margin="0 20 0 0"
+                      BorderThickness="0"
                       ItemsSource="{Binding Folders}"
                       SelectedItem="{Binding SelectedFolder, Mode=TwoWay}"
                       AlternationCount="99"
                       Grid.Row="1"
                       Grid.Column="0"
+                      Focusable="False"
                       Background="Transparent">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -128,7 +130,7 @@
                                         <KeyBinding
                                             Key="Esc"
                                             Command="{Binding DataContext.CancelFolderEditCommand, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
-                                            CommandParameter="{Binding Name}"/>
+                                            CommandParameter="{Binding .}"/>
                                         <KeyBinding
                                             Key="Enter"
                                             Command="{Binding DataContext.SaveEditFolderCommand, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
@@ -139,7 +141,7 @@
                                         <i:EventTrigger EventName="LostFocus">
                                             <i:InvokeCommandAction Command="{Binding DataContext.CancelFolderEditCommand,
                                                                              RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
-                                                                   CommandParameter="{Binding Name}"/>
+                                                                   CommandParameter="{Binding .}"/>
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </TextBox>
@@ -292,28 +294,83 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2.1*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Margin="15 0 0 0" Orientation="Horizontal">
+            <StackPanel Grid.Row="0" Grid.Column="0" Margin="15 0 0 0" Orientation="Horizontal">
                 <Border Height="30">
-                    <TextBlock Margin="0 5 0 0" Text="Search..." VerticalAlignment="Center"/>
+                    <TextBlock Margin="0 5 0 0" Text="Search" VerticalAlignment="Center"/>
                 </Border>
-                <TextBox Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         FontSize="20"
-                         Padding="2"
-                         Grid.Column="0"
-                         MaxWidth="400"
-                         Width="200"
-                         Height="30"
-                         HorizontalAlignment="Stretch" Margin="8 0 0 0"/>
+                <TextBox 
+                    Name="searchTextBox"
+                    Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    FontSize="20"
+                    Padding="2"
+                    Grid.Column="0"
+                    MaxWidth="400"
+                    Width="200"
+                    Height="30"
+                    Margin="10 0 0 0"/>
+
+                <StackPanel 
+                    Margin="25 0 0 0"
+                    Orientation="Horizontal"
+                    Grid.Row="1" 
+                    Grid.Column="0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                    <TextBlock
+                        Text="Sort By"
+                        VerticalAlignment="Center">
+                    </TextBlock>
+
+                    <ComboBox 
+                        Template="{DynamicResource RoundComboBox}"
+                        IsEnabled="{Binding IsFolderSelected}"
+                        ItemsSource="{Binding SortOptions}"
+                        SelectedItem="{Binding SelectedSortOption}"
+                        Margin="10 0 0 0"
+                        Height="{Binding Path=ActualHeight, ElementName=searchTextBox}"
+                        Width="150"
+                        Focusable="False">
+                        <ComboBox.Resources>
+                            <Style TargetType="TextBlock" BasedOn="{x:Null}">
+                                <Setter Property="Foreground" Value="#09203F"/>
+                            </Style>
+                        </ComboBox.Resources>
+
+                        <ComboBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ComboBoxItem}">
+                                <Setter Property="Foreground" Value="#09203F"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ComboBoxItem">
+                                            <Border x:Name="Bd" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                          RecognizesAccessKey="True"
+                                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                          TextElement.Foreground="{TemplateBinding Foreground}">
+                                                    <ContentPresenter.Resources>
+                                                        <Style TargetType="TextBlock" BasedOn="{x:Null}" />
+                                                    </ContentPresenter.Resources>
+                                                </ContentPresenter>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.ItemContainerStyle>
+
+                    </ComboBox>
+                </StackPanel>
             </StackPanel>
 
+            
             <Button 
                 FontSize="20"
-                Grid.Column="1"
-                IsEnabled="{Binding CanPressAddItem}"
+                Grid.Column="2"
+                IsEnabled="{Binding IsFolderSelected}"
                 Width="160"
                 HorizontalAlignment="Right"
                 Margin="0 0 25 0"
@@ -322,20 +379,22 @@
                 </TextBlock>
             </Button>
 
-            <ListView Grid.Row="1"
+            <ListView Grid.Row="2"
                       Grid.Column="0"
                       Grid.ColumnSpan="2"
                       ItemsSource="{Binding FolderItems}"
                       SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                       Background="Transparent"
                       BorderThickness="0"
-                      Margin="0 20 40 0">
+                      Focusable="False"
+                      Margin="0 10 40 0">
 
                 <ListView.Resources>
                     <Style TargetType="{x:Type ListViewItem}">
                         <Style.Setters>
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                             <Setter Property="Margin" Value="0 5 0 0"/>
+                            <Setter Property="Focusable" Value="False"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type ListViewItem}">
@@ -381,14 +440,31 @@
                                     Grid.Row="0"
                                     Grid.Column="0">
                                     <TextBox
-                                        Width="100"
+                                        MinWidth="100"
+                                        MaxWidth="200"
                                         Text="{Binding DataContext.EditingItemName, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                                        Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}"
+                                        IsVisibleChanged="EditFolderNameTextBox_IsVisibleChanged">
+                                        <TextBox.InputBindings>
+                                            <KeyBinding 
+                                                Key="Esc"
+                                                Command="{Binding DataContext.CancelItemEditCommand, RelativeSource={RelativeSource AncestorType=views:MvxWpfView}}"
+                                                CommandParameter="{Binding .}"/>
+                                        </TextBox.InputBindings>
+                                    </TextBox>
                                     <TextBox
-                                        Width="100"
+                                        MinWidth="100"
+                                        MaxWidth="200"
                                         Margin="10 0 0 0"
                                         Text="{Binding DataContext.EditingItemReleaseDate, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                                        Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}">
+                                        <TextBox.InputBindings>
+                                            <KeyBinding 
+                                                Key="Esc"
+                                                Command="{Binding DataContext.CancelItemEditCommand, RelativeSource={RelativeSource AncestorType=views:MvxWpfView}}"
+                                                CommandParameter="{Binding .}"/>
+                                        </TextBox.InputBindings>
+                                    </TextBox>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
@@ -399,8 +475,17 @@
                                         Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverterInverse}}"/>
                                     <TextBox
                                         Margin="0 6 0 0"
+                                        MinWidth="100"
+                                        MaxWidth="200"
                                         Text="{Binding DataContext.EditingItemCollectionName, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                                        Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}">
+                                        <TextBox.InputBindings>
+                                            <KeyBinding 
+                                                Key="Esc"
+                                                Command="{Binding DataContext.CancelItemEditCommand, RelativeSource={RelativeSource AncestorType=views:MvxWpfView}}"
+                                                CommandParameter="{Binding .}"/>
+                                        </TextBox.InputBindings>
+                                    </TextBox>
                                 </StackPanel>
                             </Grid>
 

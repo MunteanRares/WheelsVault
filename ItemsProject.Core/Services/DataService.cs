@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
+using DevExpress.Data.Helpers;
 using ItemsProject.Core.Data;
 using ItemsProject.Core.Messages;
 using ItemsProject.Core.Models;
@@ -45,7 +46,12 @@ namespace ItemsProject.Core.Services
             }
             else
             {
-                List<ItemModel> filteredItems = allFolderItems.Where(i => i.ModelName.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
+                List<ItemModel> filteredItems = allFolderItems.Where
+                    (i =>
+                        (i.ModelName.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
+                        (i.CollectionName.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
+                        (i.ModelReleaseDate.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                    ).ToList();
                 searchResult = filteredItems;
             }
 
@@ -113,6 +119,33 @@ namespace ItemsProject.Core.Services
         public void EditItem(int itemId, string newName, string newReleaseDate, string newCollectionName)
         {
             _db.EditItem(itemId, newName, newReleaseDate, newCollectionName);
+        }
+
+        public ObservableCollection<ItemModel> SortItems(string sortOption, List<ItemModel> allFolderItems, ObservableCollection<ItemModel> folderItems)
+        {
+            try
+            {
+                if (sortOption == "Date Added")
+                {
+                    folderItems = UpdateFolderItems(allFolderItems, folderItems);
+                }
+                else if (sortOption == "A-Z")
+                {
+                    allFolderItems = allFolderItems.OrderBy(item => item.ModelName).ToList();
+                    folderItems = UpdateFolderItems(allFolderItems, folderItems);
+                }
+                else if (sortOption == "Z-A")
+                {
+                    allFolderItems = allFolderItems.OrderByDescending(item => item.ModelName).ToList();
+                    folderItems = UpdateFolderItems(allFolderItems, folderItems);
+                }
+            }
+            catch (NullReferenceException ex)
+            {
+                throw;
+            }
+
+            return folderItems;
         }
     }
 }

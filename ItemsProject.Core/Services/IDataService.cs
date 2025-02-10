@@ -19,5 +19,6 @@ namespace ItemsProject.Core.Services
         
         void EditFolderName(string folderName, int folderId);
         void EditItem(int itemId, string newName, string newReleaseDate, string newCollectionName);
+        ObservableCollection<ItemModel> SortItems(string selectedSortOption, List<ItemModel> allFolderItems, ObservableCollection<ItemModel> folderItems);
     }
 }

@@ -13,13 +13,13 @@ namespace ItemsProject.Core.Data
             _db = db;
         }
 
-        public List<ItemModel> GetAllItems()
+        public List<ItemModel> GetAllUniqueItems()
         {
             List<ItemModel> output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetAll", new { }, connectionStringName, true);
             return output;
         }
 
-        public List<FolderModel> GetAllFolderItems()
+        public List<FolderModel> GetAllFolders()
         {
             List<FolderModel> output = _db.LoadData<FolderModel, dynamic>("dbo.spFolders_GetAll", new { }, connectionStringName, true);
             return output;
@@ -34,7 +34,7 @@ namespace ItemsProject.Core.Data
         public ItemModel CreateNewItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName)
         {
             _db.SaveData("dbo.spItems_CreateItem", new { FolderId, ModelName = ModelName.Capitalize(), ModelReleaseDate, CollectionName = CollectionName.ToUpper() }, connectionStringName, true);
-            ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetLast", new { }, connectionStringName, true).First();
+            ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetLast", new { }, connectionStringName, true).First();                        
             return output;
         }
 
@@ -53,7 +53,7 @@ namespace ItemsProject.Core.Data
 
         public void DeleteItem(int itemId, int folderId, string modelName, string modelReleaseDate, string collectionName)
         {
-            _db.SaveData("dbo.spItems_Remove", new { itemId, folderId, modelName, modelReleaseDate, collectionName }, connectionStringName, true);
+            _db.SaveData("dbo.spItems_Remove", new { itemId }, connectionStringName, true);
         }
 
         public FolderModel GetFolderById(int folderId)

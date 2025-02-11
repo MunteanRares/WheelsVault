@@ -30,8 +30,14 @@ namespace ItemsProject.Core.Services
             {
                 return allFolderItems;
             }
-
-            allFolderItems = _db.GetItemsByFolderId(selectedFolder.Id);
+            else if (selectedFolder.Name == "All Cars")
+            {
+                allFolderItems = _db.GetAllUniqueItems();
+            }
+            else
+            {
+                allFolderItems = _db.GetItemsByFolderId(selectedFolder.Id);
+            }            
 
             return allFolderItems;
         }
@@ -92,14 +98,13 @@ namespace ItemsProject.Core.Services
         {
             ItemModel newItem = _db.CreateNewItem(folderId, modelName, modelReleaseDate, collectionName);
             var message = new AddedItemMessage(Mvx.IoCProvider.Resolve<AddItemViewModel>(), newItem);
-            _messenger.Publish(message);
+            _messenger.Publish(message);         
         }
 
         public FolderModel RemoveFolder(int folderId)
         {
             FolderModel folderToRemove = _db.GetFolderById(folderId);
             _db.RemoveFolderById(folderId);
-
             return folderToRemove;
         }
 

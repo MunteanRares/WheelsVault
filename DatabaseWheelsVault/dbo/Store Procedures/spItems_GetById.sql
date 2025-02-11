@@ -3,9 +3,8 @@
 AS
 begin
 	set nocount on;
-
-	select *
-	from dbo.Items
+	select Items.*
+	from Items
+	join FolderItems on Items.Id = FolderItems.itemId
 	where Items.Id = @itemId
-
 end

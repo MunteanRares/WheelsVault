@@ -3,7 +3,6 @@
 	@newName nvarchar(50),
 	@newReleaseDate nvarchar(10),
 	@newCollectionName nvarchar(50)
-
 AS
 begin
 	set nocount on;

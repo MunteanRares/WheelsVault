@@ -31,7 +31,7 @@ namespace ItemsProject.Core.ViewModels
 			_dataService = dataService;
 			_nav = nav;
 
-			Folders = new ObservableCollection<FolderModel>(_db.GetAllFolderItems());
+			Folders = new ObservableCollection<FolderModel>(_db.GetAllFolders());
 			FolderItems = new ObservableCollection<ItemModel>();
 
 			// Messages
@@ -52,7 +52,6 @@ namespace ItemsProject.Core.ViewModels
 			SaveEditFolderCommand = new SaveEditFolder(_dataService, () => EditingFolderName, SaveFolderEdit);
 			EditItemFromFolderCommand = new EditItemFromFolder(EditModeItems);
 			SaveEditItemCommand = new SaveEditItem(_dataService, () => EditingItemName, () => EditingItemReleaseDate, () => EditingItemCollectionName, SaveItemEdit);
-			SortByDateAddedCommand = new SortByDateAdded();
         }
 
         // COMMANDS
@@ -67,7 +66,6 @@ namespace ItemsProject.Core.ViewModels
 		public ICommand SaveEditFolderCommand { get; }
 		public ICommand EditItemFromFolderCommand { get; }
 		public ICommand SaveEditItemCommand { get; }
-		public ICommand SortByDateAddedCommand { get; }
 
         // MESSAGES
         private void OnAddedItemMessage(AddedItemMessage addedItemMessage)
@@ -228,9 +226,11 @@ namespace ItemsProject.Core.ViewModels
 
         // VALIDATIONS
         public bool IsFolderSelected => SelectedFolder != null;
+		public bool CanSaveItemEdit => !string.IsNullOrWhiteSpace(EditingItemName) && !string.IsNullOrWhiteSpace(EditingItemReleaseDate) && !string.IsNullOrWhiteSpace(EditingItemCollectionName);
+		public bool CanSaveFolderEdit => !string.IsNullOrWhiteSpace(EditingFolderName);
 
-		// PROPERTIES
-		public ObservableCollection<ItemModel> FolderItems { get; private set; }
+        // PROPERTIES
+        public ObservableCollection<ItemModel> FolderItems { get; private set; }
         public ObservableCollection<FolderModel> Folders { get; private set; }
 		public ObservableCollection<string> SortOptions { get; private set; } = new ObservableCollection<string>
 		{
@@ -306,6 +306,7 @@ namespace ItemsProject.Core.ViewModels
 			set 
 			{
 				SetProperty(ref _editingFolderName, value);
+				RaisePropertyChanged(() => CanSaveFolderEdit);
 			}
 		}
 
@@ -316,6 +317,7 @@ namespace ItemsProject.Core.ViewModels
 			set 
 			{
 				SetProperty(ref _editingItemName, value);
+				RaisePropertyChanged(() => CanSaveItemEdit);
 			}
 		}
 
@@ -327,7 +329,8 @@ namespace ItemsProject.Core.ViewModels
 			set 
 			{ 
 				SetProperty(ref _editingItemReleaseDate, value);
-			}
+                RaisePropertyChanged(() => CanSaveItemEdit);
+            }
 		}
 
 		private string _editingItemCollectionName;
@@ -336,8 +339,9 @@ namespace ItemsProject.Core.ViewModels
 			get { return _editingItemCollectionName; }
 			set 
 			{ 
-				SetProperty(ref _editingItemCollectionName, value);	
-			}
+				SetProperty(ref _editingItemCollectionName, value);
+                RaisePropertyChanged(() => CanSaveItemEdit);
+            }
 		}
 
 		// WHEN CLOSING APP

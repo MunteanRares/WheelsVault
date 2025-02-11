@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[Folders]
 (
 	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
-    [name] NVARCHAR(50) NOT NULL	
+    [name] NVARCHAR(50) NOT NULL, 
+    [isDefault] BIT NOT NULL DEFAULT 0
 )

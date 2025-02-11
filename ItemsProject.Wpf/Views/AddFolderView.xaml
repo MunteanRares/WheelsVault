@@ -29,12 +29,26 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0 20 0 10" Text="Folder Name"></TextBlock>
-        <TextBox Text="{Binding NewFolderName, Mode=TwoWay}" Grid.Row="1" Grid.ColumnSpan="2" Width="200"></TextBox>
+        <TextBox
+            Text="{Binding FolderName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+            Grid.Row="1" 
+            Grid.ColumnSpan="2" 
+            Width="200">
+            <TextBox.InputBindings>
+                <KeyBinding
+                    Key="Enter"
+                    mvx:Bi.nd="Command addFolderCommand"/>
+            </TextBox.InputBindings>
+        </TextBox>
         <Button mvx:Bi.nd="Command cancelAddFolderCommand" Height="30" Width="80" Margin="10 0 10 20" Grid.Row="3" Grid.Column="0">
             <TextBlock Text="Cancel" Foreground="#09203F">
             </TextBlock>
         </Button>
-        <Button mvx:Bi.nd="Command addFolderCommand" Margin="10 0 10 20" Grid.Row="3" Grid.Column="1">
+        <Button 
+            mvx:Bi.nd="Command addFolderCommand" 
+            Margin="10 0 10 20" Grid.Row="3" 
+            Grid.Column="1"
+            IsEnabled="{Binding CanAddFolder}">
             <TextBlock Text="Add Folder" Foreground="#09203F"></TextBlock>
         </Button>
 

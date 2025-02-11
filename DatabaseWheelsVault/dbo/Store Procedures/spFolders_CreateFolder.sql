@@ -3,8 +3,6 @@
 AS
 begin
 	set nocount on;
-	
 	insert into dbo.Folders (name)
 	values (@folderName)
-
 end

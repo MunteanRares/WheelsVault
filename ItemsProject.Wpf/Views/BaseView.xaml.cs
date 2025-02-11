@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using ItemsProject.Core.Messages;
@@ -23,6 +24,12 @@ namespace ItemsProject.Wpf.Views
             TextBox editTextBox = (TextBox)sender;
             Keyboard.Focus(editTextBox);
             editTextBox.CaretIndex = editTextBox.Text.Length;
+        }
+
+        private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
         }
     }
 }

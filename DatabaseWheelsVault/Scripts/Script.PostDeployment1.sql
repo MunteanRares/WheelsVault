@@ -10,9 +10,8 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
-if not exists (select 1 from dbo.Folders)
+if not exists (select 1 from Folders)
 begin
-    insert into dbo.Folders (name)
-    values ('All Cars');
-
+    insert into Folders (name, isDefault)
+    values ('All Cars', 1)
 end

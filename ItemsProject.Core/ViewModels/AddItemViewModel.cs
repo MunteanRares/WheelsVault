@@ -5,6 +5,7 @@ using System.Windows.Input;
 using ItemsProject.Core.Services;
 using ItemsProject.Core.Commands.General;
 using ItemsProject.Core.Commands.AddItemViewModelCommands;
+using System.Collections;
 
 
 namespace ItemsProject.Core.ViewModels
@@ -45,7 +46,8 @@ namespace ItemsProject.Core.ViewModels
         }
 
         // VALIDATIONS
-        public bool CanAddItem => ModelName?.Length > 0 && ModelReleaseDate?.Length > 0 && CollectionName?.Length > 0;
+        public bool CanAddItem => !string.IsNullOrWhiteSpace(ModelName) && !string.IsNullOrWhiteSpace(ModelReleaseDate) && !string.IsNullOrWhiteSpace(CollectionName);
+
 
 
         // PROPERTIES

@@ -32,8 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DatabaseWheelsVault\DatabaseWheelsVault.sqlproj" />
     <ProjectReference Include="..\ItemsProject.Core\ItemsProject.Core.csproj" />
-    <ProjectReference Include="..\ItemsProjectDB\ItemsProjectDB.sqlproj" />
   </ItemGroup>
 
   <ItemGroup>

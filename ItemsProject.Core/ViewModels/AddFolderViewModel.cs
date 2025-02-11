@@ -25,6 +25,8 @@ namespace ItemsProject.Core.ViewModels
         public IMvxCommand cancelAddFolderCommand { get; set; }
         public IMvxCommand addFolderCommand { get; set; }
 
+
+        // FUNCTIONS    
         public void CancelAddFolder()
         {
             _navigation.Close(this);
@@ -32,7 +34,7 @@ namespace ItemsProject.Core.ViewModels
 
         public void AddFolder()
         {
-            var newFolder = _db.CreateNewFolder(NewFolderName);
+            var newFolder = _db.CreateNewFolder(FolderName);
             var message = new AddedFolderMessage(
                 this,
                 newFolder
@@ -41,16 +43,18 @@ namespace ItemsProject.Core.ViewModels
             _navigation.Close(this);
         }
 
+        // VALIDATIONS
+        public bool CanAddFolder => !string.IsNullOrWhiteSpace(FolderName);
+
         // PROPERTIES
-
-        private string _newFolderName;
-
-        public string NewFolderName
+        private string _folderName;
+        public string FolderName
         {
-            get { return _newFolderName; }
+            get { return _folderName; }
             set 
             { 
-                SetProperty(ref _newFolderName, value);
+                SetProperty(ref _folderName, value);
+                RaisePropertyChanged(() => CanAddFolder);
             }
         }
 

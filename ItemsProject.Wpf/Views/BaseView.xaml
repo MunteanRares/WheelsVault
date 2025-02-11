@@ -153,6 +153,7 @@
                                         CommandParameter="{Binding .}"
                                         Visibility="{Binding IsEditing,
                                                     Converter={StaticResource BooleanVisibilityConverter}}"
+                                        IsEnabled="{Binding DataContext.CanSaveFolderEdit, RelativeSource={RelativeSource AncestorType=views:MvxWpfView}}"
                                         Margin="4 0 8 0">
                                     <Button.Style>
                                         <Style TargetType="Button">
@@ -175,6 +176,9 @@
                                                             <Trigger Property="IsMouseOver" Value="True">
                                                                 <Setter Property="Cursor" Value="Hand"/>
                                                                 <Setter Property="Foreground" Value="#388E3C" />
+                                                            </Trigger>
+                                                            <Trigger Property="IsEnabled" Value="False">
+                                                                <Setter Property="TextBlock.Opacity" Value="0.4"/>
                                                             </Trigger>
                                                         </ControlTemplate.Triggers>
                                                     </ControlTemplate>
@@ -457,7 +461,8 @@
                                         MaxWidth="200"
                                         Margin="10 0 0 0"
                                         Text="{Binding DataContext.EditingItemReleaseDate, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}">
+                                        Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}"
+                                        PreviewTextInput="TextBox_PreviewTextInput" MaxLength="4">
                                         <TextBox.InputBindings>
                                             <KeyBinding 
                                                 Key="Esc"
@@ -518,13 +523,22 @@
                                 Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}"
                                 Command="{Binding DataContext.SaveEditItemCommand, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
                                 CommandParameter="{Binding .}"
-                                Style="{StaticResource BorderlessButton}"
                                 Margin="0 0 10 0"
                                 Height="40"
                                 Grid.Column="2"
                                 Grid.Row="0"
                                 DockPanel.Dock="Right"
-                                HorizontalAlignment="Right">
+                                HorizontalAlignment="Right"
+                                IsEnabled="{Binding DataContext.CanSaveItemEdit, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource BorderlessButton}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="TextBlock.Opacity" Value="0.4"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
                                 <TextBlock
                                      FontWeight="Bold" Padding="15 0" Text="Save" Foreground="#388E3C"/>
                             </Button>

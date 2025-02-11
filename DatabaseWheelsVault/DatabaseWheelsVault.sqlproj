@@ -3,16 +3,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <Name>ItemsProjectDB</Name>
+    <Name>DatabaseWheelsVault</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
-    <ProjectGuid>{9fc502f4-3b37-4afb-ba77-3207dd931679}</ProjectGuid>
+    <ProjectGuid>{c3785569-94b3-4a51-accf-323b1b055929}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql150DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
-    <RootNamespace>ItemsProjectDB</RootNamespace>
-    <AssemblyName>ItemsProjectDB</AssemblyName>
+    <RootNamespace>DatabaseWheelsVault</RootNamespace>
+    <AssemblyName>DatabaseWheelsVault</AssemblyName>
     <ModelCollation>1033, CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
@@ -58,34 +58,35 @@
     <Folder Include="Properties" />
     <Folder Include="dbo" />
     <Folder Include="dbo\Tables" />
-    <Folder Include="Store Procedures" />
+    <Folder Include="Publish Profiles\" />
+    <Folder Include="dbo\Store Procedures" />
     <Folder Include="Scripts" />
-    <Folder Include="Publish Files\" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="dbo\Tables\Items.sql" />
     <Build Include="dbo\Tables\Folders.sql" />
-    <Build Include="Store Procedures\spFolders_GetAll.sql" />
-    <Build Include="Store Procedures\spItems_GetByFolderId.sql" />
-    <Build Include="Store Procedures\spItems_CreateItem.sql" />
-    <Build Include="Store Procedures\spItems_GetLast.sql" />
-    <Build Include="Store Procedures\spFolders_CreateFolder.sql" />
-    <Build Include="Store Procedures\spFolders_GetLast.sql" />
-    <Build Include="Store Procedures\spItems_GetAll.sql" />
-    <Build Include="Store Procedures\spItems_GetById.sql" />
-    <Build Include="Store Procedures\spItems_Remove.sql" />
-    <Build Include="Store Procedures\spFolders_GetById.sql" />
-    <Build Include="Store Procedures\spFolders_Remove.sql" />
-    <Build Include="Store Procedures\spFolders_EditName.sql" />
-    <Build Include="Store Procedures\spItems_EditItem.sql" />
+    <Build Include="dbo\Tables\Items.sql" />
+    <Build Include="dbo\Tables\FolderItems.sql" />
+    <Build Include="dbo\Store Procedures\spItems_GetAll.sql" />
+    <Build Include="dbo\Store Procedures\spFolders_GetAll.sql" />
+    <Build Include="dbo\Store Procedures\spItems_GetByFolderId.sql" />
+    <Build Include="dbo\Store Procedures\spItems_CreateItem.sql" />
+    <Build Include="dbo\Store Procedures\spFolders_CreateFolder.sql" />
+    <Build Include="dbo\Store Procedures\spItems_GetLast.sql" />
+    <Build Include="dbo\Store Procedures\spFolders_GetLast.sql" />
+    <Build Include="dbo\Store Procedures\spItems_GetById.sql" />
+    <Build Include="dbo\Store Procedures\spFolders_GetById.sql" />
+    <Build Include="dbo\Store Procedures\spFolders_Remove.sql" />
+    <Build Include="dbo\Store Procedures\spItems_Remove.sql" />
+    <Build Include="dbo\Store Procedures\spFolders_EditName.sql" />
+    <Build Include="dbo\Store Procedures\spItems_EditItem.sql" />
   </ItemGroup>
   <ItemGroup>
-    <RefactorLog Include="ItemsProjectDB.refactorlog" />
+    <RefactorLog Include="DatabaseWheelsVault.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Publish Profiles\DatabaseWheelsVault.publish.xml" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment1.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Publish Files\ItemsProjectDB.publish.xml" />
   </ItemGroup>
 </Project>

@@ -12,12 +12,12 @@ namespace ItemsProject.Core.ViewModels
 {
     public class AddItemViewModel : MvxViewModel<FolderModel>
     {
-        private readonly IDataService _dataService;
         private readonly IMvxNavigationService _nav;
+        private readonly IItemDataService _itemDataService;
 
-        public AddItemViewModel(IMvxNavigationService nav, IDataService dataService)
+        public AddItemViewModel(IMvxNavigationService nav, IItemDataService itemDataService)
         {
-            _dataService = dataService;
+            _itemDataService = itemDataService;
             _nav = nav;
 
             CancelCommand = new Cancel(CloseWindow);
@@ -41,7 +41,7 @@ namespace ItemsProject.Core.ViewModels
 
         public void ConfirmAddItem()
         {
-            _dataService.AddItem(SelectedFolderId, ModelName, ModelReleaseDate, CollectionName);
+            _itemDataService.AddItem(SelectedFolderId, ModelName, ModelReleaseDate, CollectionName);
             _nav.Close(this);
         }
 

@@ -23,6 +23,9 @@ namespace ItemsProject.Core
             Mvx.IoCProvider.RegisterType<ISqlDataAccess, SqlDataAccess>();
             Mvx.IoCProvider.RegisterType<IDatabaseData, SqlData>();
             Mvx.IoCProvider.RegisterType<IDataService, DataService>();
+            Mvx.IoCProvider.RegisterType<IFolderDataService, FolderDataService>();
+            Mvx.IoCProvider.RegisterType<IMessageBoxDataService, MessageBoxDataService>();
+            Mvx.IoCProvider.RegisterType<IItemDataService, ItemDataService>();
 
             // ViewModels
             Mvx.IoCProvider.RegisterType<BaseViewModel>();

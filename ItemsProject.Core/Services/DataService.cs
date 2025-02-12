@@ -15,11 +15,9 @@ namespace ItemsProject.Core.Services
     public class DataService : IDataService
     {
         private readonly IDatabaseData _db;
-        private readonly IMvxMessenger _messenger;
         public DataService(IDatabaseData db, IMvxNavigationService navigationService, IMvxMessenger messenger)
         {
             _db = db;
-            _messenger = messenger;
         }
 
         public List<ItemModel> LoadItemsForFolder(FolderModel selectedFolder)
@@ -85,13 +83,6 @@ namespace ItemsProject.Core.Services
             _db.DeleteItem(itemId, folderId, modelName, modelReleaseDate, collectionName);
 
             return itemToRemove;
-        }
-
-        public void AddItem(int folderId, string modelName, string modelReleaseDate, string collectionName)
-        {
-            ItemModel newItem = _db.CreateNewItem(folderId, modelName, modelReleaseDate, collectionName);
-            var message = new AddedItemMessage(Mvx.IoCProvider.Resolve<AddItemViewModel>(), newItem);
-            _messenger.Publish(message);         
         }
 
         public FolderModel RemoveFolder(int folderId)

@@ -6,43 +6,36 @@ using MvvmCross.Plugin.Messenger;
 using ItemsProject.Core.Messages;
 using ItemsProject.Core.Commands.General;
 using MvvmCross.Navigation;
+using ItemsProject.Core.Data;
+using ItemsProject.Core.Services;
 
 namespace ItemsProject.Core.ViewModels
 {
     public class CustomMessageBoxViewModel : MvxViewModel<MessageBoxModel>
     {
-        private readonly IMvxMessenger _messenger;
         private readonly IMvxNavigationService _nav;
-        public CustomMessageBoxViewModel(IMvxNavigationService nav, IMvxMessenger messenger)
+        private readonly IMessageBoxDataService _messageBoxDataService;
+        public CustomMessageBoxViewModel(IMvxNavigationService nav, IMessageBoxDataService messageBoxDataService)
         {
-            _messenger = messenger; 
+            _messageBoxDataService = messageBoxDataService;
             _nav = nav;
 
             ConfirmCommand = new MessageBoxConfirm(CloseConfirmWindow);
             CancelCommand = new Cancel(CloseCancelWindow);
         }
 
-        public override void Prepare(MessageBoxModel parameter)
-        {   
-            Message = parameter.Message;
-            Title = parameter.Title;
-            IconSource = parameter.IconSource;
-            FolderToDelete = parameter.FolderToDelete;
-        }
-
         // COMMANDS 
         public ICommand ConfirmCommand { get; }
         public ICommand CancelCommand { get; }
-
+   
         // FUNCTIONS
         public void CloseConfirmWindow(bool result)
         {
-            CanRemoveFolderMessage folderMessage = new CanRemoveFolderMessage(this, result, FolderToDelete);
-            _messenger.Publish(folderMessage);
+            _messageBoxDataService.ConfirmAdd(result, FolderToDelete);
             _nav.Close(this);
         }
 
-        public void CloseCancelWindow(bool result)
+        public void CloseCancelWindow()
         {
             _nav.Close(this);
         }
@@ -87,6 +80,15 @@ namespace ItemsProject.Core.ViewModels
         {
             get { return _folderToDelete; }
             set { SetProperty(ref _folderToDelete, value); }
+        }
+
+        // 
+        public override void Prepare(MessageBoxModel parameter)
+        {
+            Message = parameter.Message;
+            Title = parameter.Title;
+            IconSource = parameter.IconSource;
+            FolderToDelete = parameter.FolderToDelete;
         }
     }
 }

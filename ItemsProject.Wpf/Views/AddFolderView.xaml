@@ -38,15 +38,15 @@
             <TextBox.InputBindings>
                 <KeyBinding
                     Key="Enter"
-                    mvx:Bi.nd="Command addFolderCommand"/>
+                    Command="{Binding AddFolderCommand}" />
             </TextBox.InputBindings>
         </TextBox>
-        <Button mvx:Bi.nd="Command cancelAddFolderCommand" Height="30" Width="80" Margin="10 0 10 20" Grid.Row="3" Grid.Column="0">
+        <Button Command="{Binding CancelAddFolderCommand}" Height="30" Width="80" Margin="10 0 10 20" Grid.Row="3" Grid.Column="0">
             <TextBlock Text="Cancel" Foreground="#09203F">
             </TextBlock>
         </Button>
         <Button 
-            mvx:Bi.nd="Command addFolderCommand" 
+            Command="{Binding AddFolderCommand}" 
             Margin="10 0 10 20" Grid.Row="3" 
             Grid.Column="1"
             IsEnabled="{Binding CanAddFolder}">

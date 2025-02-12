@@ -1,6 +1,8 @@
-﻿using ItemsProject.Core.Data;
-using ItemsProject.Core.Messages;
-using MvvmCross.Commands;
+﻿using System.Windows.Input;
+using ItemsProject.Core.Commands.AddFolderViewModelCommands;
+using ItemsProject.Core.Commands.General;
+using ItemsProject.Core.Data;
+using ItemsProject.Core.Services;
 using MvvmCross.Navigation;
 using MvvmCross.Plugin.Messenger;
 using MvvmCross.ViewModels;
@@ -9,38 +11,31 @@ namespace ItemsProject.Core.ViewModels
 {
     public class AddFolderViewModel : MvxViewModel
     {
-        private readonly IDatabaseData _db;
-        private readonly IMvxNavigationService _navigation;
-        private readonly IMvxMessenger _messenger;
-        public AddFolderViewModel(IDatabaseData db, IMvxNavigationService navigation, IMvxMessenger messenger)
+        private readonly IMvxNavigationService _nav;
+        private readonly IFolderDataService _folderDataService;
+        public AddFolderViewModel(IMvxNavigationService nav, IFolderDataService folderDataService)
         {
-            _db = db;
-            _navigation = navigation;
-            _messenger = messenger;
-            cancelAddFolderCommand = new MvxCommand(CancelAddFolder);
-            addFolderCommand = new MvxCommand(AddFolder);
+            _nav = nav;
+            _folderDataService = folderDataService;
+            CancelAddFolderCommand = new Cancel(CancelAddFolder);
+            AddFolderCommand = new AddFolderCommand(AddFolder);
         }
 
         // COMMANDS
-        public IMvxCommand cancelAddFolderCommand { get; set; }
-        public IMvxCommand addFolderCommand { get; set; }
+        public ICommand CancelAddFolderCommand { get; set; }
+        public ICommand AddFolderCommand { get; set; }
 
 
         // FUNCTIONS    
         public void CancelAddFolder()
         {
-            _navigation.Close(this);
+            _nav.Close(this);
         }
 
         public void AddFolder()
         {
-            var newFolder = _db.CreateNewFolder(FolderName);
-            var message = new AddedFolderMessage(
-                this,
-                newFolder
-            );
-            _messenger.Publish(message);
-            _navigation.Close(this);
+            _folderDataService.AddFolder(FolderName);
+            _nav.Close(this);
         }
 
         // VALIDATIONS

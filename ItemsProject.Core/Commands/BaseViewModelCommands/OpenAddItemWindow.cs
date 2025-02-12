@@ -10,16 +10,19 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands
         private readonly Func<FolderModel> _getSelectedFolder;
         private readonly Action _clearSearchText;
         private readonly IMvxNavigationService _nav;
-        public OpenAddItemWindow(IMvxNavigationService nav, Func<FolderModel> getSelectedFolder, Action clearSearchText)
+        private readonly Action _changeWindowState;
+        public OpenAddItemWindow(IMvxNavigationService nav, Func<FolderModel> getSelectedFolder, Action clearSearchText, Action changeWindowState)
         {
             _getSelectedFolder = getSelectedFolder;
             _clearSearchText = clearSearchText;
+            _changeWindowState = changeWindowState;
             _nav = nav;
         }
 
         public override void Execute(object? parameter)
         {
             _clearSearchText();
+            _changeWindowState();
             FolderModel folderToAddTo = _getSelectedFolder();
             _nav.Navigate<AddItemViewModel, FolderModel>(folderToAddTo);
         }

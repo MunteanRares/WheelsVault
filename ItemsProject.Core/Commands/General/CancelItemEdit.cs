@@ -18,7 +18,10 @@ namespace ItemsProject.Core.Commands.General
 
         public override void Execute(object? parameter)
         {
-            _stopItemEditing((ItemModel)parameter);
+            if (parameter != null)
+            {
+                _stopItemEditing((ItemModel)parameter);
+            }
         }
     }
 }

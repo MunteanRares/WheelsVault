@@ -2,13 +2,9 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ItemsProject.Core.Messages;
-using ItemsProject.Core.Models;
-using ItemsProject.Core.ViewModels;
-using MvvmCross;
+using ItemsProject.Wpf.Helper_Functions;
 using MvvmCross.Platforms.Wpf.Views;
-using MvvmCross.ViewModels;
-using Xceed.Wpf.Toolkit;
+
 
 namespace ItemsProject.Wpf.Views
 {
@@ -17,6 +13,18 @@ namespace ItemsProject.Wpf.Views
         public BaseView()
         {
             InitializeComponent();
+        }
+
+        protected bool isDropDownOpened = false;
+
+        private void comboBoxSort_DropDownOpened(object sender, EventArgs e)
+        {
+            isDropDownOpened = true;
+        }
+
+        private void comboBoxSort_DropDownClosed(object sender, EventArgs e)
+        {
+            isDropDownOpened = false;
         }
 
         private void EditFolderNameTextBox_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -30,6 +38,37 @@ namespace ItemsProject.Wpf.Views
         {
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void MvxWpfView_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            bool isMouseOverEditingPanel = false;
+            bool isMouseOverComboBox = false;
+
+            foreach (StackPanel stackPanel in FindChildrenInTemplates.FindVisualChildren<StackPanel>(this))
+            {
+                if (stackPanel.Name == "stackPanelItemEdit")
+                {
+                    if (stackPanel.IsMouseOver)
+                    {
+                        isMouseOverEditingPanel = true;
+
+                    }
+                }
+            }
+
+            if (isDropDownOpened)
+            {
+                isMouseOverComboBox = true;
+            }
+
+            if (!isMouseOverEditingPanel && !isMouseOverComboBox)
+            {
+                mainGrid.Focus();
+                var cancelItemEditing = (ICommand)DataContext.GetType().GetProperty("CancelItemEditCommand")?.GetValue(DataContext);
+                var selectedItem = DataContext.GetType().GetProperty("SelectedItem").GetValue(DataContext);
+                cancelItemEditing?.Execute(selectedItem);
+            }
         }
     }
 }

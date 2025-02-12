@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Data;
+using System.Windows.Input;
 using ItemsProject.Core.Commands.AddFolderViewModelCommands;
 using ItemsProject.Core.Commands.General;
 using ItemsProject.Core.Data;
@@ -13,6 +14,7 @@ namespace ItemsProject.Core.ViewModels
     {
         private readonly IMvxNavigationService _nav;
         private readonly IFolderDataService _folderDataService;
+        private readonly IDataService _dataService;
         public AddFolderViewModel(IMvxNavigationService nav, IFolderDataService folderDataService)
         {
             _nav = nav;

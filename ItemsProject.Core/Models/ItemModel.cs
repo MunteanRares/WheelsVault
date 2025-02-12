@@ -1,5 +1,8 @@
-﻿
-
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using MvvmCross.ViewModels;
 
 namespace ItemsProject.Core.Models
@@ -8,14 +11,14 @@ namespace ItemsProject.Core.Models
     {
         public int Id { get; set; }
         public int FolderId { get; set; }
-        private string _modelName;
 
+        private string _modelName;
         public string ModelName
         {
             get { return _modelName; }
-            set 
-            { 
-                 SetProperty(ref _modelName, value); 
+            set
+            {
+                SetProperty(ref _modelName, value);
             }
         }
 
@@ -23,18 +26,17 @@ namespace ItemsProject.Core.Models
         public string ModelReleaseDate
         {
             get { return _modelReleaseDate; }
-            set 
-            { 
+            set
+            {
                 SetProperty(ref _modelReleaseDate, value);
             }
         }
 
         private string _collectionName;
-
         public string CollectionName
         {
             get { return _collectionName; }
-            set 
+            set
             {
                 SetProperty(ref _collectionName, value);
             }
@@ -45,11 +47,10 @@ namespace ItemsProject.Core.Models
         public bool IsEditing
         {
             get { return _isEditing; }
-            set 
+            set
             {
                 SetProperty(ref _isEditing, value);
             }
         }
-
     }
 }

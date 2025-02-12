@@ -1,6 +1,7 @@
 ﻿using ItemsProject.Core.Commands.General;
 using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;
+using ItemsProject.Core.ViewModels;
 
 
 namespace ItemsProject.Core.Commands.BaseViewModelCommands
@@ -10,22 +11,26 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands
         private readonly IDataService _dataService;
         private readonly Action<List<ItemModel>> _updateFolderItems;
         private readonly Func<List<ItemModel>> _getFolderItems;
+        private readonly Func<FolderModel> _getSelectedFolder;
 
         public DeleteItemFromFolder(IDataService dataService,
                                     Action<List<ItemModel>> updateFolderItems,
-                                    Func<List<ItemModel>> getFolderItems)
+                                    Func<List<ItemModel>> getFolderItems,
+                                    Func<FolderModel> getSelectedFolder)
         {
             _dataService = dataService;
             _getFolderItems = getFolderItems;
             _updateFolderItems = updateFolderItems;
+            _getSelectedFolder = getSelectedFolder;
         }
 
         public override void Execute(object? parameter)
         {
             ItemModel valuePassedInFromButton = parameter as ItemModel;
-            var allFolderItems = _getFolderItems();
+            FolderModel selectedFolder = _getSelectedFolder();
+            List<ItemModel> allFolderItems = _getFolderItems();
             ItemModel itemToRemoveCopy = _dataService.RemoveItemFromFolder(valuePassedInFromButton.Id,
-                                                                           valuePassedInFromButton.FolderId,
+                                                                           selectedFolder.Id,
                                                                            valuePassedInFromButton.ModelName,
                                                                            valuePassedInFromButton.ModelReleaseDate,
                                                                            valuePassedInFromButton.CollectionName);

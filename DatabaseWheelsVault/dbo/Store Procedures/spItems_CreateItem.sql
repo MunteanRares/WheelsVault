@@ -8,11 +8,22 @@ begin
 	set nocount on;
 
 	declare @addedItemID int;
+	declare @defaultFolderId int;
 	
 	insert into dbo.Items (modelName, modelReleaseDate, collectionName)
 	values(@ModelName, @ModelReleaseDate, @CollectionName)
 	set @addedItemID = SCOPE_IDENTITY()
 
+	select @defaultFolderId = Folders.Id
+	from Folders
+	where isDefault = 1
+
 	insert into dbo.FolderItems (folderId, itemId)
-	values (@FolderId, @addedItemID)
+	values (@defaultFolderId, @addedItemID)
+
+	if (@defaultFolderId != @FolderId)
+	begin
+		insert into dbo.FolderItems (folderId, itemId)
+		values (@FolderId, @addedItemID)
+	end
 end

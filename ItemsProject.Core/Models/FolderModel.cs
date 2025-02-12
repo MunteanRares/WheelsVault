@@ -1,6 +1,8 @@
-﻿
-
-using DevExpress.Data.Browsing.Design;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using MvvmCross.ViewModels;
 
 namespace ItemsProject.Core.Models
@@ -23,11 +25,10 @@ namespace ItemsProject.Core.Models
         public bool IsEditing
         {
             get { return _isEditing; }
-            set 
-            { 
+            set
+            {
                 SetProperty(ref _isEditing, value);
             }
         }
-
     }
 }

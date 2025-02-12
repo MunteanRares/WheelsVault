@@ -30,14 +30,7 @@ namespace ItemsProject.Core.Services
             {
                 return allFolderItems;
             }
-            else if (selectedFolder.Name == "All Cars")
-            {
-                allFolderItems = _db.GetAllUniqueItems();
-            }
-            else
-            {
-                allFolderItems = _db.GetItemsByFolderId(selectedFolder.Id);
-            }            
+            allFolderItems = _db.GetItemsByFolderId(selectedFolder.Id);
 
             return allFolderItems;
         }

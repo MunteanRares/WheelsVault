@@ -4,7 +4,7 @@ namespace ItemsProject.Core.Data
 {
     public interface IDatabaseData
     {
-        List<ItemModel> GetAllUniqueItems();
+        List<ItemModel> GetAllItems();
         public List<FolderModel> GetAllFolders();
         public List<ItemModel> GetItemsByFolderId(int folderId);
         public ItemModel CreateNewItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName);

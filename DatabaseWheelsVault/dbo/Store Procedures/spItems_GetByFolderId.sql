@@ -3,6 +3,7 @@
 AS
 begin
 	set nocount on;
+
 	select Items.*
 	from Items
 	join FolderItems on Items.Id = FolderItems.itemId

@@ -13,7 +13,7 @@ namespace ItemsProject.Core.Data
             _db = db;
         }
 
-        public List<ItemModel> GetAllUniqueItems()
+        public List<ItemModel> GetAllItems()
         {
             List<ItemModel> output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetAll", new { }, connectionStringName, true);
             return output;
@@ -53,7 +53,7 @@ namespace ItemsProject.Core.Data
 
         public void DeleteItem(int itemId, int folderId, string modelName, string modelReleaseDate, string collectionName)
         {
-            _db.SaveData("dbo.spItems_Remove", new { itemId }, connectionStringName, true);
+            _db.SaveData("dbo.spItems_Remove", new { itemId, folderId }, connectionStringName, true);
         }
 
         public FolderModel GetFolderById(int folderId)

@@ -33,7 +33,8 @@
             Text="{Binding FolderName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
             Grid.Row="1" 
             Grid.ColumnSpan="2" 
-            Width="200">
+            Width="200"
+            MaxLength="50">
             <TextBox.InputBindings>
                 <KeyBinding
                     Key="Enter"

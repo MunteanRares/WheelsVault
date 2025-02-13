@@ -13,8 +13,7 @@
         FontSize="22"
         Background="#09203F"
         FontFamily="pack://application:,,,/WheelsVault;component/Assets/Fonts/#Fredoka Medium"        
-        d:DesignHeight="1080" d:DesignWidth="1920" IsHitTestVisible="{Binding IsWindowEnabled}"
-        PreviewMouseDown="MvxWpfView_MouseDown">
+        d:DesignHeight="1080" d:DesignWidth="1920" IsHitTestVisible="{Binding IsWindowEnabled}">
 
     <views:MvxWpfView.Resources>
         <conv:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
@@ -344,7 +343,7 @@
                         Margin="10 0 0 0"
                         Height="{Binding Path=ActualHeight, ElementName=searchTextBox}"
                         Width="150"
-                        Focusable="False">
+                        Focusable="True">
                         <ComboBox.Resources>
                             <Style TargetType="TextBlock" BasedOn="{x:Null}">
                                 <Setter Property="Foreground" Value="#09203F"/>
@@ -372,7 +371,6 @@
                                 </Setter>
                             </Style>
                         </ComboBox.ItemContainerStyle>
-
                     </ComboBox>
                 </StackPanel>
             </StackPanel>
@@ -449,35 +447,47 @@
                                 <StackPanel
                                     x:Name="stackPanelItemEdit">
                                     <StackPanel 
-    Orientation="Horizontal"
-    Grid.Row="0"
-    Grid.Column="0">
+                                        Orientation="Horizontal"
+                                        Grid.Row="0"
+                                        Grid.Column="0">
                                         <TextBox
-        MinWidth="100"
-        MaxWidth="200"
-        Text="{Binding DataContext.EditingItemName, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-        Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}"
-        IsVisibleChanged="EditFolderNameTextBox_IsVisibleChanged">
+                                            MinWidth="100"
+                                            MaxWidth="200"
+                                            Text="{Binding DataContext.EditingItemName, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}"
+                                            IsVisibleChanged="EditFolderNameTextBox_IsVisibleChanged">
                                             <TextBox.InputBindings>
                                                 <KeyBinding 
-                Key="Esc"
-                Command="{Binding DataContext.CancelItemEditCommand, RelativeSource={RelativeSource AncestorType=views:MvxWpfView}}"
-                CommandParameter="{Binding .}"/>
+                                                    Key="Esc"
+                                                    Command="{Binding DataContext.CancelItemEditCommand, RelativeSource={RelativeSource AncestorType=views:MvxWpfView}}"
+                                                    CommandParameter="{Binding .}"/>
                                             </TextBox.InputBindings>
+                                            <i:Interaction.Triggers>
+                                                <i:EventTrigger EventName="LostFocus">
+                                                    <i:InvokeCommandAction
+                                                        Command="{Binding DataContext.CancelItemEditingCommand, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"/>
+                                                </i:EventTrigger>
+                                            </i:Interaction.Triggers>
                                         </TextBox>
                                         <TextBox
-        MinWidth="100"
-        MaxWidth="200"
-        Margin="10 0 0 0"
-        Text="{Binding DataContext.EditingItemReleaseDate, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-        Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}"
-        PreviewTextInput="TextBox_PreviewTextInput" MaxLength="4">
+                                            MinWidth="100"
+                                            MaxWidth="200"
+                                            Margin="10 0 0 0"
+                                            Text="{Binding DataContext.EditingItemReleaseDate, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}"
+                                            PreviewTextInput="TextBox_PreviewTextInput" MaxLength="4">
                                             <TextBox.InputBindings>
-                                                <KeyBinding 
-                Key="Esc"
-                Command="{Binding DataContext.CancelItemEditCommand, RelativeSource={RelativeSource AncestorType=views:MvxWpfView}}"
-                CommandParameter="{Binding .}"/>
+                                                <KeyBinding  
+                                                    Key="Esc"
+                                                    Command="{Binding DataContext.CancelItemEditCommand, RelativeSource={RelativeSource AncestorType=views:MvxWpfView}}"
+                                                    CommandParameter="{Binding .}"/>
                                             </TextBox.InputBindings>
+                                            <i:Interaction.Triggers>
+                                                <i:EventTrigger EventName="LostFocus">
+                                                    <i:InvokeCommandAction
+                                                        Command="{Binding DataContext.CancelItemEditingCommand, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"/>
+                                                </i:EventTrigger>
+                                            </i:Interaction.Triggers>
                                         </TextBox>
                                     </StackPanel>
 
@@ -499,6 +509,12 @@
                                                     Command="{Binding DataContext.CancelItemEditCommand, RelativeSource={RelativeSource AncestorType=views:MvxWpfView}}"
                                                     CommandParameter="{Binding .}"/>
                                             </TextBox.InputBindings>
+                                            <i:Interaction.Triggers>
+                                                <i:EventTrigger EventName="LostFocus">
+                                                    <i:InvokeCommandAction
+                                                         Command="{Binding DataContext.CancelItemEditingCommand, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"/>
+                                                </i:EventTrigger>
+                                            </i:Interaction.Triggers>
                                         </TextBox>
                                     </StackPanel>
                                 </StackPanel>
@@ -535,6 +551,7 @@
                                 Command="{Binding DataContext.SaveEditItemCommand, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
                                 CommandParameter="{Binding .}"
                                 Margin="0 0 10 0"
+                                Focusable="False"
                                 Height="40"
                                 Grid.Column="2"
                                 Grid.Row="0"

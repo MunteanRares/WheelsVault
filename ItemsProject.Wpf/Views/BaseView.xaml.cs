@@ -2,17 +2,27 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using DevExpress.Data.Async.Helpers;
+using ItemsProject.Core.Messages;
+using ItemsProject.Core.ViewModels;
 using ItemsProject.Wpf.Helper_Functions;
+using MvvmCross;
 using MvvmCross.Platforms.Wpf.Views;
+using MvvmCross.Plugin.Messenger;
 
 
 namespace ItemsProject.Wpf.Views
 {
     public partial class BaseView : MvxWpfView
     {
+        private readonly IMvxMessenger _messenger;
+        private readonly List<MvxSubscriptionToken> _tokens = new List<MvxSubscriptionToken>();
+
         public BaseView()
         {
             InitializeComponent();
+            _messenger = Mvx.IoCProvider.Resolve<IMvxMessenger>();
+            _tokens.Add(_messenger.Subscribe<CancelItemEditingMessage>(OnCancelItemEditingMessage));
         }
 
         protected bool isDropDownOpened = false;
@@ -40,7 +50,7 @@ namespace ItemsProject.Wpf.Views
             e.Handled = regex.IsMatch(e.Text);
         }
 
-        private void MvxWpfView_MouseDown(object sender, MouseButtonEventArgs e)
+        private void OnCancelItemEditingMessage(CancelItemEditingMessage cancelItemEditingMessage)
         {
             bool isMouseOverEditingPanel = false;
             bool isMouseOverComboBox = false;
@@ -52,7 +62,6 @@ namespace ItemsProject.Wpf.Views
                     if (stackPanel.IsMouseOver)
                     {
                         isMouseOverEditingPanel = true;
-
                     }
                 }
             }
@@ -62,7 +71,7 @@ namespace ItemsProject.Wpf.Views
                 isMouseOverComboBox = true;
             }
 
-            if (!isMouseOverEditingPanel && !isMouseOverComboBox)
+            if (!isMouseOverEditingPanel)
             {
                 mainGrid.Focus();
                 var cancelItemEditing = (ICommand)DataContext.GetType().GetProperty("CancelItemEditCommand")?.GetValue(DataContext);

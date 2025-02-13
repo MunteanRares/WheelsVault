@@ -15,9 +15,11 @@ namespace ItemsProject.Core.Services
     public class DataService : IDataService
     {
         private readonly IDatabaseData _db;
+        private readonly IMvxMessenger _messenger;
         public DataService(IDatabaseData db, IMvxNavigationService navigationService, IMvxMessenger messenger)
         {
             _db = db;
+            _messenger = messenger;
         }
 
         public List<ItemModel> LoadItemsForFolder(FolderModel selectedFolder)
@@ -135,6 +137,12 @@ namespace ItemsProject.Core.Services
             }
 
             return folderItems;
+        }
+
+        public void PostCancelEditMessage()
+        {
+            CancelItemEditingMessage message = new CancelItemEditingMessage(Mvx.IoCProvider.Resolve<BaseViewModel>());
+            _messenger.Publish(message);
         }
     }
 }

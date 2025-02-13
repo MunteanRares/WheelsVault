@@ -52,6 +52,9 @@ namespace ItemsProject.Core.ViewModels
 			SaveEditFolderCommand = new SaveEditFolder(_dataService, () => EditingFolderName, SaveFolderEdit);
 			EditItemFromFolderCommand = new EditItemFromFolder(EditModeItems);
 			SaveEditItemCommand = new SaveEditItem(_dataService, () => EditingItemName, () => EditingItemReleaseDate, () => EditingItemCollectionName, SaveItemEdit);
+			CancelItemEditingCommand = new CancelItemEditingCommand(_dataService);
+
+			SelectedSortOption = SortOptions[0];
         }
 
         // COMMANDS
@@ -66,6 +69,7 @@ namespace ItemsProject.Core.ViewModels
 		public ICommand SaveEditFolderCommand { get; }
 		public ICommand EditItemFromFolderCommand { get; }
 		public ICommand SaveEditItemCommand { get; }
+		public ICommand CancelItemEditingCommand { get; }
 
         // MESSAGES
         private void OnAddedItemMessage(AddedItemMessage addedItemMessage)
@@ -269,7 +273,7 @@ namespace ItemsProject.Core.ViewModels
 				SetProperty(ref _selectedFolder, value);
 				RaisePropertyChanged(() => IsFolderSelected);
 				SelectedItem = null;
-				SelectedSortOption = null;
+				SelectedSortOption = SortOptions[0];
 				_allFolderItems =_dataService.LoadItemsForFolder(SelectedFolder);
 				_searchResult = _dataService.FilterItems(SearchText, _allFolderItems);
                 FolderItems = _dataService.UpdateFolderItems(_searchResult, FolderItems);

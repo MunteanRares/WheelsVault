@@ -52,5 +52,16 @@ namespace ItemsProject.Core.Models
                 SetProperty(ref _isEditing, value);
             }
         }
+
+        private bool _isPopupOpened;
+        public bool IsPopupOpened
+        {
+            get { return _isPopupOpened; }
+            set 
+            { 
+                SetProperty(ref _isPopupOpened, value);
+            }
+        }
+
     }
 }

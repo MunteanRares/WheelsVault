@@ -1,6 +1,8 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using DevExpress.Data.Async.Helpers;
 using ItemsProject.Core.Messages;
@@ -17,24 +19,13 @@ namespace ItemsProject.Wpf.Views
     {
         private readonly IMvxMessenger _messenger;
         private readonly List<MvxSubscriptionToken> _tokens = new List<MvxSubscriptionToken>();
+        protected bool isDropDownOpened = false;
 
         public BaseView()
         {
             InitializeComponent();
             _messenger = Mvx.IoCProvider.Resolve<IMvxMessenger>();
             _tokens.Add(_messenger.Subscribe<CancelItemEditingMessage>(OnCancelItemEditingMessage));
-        }
-
-        protected bool isDropDownOpened = false;
-
-        private void comboBoxSort_DropDownOpened(object sender, EventArgs e)
-        {
-            isDropDownOpened = true;
-        }
-
-        private void comboBoxSort_DropDownClosed(object sender, EventArgs e)
-        {
-            isDropDownOpened = false;
         }
 
         private void EditFolderNameTextBox_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -64,11 +55,6 @@ namespace ItemsProject.Wpf.Views
                         isMouseOverEditingPanel = true;
                     }
                 }
-            }
-
-            if (isDropDownOpened)
-            {
-                isMouseOverComboBox = true;
             }
 
             if (!isMouseOverEditingPanel)

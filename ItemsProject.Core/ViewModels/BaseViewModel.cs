@@ -11,6 +11,7 @@ using ItemsProject.Core.Commands.BaseViewModelCommands;
 using ItemsProject.Core.Commands.General;
 using System.Diagnostics.Contracts;
 using ItemsProject.Core.Helper_Methods.String_Manipulation;
+using ItemsProject.Core.Commands.BaseViewModelCommands.Opening_Commands;
 
 
 namespace ItemsProject.Core.ViewModels
@@ -40,38 +41,56 @@ namespace ItemsProject.Core.ViewModels
 			_tokens.Add(messenger.Subscribe<CanRemoveFolderMessage>(OnRemoveFolderMessage));
 			_tokens.Add(messenger.Subscribe<ChangeWindowStateMessage>(OnChangeWindowStateMessage));
 
-			// Commands
+			// COMMANDS
+			// Opening Commands
 			OpenAddItemWindowCommand = new OpenAddItemWindow(_nav, () => SelectedFolder, ClearSearchText, SetWindowStateToFalse);
 			OpenAddFolderWindowCommand = new OpenAddFolderWindow(_nav, SetWindowStateToFalse);
-			DeleteFolderConfirmationCommand = new OpenConfirmationWindow(_nav, DeleteFolderConfirmationMessage, "Confirm Deletion", "pack://application:,,,/Assets/Icons/question-mark.png", SetWindowStateToFalse);
-            DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems, () => SelectedFolder);
-            DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
-			EditModeFoldersCommand = new EditModeFolders(ChangeFolderEditMode);
-			CancelFolderEditCommand = new CancelFolderEdit(CancelFolderEditing);
-			CancelItemEditCommand = new CancelItemEdit(CancelItemEditing);
-			SaveEditFolderCommand = new SaveEditFolder(_dataService, () => EditingFolderName, SaveFolderEdit);
-			EditItemFromFolderCommand = new EditItemFromFolder(EditModeItems);
-			SaveEditItemCommand = new SaveEditItem(_dataService, () => EditingItemName, () => EditingItemReleaseDate, () => EditingItemCollectionName, SaveItemEdit);
-			CancelItemEditingCommand = new CancelItemEditingCommand(_dataService);
+			OpenDeleteFolderConfirmationCommand = new OpenConfirmationWindow(_nav, DeleteFolderConfirmationMessage, "Confirm Deletion", "pack://application:,,,/Assets/Icons/question-mark.png", SetWindowStateToFalse);
+			OpenPopupCommand = new OpenPopupCommand(_dataService);
 
+            // Folder Commands
+            DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
+            EditModeFoldersCommand = new EditModeFolders(ChangeFolderEditMode);
+            CancelFolderEditCommand = new CancelFolderEdit(CancelFolderEditing);
+            SaveEditFolderCommand = new SaveEditFolder(_dataService, () => EditingFolderName, SaveFolderEdit);
+
+			// Item Commands
+            DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems, () => SelectedFolder);
+            EditModeItemCommand = new EditItemFromFolder(EditModeItems);
+            CancelItemEditCommand = new CancelItemEdit(CancelItemEditing);		
+			SaveEditItemCommand = new SaveEditItem(_dataService, () => EditingItemName, () => EditingItemReleaseDate, () => EditingItemCollectionName, SaveItemEdit);
+			LoseItemFocusCommand = new CancelItemEditingCommand(_dataService);
+
+			// Setting Default Values
 			SelectedSortOption = SortOptions[0];
         }
 
-        // COMMANDS
+        /// <summary>
+		/// COLLECTION OF COMMAND DECLARATION
+		/// </summary>
+		// Opening Commands
         public ICommand OpenAddItemWindowCommand { get; }
 		public ICommand OpenAddFolderWindowCommand { get; }
-		public ICommand DeleteItemFromFolderCommand { get; }
-		public ICommand DeleteFolderConfirmationCommand { get; }
-		public ICommand DeleteFolderCommand { get; }
-		public ICommand EditModeFoldersCommand { get; }
-		public ICommand CancelFolderEditCommand { get; }
-		public ICommand CancelItemEditCommand { get; }	
-		public ICommand SaveEditFolderCommand { get; }
-		public ICommand EditItemFromFolderCommand { get; }
-		public ICommand SaveEditItemCommand { get; }
-		public ICommand CancelItemEditingCommand { get; }
+        public ICommand OpenDeleteFolderConfirmationCommand { get; }
+        public ICommand OpenPopupCommand { get; }
 
-        // MESSAGES
+        // Folder Commands
+        public ICommand DeleteFolderCommand { get; }
+		public ICommand EditModeFoldersCommand { get; }
+        public ICommand CancelFolderEditCommand { get; }
+        public ICommand SaveEditFolderCommand { get; }
+
+        // Item Commands
+        public ICommand DeleteItemFromFolderCommand { get; }
+        public ICommand EditModeItemCommand { get; }        
+		public ICommand CancelItemEditCommand { get; }
+		public ICommand SaveEditItemCommand { get; }
+		public ICommand LoseItemFocusCommand { get; }
+
+
+        /// <summary>
+		///	FUNCTIONS THAT CALL WHENEVER THIS VIEWMODEL GETS MESSAGES
+		/// </summary>
         private void OnAddedItemMessage(AddedItemMessage addedItemMessage)
         {
             _allFolderItems.Add(addedItemMessage.NewItem);
@@ -93,7 +112,9 @@ namespace ItemsProject.Core.ViewModels
 			IsWindowEnabled = changeWindowStateMessage.ChangeWindowState;
 		}
 
-        // FUNCTIONS
+        /// <summary>
+		/// GENERAL HELPER FUNCTIONS
+		/// </summary>
         private void UnsubscribeMessages()
         {
             foreach (MvxSubscriptionToken token in _tokens)
@@ -228,12 +249,17 @@ namespace ItemsProject.Core.ViewModels
 			SelectedItem.IsEditing = false;
 		}
 
-        // VALIDATIONS
+        /// <summary>
+		/// LIST OF VALIDATION FUNCTIONS THAT CHANGE HOW THE UI RESPONDS
+		/// </summary>
         public bool IsFolderSelected => SelectedFolder != null;
 		public bool CanSaveItemEdit => !string.IsNullOrWhiteSpace(EditingItemName) && !string.IsNullOrWhiteSpace(EditingItemReleaseDate) && !string.IsNullOrWhiteSpace(EditingItemCollectionName);
 		public bool CanSaveFolderEdit => !string.IsNullOrWhiteSpace(EditingFolderName);
 
-        // PROPERTIES
+
+        /// <summary>
+		///	BASE VIEWMODEL PROPERTIES
+		/// </summary>
         public ObservableCollection<ItemModel> FolderItems { get; private set; }
         public ObservableCollection<FolderModel> Folders { get; private set; }
 		public ObservableCollection<string> SortOptions { get; private set; } = new ObservableCollection<string>

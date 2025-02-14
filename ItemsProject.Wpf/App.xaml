@@ -113,7 +113,7 @@
         <Style TargetType="TextBox">
             <Style.Resources>
                 <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="3"/>
+                    <Setter Property="CornerRadius" Value="4"/>
                 </Style>
             </Style.Resources>
 
@@ -127,7 +127,8 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListViewItem}">
-                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
                                     <ContentPresenter Margin="10 5 8 5"/>
                                 </Grid>
@@ -138,8 +139,6 @@
             </Style.Setters>
 
             <Style.Triggers>
-
-
                 <Trigger Property="IsMouseOver" Value="True">
 
                     <Setter Property="Background">

@@ -14,7 +14,6 @@ namespace ItemsProject.Core.ViewModels
     {
         private readonly IMvxNavigationService _nav;
         private readonly IFolderDataService _folderDataService;
-        private readonly IDataService _dataService;
         public AddFolderViewModel(IMvxNavigationService nav, IFolderDataService folderDataService)
         {
             _nav = nav;

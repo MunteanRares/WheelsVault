@@ -1,8 +1,6 @@
 ﻿using ItemsProject.Core.Commands.General;
 using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;
-using ItemsProject.Core.ViewModels;
-
 
 namespace ItemsProject.Core.Commands.BaseViewModelCommands
 {

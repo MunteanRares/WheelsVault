@@ -474,7 +474,7 @@
                                 </Button.Style>
                             </Button>
 
-                            <Button Name="DeleteFolderIconBtn" Command="{Binding DataContext.DeleteAllItemsCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:IMvxWpfView}}}"
+                            <Button Name="DeleteFolderIconBtn" Command="{Binding DataContext.OpenDeleteFolderConfirmationCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:IMvxWpfView}}}"
                                     CommandParameter="{Binding}"                                    
                                     BorderThickness="0"
                                     Grid.Column="2" HorizontalAlignment="Right">

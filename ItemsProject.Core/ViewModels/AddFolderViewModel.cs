@@ -1,11 +1,8 @@
-﻿using System.Data;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using ItemsProject.Core.Commands.AddFolderViewModelCommands;
 using ItemsProject.Core.Commands.General;
-using ItemsProject.Core.Data;
 using ItemsProject.Core.Services;
 using MvvmCross.Navigation;
-using MvvmCross.Plugin.Messenger;
 using MvvmCross.ViewModels;
 
 namespace ItemsProject.Core.ViewModels

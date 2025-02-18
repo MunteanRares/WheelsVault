@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ItemsProject.Core.Commands.General;
+﻿using ItemsProject.Core.Commands.General;
 using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;
-using Xceed.Wpf.Toolkit.Primitives;
 
 namespace ItemsProject.Core.Commands.BaseViewModelCommands.Opening_Commands
 {

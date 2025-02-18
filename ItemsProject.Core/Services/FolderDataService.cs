@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ItemsProject.Core.Data;
+﻿using ItemsProject.Core.Data;
 using ItemsProject.Core.Messages;
 using ItemsProject.Core.ViewModels;
 using MvvmCross;

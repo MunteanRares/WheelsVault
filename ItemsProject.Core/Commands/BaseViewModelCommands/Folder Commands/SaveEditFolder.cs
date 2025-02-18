@@ -1,5 +1,4 @@
-﻿using DevExpress.XtraReports.Native;
-using ItemsProject.Core.Commands.General;
+﻿using ItemsProject.Core.Commands.General;
 using ItemsProject.Core.Helper_Methods.String_Manipulation;
 using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ItemsProject.Core.Commands.General;
+﻿using ItemsProject.Core.Commands.General;
 using ItemsProject.Core.Models;
 
 namespace ItemsProject.Core.Commands.BaseViewModelCommands

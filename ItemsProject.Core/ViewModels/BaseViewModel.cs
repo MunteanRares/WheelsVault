@@ -9,11 +9,9 @@ using MvvmCross.Plugin.Messenger;
 using MvvmCross.ViewModels;
 using ItemsProject.Core.Commands.BaseViewModelCommands;
 using ItemsProject.Core.Commands.General;
-using System.Diagnostics.Contracts;
 using ItemsProject.Core.Helper_Methods.String_Manipulation;
 using ItemsProject.Core.Commands.BaseViewModelCommands.Opening_Commands;
 using ItemsProject.Core.Commands.BaseViewModelCommands.Item_Commands;
-using DevExpress.Utils.Menu;
 
 
 namespace ItemsProject.Core.ViewModels
@@ -102,7 +100,6 @@ namespace ItemsProject.Core.ViewModels
         private void OnAddedItemMessage(AddedItemMessage addedItemMessage)
         {
             _allFolderItems.Add(addedItemMessage.NewItem);
-			//SelectedFolder.Items.Add(addedItemMessage.NewItem);
             FolderItems.Add(addedItemMessage.NewItem);
         }
 
@@ -145,13 +142,6 @@ namespace ItemsProject.Core.ViewModels
             output = $"Are you sure you want to delete the '{folderName}' folder?";
             return output;
         }
-
-		public string DeleteAllItemsConfirmationMessage(string itemName)
-		{
-			string output = string.Empty;
-			output = $"Are you sure you want to delete {itemName} from ALL folders?";
-			return output;
-		}
 
         public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
         {
@@ -264,11 +254,11 @@ namespace ItemsProject.Core.ViewModels
             SelectedItem.FolderIds = folderIds;
         }
 
-		public void SetIsCheckedIfItemInFolder(ItemModel passedInItemModel)
+		public void SetIsCheckedIfItemInFolder(ItemModel passedItemModel)
 		{
 			foreach (FolderModel folder in Folders)
 			{
-				if (passedInItemModel.FolderIds.Contains(folder.Id))
+				if (passedItemModel.FolderIds.Contains(folder.Id))
                 {
                     folder.IsChecked = true;
                 }

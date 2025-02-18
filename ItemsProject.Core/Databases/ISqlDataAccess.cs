@@ -1,4 +1,6 @@
 ﻿
+
+
 namespace ItemsProject.Core.Databases
 {
     public interface ISqlDataAccess

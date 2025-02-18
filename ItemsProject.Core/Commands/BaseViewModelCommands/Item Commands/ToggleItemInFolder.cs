@@ -1,9 +1,6 @@
-﻿
-using DevExpress.Data.Async.Helpers;
-using ItemsProject.Core.Commands.General;
+﻿using ItemsProject.Core.Commands.General;
 using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;
-using Xceed.Wpf.Toolkit.Core.Converters;
 
 namespace ItemsProject.Core.Commands.BaseViewModelCommands.Item_Commands
 {

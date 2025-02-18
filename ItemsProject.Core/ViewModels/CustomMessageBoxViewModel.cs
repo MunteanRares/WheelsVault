@@ -2,11 +2,8 @@
 using System.Windows.Input;
 using ItemsProject.Core.Commands.CustomMessageBoxCommands;
 using ItemsProject.Core.Models;
-using MvvmCross.Plugin.Messenger;
-using ItemsProject.Core.Messages;
 using ItemsProject.Core.Commands.General;
 using MvvmCross.Navigation;
-using ItemsProject.Core.Data;
 using ItemsProject.Core.Services;
 
 namespace ItemsProject.Core.ViewModels

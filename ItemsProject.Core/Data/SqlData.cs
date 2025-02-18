@@ -34,7 +34,7 @@ namespace ItemsProject.Core.Data
         public ItemModel CreateNewItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName)
         {
             _db.SaveData("dbo.spItems_CreateItem", new { FolderId, ModelName = ModelName.Capitalize(), ModelReleaseDate, CollectionName = CollectionName.ToUpper() }, connectionStringName, true);
-            ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetLast", new { }, connectionStringName, true).First();                        
+            ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetLast", new { }, connectionStringName, true).First();
             return output;
         }
 
@@ -51,7 +51,7 @@ namespace ItemsProject.Core.Data
             return output;
         }
 
-        public void DeleteItem(int itemId, int folderId, string modelName, string modelReleaseDate, string collectionName)
+        public void DeleteItem(int itemId, int folderId)
         {
             _db.SaveData("dbo.spItems_Remove", new { itemId, folderId }, connectionStringName, true);
         }
@@ -74,7 +74,23 @@ namespace ItemsProject.Core.Data
 
         public void EditItem(int itemId, string newName, string newReleaseDate, string newCollectionName)
         {
-            _db.SaveData("dbo.spItems_EditItem", new { itemId, newName, newReleaseDate, newCollectionName}, connectionStringName, true);
+            _db.SaveData("dbo.spItems_EditItem", new { itemId, newName, newReleaseDate, newCollectionName }, connectionStringName, true);
+        }
+
+        public List<int> GetAllFolderIdsForItem(int selectedItemID)
+        {
+            List<int> output = _db.LoadData<int, dynamic>("dbo.spFolders_GetAllFolderIdsForItem", new { selectedItemID }, connectionStringName, true);
+            return output;
+        }
+
+        public void AddItemToFolder(int selectedItemId, int selectedFolderId)
+        {
+            _db.SaveData("dbo.spItems_AddToFolder", new { selectedItemId, selectedFolderId }, connectionStringName, true);
+        }
+
+        public void DeleteAllItemsFromFolder(int itemId)
+        {
+            _db.SaveData("dbo.spItems_RemoveAllFromFolder", new { itemId }, connectionStringName, true);
         }
     }
 }

@@ -23,35 +23,35 @@
         <SolidColorBrush x:Key="ComboBox.Static.Border" Color="Transparent"/>
         <SolidColorBrush x:Key="ComboBox.Static.Glyph" Color="Transparent"/>
         <SolidColorBrush x:Key="ComboBox.Static.Editable.Background" Color="Transparent"/>
-        <SolidColorBrush x:Key="ComboBox.Static.Editable.Border" Color="#FFABADB3"/>
+        <SolidColorBrush x:Key="ComboBox.Static.Editable.Border" Color="Transparent"/>
         <SolidColorBrush x:Key="ComboBox.Static.Editable.Button.Background" Color="Transparent"/>
         <SolidColorBrush x:Key="ComboBox.Static.Editable.Button.Border" Color="Transparent"/>
         <LinearGradientBrush x:Key="ComboBox.MouseOver.Background" EndPoint="0,1" StartPoint="0,0">
-            <GradientStop Color="#FFECF4FC" Offset="0.0"/>
-            <GradientStop Color="#FFDCECFC" Offset="1.0"/>
+            <GradientStop Color="Transparent" Offset="0.0"/>
+            <GradientStop Color="Transparent" Offset="1.0"/>
         </LinearGradientBrush>
-        <SolidColorBrush x:Key="ComboBox.MouseOver.Border" Color="#FF7EB4EA"/>
+        <SolidColorBrush x:Key="ComboBox.MouseOver.Border" Color="#33414c"/>
         <SolidColorBrush x:Key="ComboBox.MouseOver.Glyph" Color="Transparent"/>
         <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Background" Color="Transparent"/>
-        <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Border" Color="#FF7EB4EA"/>
+        <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Border" Color="Transparent"/>
         <LinearGradientBrush x:Key="ComboBox.MouseOver.Editable.Button.Background" EndPoint="0,1" StartPoint="0,0">
-            <GradientStop Color="#FFEBF4FC" Offset="0.0"/>
-            <GradientStop Color="#FFDCECFC" Offset="1.0"/>
+            <GradientStop Color="Transparent" Offset="0.0"/>
+            <GradientStop Color="Transparent" Offset="1.0"/>
         </LinearGradientBrush>
-        <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Button.Border" Color="#FF7EB4EA"/>
+        <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Button.Border" Color="Transparent"/>
         <LinearGradientBrush x:Key="ComboBox.Pressed.Background" EndPoint="0,1" StartPoint="0,0">
             <GradientStop Color="#FFDAECFC" Offset="0.0"/>
             <GradientStop Color="#FFC4E0FC" Offset="1.0"/>
         </LinearGradientBrush>
-        <SolidColorBrush x:Key="ComboBox.Pressed.Border" Color="#FF569DE5"/>
+        <SolidColorBrush x:Key="ComboBox.Pressed.Border" Color="#33414c"/>
         <SolidColorBrush x:Key="ComboBox.Pressed.Glyph" Color="Transparent"/>
         <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Background" Color="Transparent"/>
-        <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Border" Color="#FF569DE5"/>
+        <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Border" Color="Transparent"/>
         <LinearGradientBrush x:Key="ComboBox.Pressed.Editable.Button.Background" EndPoint="0,1" StartPoint="0,0">
-            <GradientStop Color="#FFDAEBFC" Offset="0.0"/>
-            <GradientStop Color="#FFC4E0FC" Offset="1.0"/>
+            <GradientStop Color="Transparent" Offset="0.0"/>
+            <GradientStop Color="Transparent" Offset="1.0"/>
         </LinearGradientBrush>
-        <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Button.Border" Color="#FF569DE5"/>
+        <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Button.Border" Color="#33414c"/>
         <SolidColorBrush x:Key="ComboBox.Disabled.Background" Color="#FFF0F0F0"/>
         <SolidColorBrush x:Key="ComboBox.Disabled.Border" Color="#FFD9D9D9"/>
         <SolidColorBrush x:Key="ComboBox.Disabled.Glyph" Color="Transparent"/>
@@ -67,8 +67,8 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ToggleButton}">
-                        <Border x:Name="templateRoot" Background="{StaticResource ComboBox.Static.Background}" BorderBrush="{StaticResource ComboBox.Static.Border}" BorderThickness="0" SnapsToDevicePixels="true">
-                            <Border x:Name="splitBorder" BorderBrush="Transparent" BorderThickness="0" HorizontalAlignment="Right" Margin="0" SnapsToDevicePixels="true" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}">
+                        <Border CornerRadius="0" x:Name="templateRoot" Background="{StaticResource ComboBox.Static.Background}" BorderBrush="{StaticResource ComboBox.Static.Border}" BorderThickness="0" SnapsToDevicePixels="true">
+                            <Border x:Name="splitBorder" CornerRadius="0" BorderBrush="Transparent" BorderThickness="0" HorizontalAlignment="Right" Margin="0" SnapsToDevicePixels="true" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}">
                                 <Path x:Name="arrow" Data="F1 M 0,0 L 2.667,2.66665 L 5.3334,0 L 5.3334,-1.78168 L 2.6667,0.88501 L0,-1.78168 L0,0 Z" Fill="{StaticResource ComboBox.Static.Glyph}" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center"/>
                             </Border>
                         </Border>
@@ -159,19 +159,24 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" Width="0"/>
                 </Grid.ColumnDefinitions>
-                <Popup x:Name="PART_Popup" AllowsTransparency="true" Grid.ColumnSpan="2" IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource Mode=TemplatedParent}}" Margin="0" Placement="Bottom" PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}">
-                    <theme:SystemDropShadowChrome Margin="0" x:Name="shadow" Color="Transparent" Width="{Binding ActualWidth, ElementName=templateRoot}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                        <Border Margin="0" x:Name="dropDownBorder" Background="#556D7E" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="0">
-                            <ScrollViewer Margin="0" x:Name="DropDownScrollViewer">
-                                <Grid Margin="0" x:Name="grid" RenderOptions.ClearTypeHint="Enabled">
-                                    <Canvas Margin="0" x:Name="canvas" HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
-                                        <Rectangle Margin="0" x:Name="opaqueRect" Fill="{Binding Background, ElementName=dropDownBorder}" Height="{Binding ActualHeight, ElementName=dropDownBorder}" Width="{Binding ActualWidth, ElementName=dropDownBorder}"/>
-                                    </Canvas>
-                                    <ItemsPresenter Margin="0" x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                                </Grid>
-                            </ScrollViewer>
-                        </Border>
-                    </theme:SystemDropShadowChrome>
+                <Popup IsHitTestVisible="True"
+                       StaysOpen="False"
+                       x:Name="PART_Popup" AllowsTransparency="true"
+                       Grid.ColumnSpan="2" IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                       Margin="0"
+                       Placement="Custom"
+                       CustomPopupPlacementCallback="CustomPopupPlacementCallback"
+                       PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}">
+                    <Border CornerRadius="4" Margin="0" x:Name="dropDownBorder" Background="#556D7E" BorderThickness="2" BorderBrush="#CCCCCCCC">
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" Margin="0" x:Name="DropDownScrollViewer">
+                            <Grid Margin="0" x:Name="grid" RenderOptions.ClearTypeHint="Enabled">
+                                <Canvas Margin="0" x:Name="canvas" HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
+                                    <Rectangle Margin="0" x:Name="opaqueRect" Fill="{Binding Background, ElementName=dropDownBorder}" Height="{Binding ActualHeight, ElementName=dropDownBorder}" Width="{Binding ActualWidth, ElementName=dropDownBorder}"/>
+                                </Canvas>
+                                <ItemsPresenter Margin="0" x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Grid>
+                        </ScrollViewer>
+                    </Border>
                 </Popup>
                 <ToggleButton x:Name="toggleButton"
                               Background="{TemplateBinding Background}"
@@ -186,22 +191,39 @@
                                   Content="{TemplateBinding SelectionBoxItem}"
                                   ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                  IsHitTestVisible="false" Margin="0"
+                                  IsHitTestVisible="True" Margin="0"
                                   SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                <TextBlock Text="{TemplateBinding Text}"
-                           Foreground="#E0E9F2"
-                           Padding="6 2"
-                           FontSize="18"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           IsHitTestVisible="False"/>
+                <TextBlock 
+                    Foreground="#E0E9F2"
+                    Padding="10 6"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    IsHitTestVisible="False">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock 
+                            Grid.Column="0"                                    
+                            Text="&#xf0d9;" 
+                            Margin="2 0 0 0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="pack://application:,,,/Assets/Fonts/#Font Awesome 6 Free Solid" 
+                            FontSize="16"/>
+                        <TextBlock
+                            Margin="12 0 0 0"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Text="{TemplateBinding Text}"
+                            FontSize="18"/>
+                    </Grid>
+                    
+                </TextBlock>
             </Grid>
             <ControlTemplate.Triggers>
-                <Trigger Property="HasDropShadow" SourceName="PART_Popup" Value="true">
-                    <Setter Property="Margin" TargetName="shadow" Value="0,0,5,5"/>
-                    <Setter Property="Color" TargetName="shadow" Value="#71000000"/>
-                </Trigger>
                 <Trigger Property="HasItems" Value="false">
                     <Setter Property="Height" TargetName="dropDownBorder" Value="95"/>
                 </Trigger>
@@ -220,12 +242,10 @@
         </ControlTemplate>
 
 
-
-
-
         <conv:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
         <conv:BooleanInverseConverter x:Key="BooleanInverseConverter"/>
         <conv:BooleanVisibilityConverterInverse x:Key="BooleanVisibilityConverterInverse"/>
+        <conv:MultiBindingConverter x:Key="MultiBindingConverter"/>
     </views:MvxWpfView.Resources>
 
     <Grid
@@ -250,7 +270,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
+
             <TextBlock Grid.Row="0"
                Grid.Column="0"
                HorizontalAlignment="Left"
@@ -270,7 +290,7 @@
 
             </TextBlock>
         </Grid>
-        
+
 
         <Border Grid.Column="1" Grid.Row="0" BorderThickness="0 0 0 2" BorderBrush="#A1A1A1" Opacity="0.8"></Border>
 
@@ -279,7 +299,7 @@
                 <SolidColorBrush Color="#06162c" Opacity="0.7"/>
             </Grid.Background>
         </Grid>
-        
+
         <Grid x:Name="actualGridWidth" Grid.Row="1" Grid.Column="0">
             <Grid.Background>
                 <SolidColorBrush Color="#06162c" Opacity="0.7"/>
@@ -299,6 +319,7 @@
             </Button>
 
             <ListView Margin="0 20 0 0"
+                      x:Name="folderListView"
                       BorderThickness="0"
                       ItemsSource="{Binding Folders}"
                       SelectedItem="{Binding SelectedFolder, Mode=TwoWay}"
@@ -346,7 +367,7 @@
                                             Command="{Binding DataContext.SaveEditFolderCommand, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
                                             CommandParameter="{Binding .}"/>
                                     </TextBox.InputBindings>
-                                    
+
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="LostFocus">
                                             <i:InvokeCommandAction Command="{Binding DataContext.CancelFolderEditCommand,
@@ -356,7 +377,7 @@
                                     </i:Interaction.Triggers>
                                 </TextBox>
 
-                                <Button Name="SaveEditBtnIcon"
+                                <Button x:Name="SaveEditBtnIcon"
                                         Focusable="False"
                                         HorizontalAlignment="Right"
                                         Command="{Binding DataContext.SaveEditFolderCommand, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
@@ -427,7 +448,7 @@
                                                             <TextBlock Name="TextBlock" FontSize="18" Text="&#xf044;" 
                                                                        HorizontalAlignment="Center" VerticalAlignment="Center"
                                                                        FontFamily="pack://application:,,,/Assets/Fonts/#Font Awesome 6 Free Solid"
-                                                                       Foreground="{TemplateBinding Foreground}" />         
+                                                                       Foreground="{TemplateBinding Foreground}" />
                                                         </Border>
                                                     </Grid>
                                                     <ControlTemplate.Triggers>
@@ -453,7 +474,7 @@
                                 </Button.Style>
                             </Button>
 
-                            <Button Name="DeleteFolderIconBtn" Command="{Binding DataContext.OpenDeleteFolderConfirmationCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:IMvxWpfView}}}"
+                            <Button Name="DeleteFolderIconBtn" Command="{Binding DataContext.DeleteAllItemsCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:IMvxWpfView}}}"
                                     CommandParameter="{Binding}"                                    
                                     BorderThickness="0"
                                     Grid.Column="2" HorizontalAlignment="Right">
@@ -513,26 +534,11 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Row="0" Grid.Column="0" Margin="15 0 0 0" Orientation="Horizontal">
-                <ComboBox
-                    Margin="0"
-                    Padding="0"
-                    BorderThickness="0"
-                    Template="{DynamicResource ComboBoxTemplate1}"
-                    Text="niggaz">
-                    <Border BorderThickness="2" BorderBrush="Red"/>
-                    <ComboBox.Resources>
-                        <Style TargetType="ComboBoxItem">
-                            <Setter Property="Margin" Value="0"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="Padding" Value="0"/>
-                        </Style>
-                    </ComboBox.Resources>
-                </ComboBox>
-                
+
                 <Border Height="30">
                     <TextBlock Margin="0 5 0 0" Text="Search" VerticalAlignment="Center"/>
                 </Border>
-       
+
                 <TextBox 
                     Name="searchTextBox"
                     Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -571,33 +577,11 @@
                                 <Setter Property="Foreground" Value="#09203F"/>
                             </Style>
                         </ComboBox.Resources>
-
-                        <ComboBox.ItemContainerStyle>
-                            <Style TargetType="{x:Type ComboBoxItem}">
-                                <Setter Property="Foreground" Value="#09203F"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ComboBoxItem">
-                                            <Border x:Name="Bd" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0">
-                                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                        RecognizesAccessKey="True"
-                                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                                        TextElement.Foreground="{TemplateBinding Foreground}">
-                                                    <ContentPresenter.Resources>
-                                                        <Style TargetType="TextBlock" BasedOn="{x:Null}" />
-                                                    </ContentPresenter.Resources>
-                                                </ContentPresenter>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ComboBox.ItemContainerStyle>
                     </ComboBox>
                 </StackPanel>
             </StackPanel>
 
-            
+
             <Button 
                 FontSize="20"
                 Grid.Column="2"
@@ -614,7 +598,7 @@
                       Grid.Column="0"
                       Grid.ColumnSpan="2"
                       ItemsSource="{Binding FolderItems}"
-                      SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                      SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       Background="Transparent"
                       BorderThickness="0"
                       Focusable="False"
@@ -742,69 +726,6 @@
                                 </StackPanel>
                             </Grid>
 
-                            <Popup
-                                x:Name="chooseFolderPopup"
-                                IsOpen="False"
-                                Focusable="False"
-                                AllowsTransparency="True"
-                                PlacementTarget="{Binding ElementName=listBoxPopupMenu}"
-                                Placement="Left"
-                                StaysOpen="False">
-                                <ListBox
-                                    Background="#556D7E"
-                                    ItemsSource="{Binding DataContext.Folders, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"
-                                    BorderThickness="0"
-                                    Padding="-2 -2 -2 -3">
-                                    <ListBox.Resources>
-                                        <Style TargetType="{x:Type ListBox}">
-                                            <Style.Setters>
-                                                <Setter Property="BorderBrush">
-                                                    <Setter.Value>
-                                                        <SolidColorBrush Color="#cccccc" Opacity="0.8"/>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style.Setters>
-                                        </Style>
-                                        
-                                        <Style TargetType="{x:Type ListBoxItem}">
-                                            <Style.Setters>
-                                                <Setter Property="Margin" Value="0 0 0 0"/>
-                                                <Setter Property="FontSize" Value="18"/>
-                                                <Setter Property="Focusable" Value="False"/>
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                                            <Grid Background="{TemplateBinding Background}"  VerticalAlignment="Stretch">
-                                                                <ContentPresenter Margin="8 6"/>
-                                                                <Border BorderThickness="0 0 0 1.5" BorderBrush="#cccccc" Opacity="0.8" CornerRadius="0"></Border>
-                                                            </Grid>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style.Setters>
-                                            <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background">
-                                                        <Setter.Value>
-                                                            <SolidColorBrush Color="#284862" Opacity="0.5"/>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                        <Style TargetType="Border">
-                                            <Setter Property="CornerRadius" Value="3"/>
-                                        </Style>
-                                    </ListBox.Resources>
-                                    
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Name}"/>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </Popup>
-
                             <Popup 
                                 x:Name="addFolderMenuOption"
                                 IsOpen="{Binding IsPopupOpened, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -815,13 +736,13 @@
                                     Background="#556D7E"
                                     x:Name="listBoxPopupMenu"
                                     BorderThickness="2"
-                                    Padding="-2 -2 -2 -3">
+                                    Padding="0">
                                     <ListBox.Resources>
                                         <Style TargetType="{x:Type ListBox}">
                                             <Style.Setters>
                                                 <Setter Property="BorderBrush">
                                                     <Setter.Value>
-                                                        <SolidColorBrush Color="#cccccc" Opacity="0.8"/>
+                                                        <SolidColorBrush Color="#CCCCCCCC"/>
                                                     </Setter.Value>
                                                 </Setter>
                                             </Style.Setters>
@@ -838,7 +759,6 @@
                                                         <ControlTemplate TargetType="{x:Type ListBoxItem}">
                                                             <Grid Background="{TemplateBinding Background}"  VerticalAlignment="Stretch">
                                                                 <ContentPresenter Margin="0"/>
-                                                                <Border BorderThickness="0 0 0 1.5" BorderBrush="#cccccc" Opacity="0.8" CornerRadius="0"></Border>
                                                             </Grid>
                                                         </ControlTemplate>
                                                     </Setter.Value>
@@ -848,7 +768,7 @@
                                                 <Trigger Property="IsMouseOver" Value="True">
                                                     <Setter Property="Background">
                                                         <Setter.Value>
-                                                            <SolidColorBrush Color="#284862" Opacity="0.5"/>
+                                                            <SolidColorBrush Color="#445765"/>
                                                         </Setter.Value>
                                                     </Setter>
                                                 </Trigger>
@@ -859,29 +779,18 @@
                                         </Style>
                                     </ListBox.Resources>
 
-                                    <TextBlock>
-                                        <TextBlock Text="+ Add To Folder">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="FontSize" Value="18"/>
-                                                    <Setter Property="Foreground" Value="#E0E9F2"/>
-                                                    <Setter Property="HorizontalAlignment" Value="Left"/>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </TextBlock>
-
                                     <ComboBox
                                         x:Name="comboBoxChooseFolder"
                                         IsReadOnly="True"
                                         IsEditable="True"
                                         Template="{DynamicResource ComboBoxTemplate1}"
                                         ItemsSource="{Binding DataContext.Folders, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"
-                                        Text="+ Add To Folder">
+                                        Text="Add To Folder">
                                         <ComboBox.Resources>
-                                            <Style TargetType="ComboBoxItem">
+                                            <Style TargetType="{x:Type ComboBoxItem}">
                                                 <Setter Property="Margin" Value="0"/>
                                                 <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="Background" Value="Transparent"/>
                                                 <Setter Property="Padding" Value="0"/>
                                             </Style>
                                         </ComboBox.Resources>
@@ -889,47 +798,231 @@
                                             <DataTemplate>
                                                 <Grid>
                                                     <Button
-                                                        Command=""
-                                                        CommandParameter="{Binding .}"
+                                                        x:Name="addToFolderBtn"
+                                                        Command="{Binding DataContext.ToggleItemInFolder, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"
                                                         Background="#556D7E"
-                                                        HorizontalAlignment="Stretch"
-                                                        HorizontalContentAlignment="Stretch"
+                                                        HorizontalContentAlignment="Left"
                                                         Width="{Binding Path=ActualWidth, ElementName=toggleButton}"
                                                         BorderThickness="0">
+                                                        <Button.CommandParameter>
+                                                            <MultiBinding Converter="{StaticResource MultiBindingConverter}">
+                                                                <Binding Path="."/>
+                                                                <Binding Path="DataContext.SelectedItem" RelativeSource="{RelativeSource AncestorType={x:Type views:IMvxWpfView}}"/>
+                                                            </MultiBinding>
+                                                        </Button.CommandParameter>
+                                                        
                                                         <Button.Resources>
-                                                            <Style TargetType="Button" BasedOn="{x:Null}">
+                                                            <Style TargetType="Button">
                                                                 <Style.Setters>
-                                                                    <Setter Property="Background" Value="Transparent"/>
-                                                                    <Setter Property="BorderThickness" Value="0"/>
+                                                                    <Setter Property="BorderBrush">
+                                                                        <Setter.Value>
+                                                                            <SolidColorBrush Color="#cccccc" Opacity="0.8"/>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="Button">
+                                                                                <Border
+                                                                                    x:Name="border"
+                                                                                    Background="{TemplateBinding Background}"
+                                                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                                                    Padding="{TemplateBinding Padding}"
+                                                                                    CornerRadius="0">
+                                                                                    <ContentPresenter
+                                                                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                                        RecognizesAccessKey="True"/>
+                                                                                </Border>
+                                                                                <ControlTemplate.Triggers>
+                                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                                        <Setter TargetName="border" Property="Background" Value="#445765"/>
+                                                                                    </Trigger>
+                                                                                </ControlTemplate.Triggers>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
                                                                 </Style.Setters>
-                                                                <Style.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter Property="Background" Value="Transparent"/>
-                                                                    </Trigger>
-                                                                </Style.Triggers>
                                                             </Style>
                                                         </Button.Resources>
                                                         <TextBlock
-                                                                Text="{Binding Name}"
-                                                                TextTrimming="CharacterEllipsis">
+                                                            Grid.Column="0"
+                                                            Text="{Binding Name}"
+                                                            TextTrimming="CharacterEllipsis"
+                                                            MaxWidth="125"
+                                                            FontSize="18">
                                                             <TextBlock.Style>
                                                                 <Style TargetType="TextBlock">
                                                                     <Style.Setters>
-                                                                        <Setter Property="Padding" Value="6 2"/>
+                                                                        <Setter Property="Margin" Value="10 4"/>
                                                                         <Setter Property="Foreground" Value="#E0E9F2"/>
                                                                     </Style.Setters>
                                                                 </Style>
                                                             </TextBlock.Style>
                                                         </TextBlock>
                                                     </Button>
+
+                                                    <CheckBox
+                                                        IsChecked="{Binding IsChecked}"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalAlignment="Right"
+                                                        Margin="0 2 10 0"
+                                                        IsHitTestVisible="False">
+                                                        <CheckBox.Style>
+                                                            <Style TargetType="CheckBox">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsDefault}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </CheckBox.Style>
+                                                    </CheckBox>
                                                 </Grid>
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
-                                    
-                                    <Button Content="- Remove From This Folder">
 
+                                    <Button
+                                        Background="#556D7E"
+                                        HorizontalAlignment="Left"
+                                        Command="{Binding DataContext.DeleteItemFromFolderCommand, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"
+                                        CommandParameter="{Binding DataContext.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}">
+                                        <Button.Resources>
+                                            <Style TargetType="Button" BasedOn="{x:Null}">
+                                                <Style.Setters>
+                                                    <Setter Property="BorderThickness" Value="0"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border
+                                                                    x:Name="border"
+                                                                    Background="Transparent"
+                                                                    BorderBrush="Transparent"
+                                                                    BorderThickness="0"
+                                                                    Padding="0">
+                                                                    <ContentPresenter
+                                                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                        RecognizesAccessKey="True"/>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="border" Property="Background" Value="#445765"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style.Setters>
+                                            </Style>
+                                        </Button.Resources>
+                                        <TextBlock
+                                            TextTrimming="CharacterEllipsis">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto"/>
+                                                    <ColumnDefinition Width="auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock 
+                                                    Grid.Column="0" 
+                                                    Text="&#xf00d;" 
+                                                    FontFamily="pack://application:,,,/Assets/Fonts/#Font Awesome 6 Free Solid" 
+                                                    FontSize="16"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"/>
+                                                <TextBlock
+                                                    Grid.Column="1"
+                                                    Margin="10 0 0 0"
+                                                    VerticalAlignment="Center"
+                                                    Text="Remove from Folder" 
+                                                    FontSize="18"/>
+                                            </Grid>
+                                            
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Setters>
+                                                        <Setter Property="Margin" Value="10 4"/>
+                                                        <Setter Property="Foreground" Value="#E0E9F2"/>
+                                                    </Style.Setters>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding DataContext.IsFirstFolderSelected, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
                                     </Button>
+
+                                    <Button
+                                        Background="#556D7E"
+                                        HorizontalAlignment="Left"
+                                        Command="{Binding DataContext.DeleteAllItemsCommand, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"
+                                        CommandParameter="{Binding DataContext.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}">
+                                        <Button.Resources>
+                                            <Style TargetType="Button" BasedOn="{x:Null}">
+                                                <Style.Setters>
+                                                    <Setter Property="BorderThickness" Value="0"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border
+                                                                    x:Name="border"
+                                                                    Background="Transparent"
+                                                                    BorderBrush="Transparent"
+                                                                    BorderThickness="0"
+                                                                    Padding="0">
+                                                                     <ContentPresenter
+                                                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                        RecognizesAccessKey="True"/>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="border" Property="Background" Value="#445765"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style.Setters>
+                                            </Style>
+                                        </Button.Resources>
+                                        <TextBlock
+                                            TextTrimming="CharacterEllipsis">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto"/>
+                                                    <ColumnDefinition Width="auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock 
+                                                    Grid.Column="0" 
+                                                    Text="&#xf1f8;" 
+                                                    FontFamily="pack://application:,,,/Assets/Fonts/#Font Awesome 6 Free Solid" 
+                                                    FontSize="14"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Center"/>
+                                                <TextBlock
+                                                    Grid.Column="1"
+                                                    Margin="10 0 0 0"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Text="Remove from all Folders" 
+                                                    FontSize="18"/>
+                                            </Grid>
+        
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock" BasedOn="{x:Null}">
+                                                    <Style.Setters>
+                                                        <Setter Property="Margin" Value="10 4"/>
+                                                    </Style.Setters>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Button>
+
+
                                 </ListBox>
                             </Popup>
 
@@ -977,18 +1070,7 @@
                                 </TextBlock>
                             </Button>
 
-                                <Button
-                                Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverterInverse}}"
-                                Style="{StaticResource BorderlessButton}"
-                                Command="{Binding DataContext.DeleteItemFromFolderCommand,
-                                            RelativeSource={RelativeSource FindAncestor,
-                                            AncestorType={x:Type views:IMvxWpfView}}}"
-                                CommandParameter="{Binding .}"                                
-                                Margin="0 0 10 0" Height="40"
-                                DockPanel.Dock="Right" Grid.Column="1"
-                                Grid.Row="0" HorizontalAlignment="Right">
-                                <TextBlock FontWeight="Bold" Padding="15 0" Text="Delete" Foreground="#d73b3e"/>
-                            </Button>
+
 
                             <Button 
                                 Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverterInverse}}"
@@ -1040,7 +1122,7 @@
                                 <TextBlock
                                     FontWeight="Bold" Padding="15 0" Text="Cancel" Foreground="#a1a1a1"/>
                             </Button>
-                            
+
                         </DockPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>

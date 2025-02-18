@@ -10,7 +10,17 @@ namespace ItemsProject.Core.Models
     public class ItemModel : MvxNotifyPropertyChanged
     {
         public int Id { get; set; }
-        public int FolderId { get; set; }
+
+        private List<int> _folderIds = new List<int>();
+
+        public List<int> FolderIds
+        {
+            get { return _folderIds; }
+            set 
+            { 
+                SetProperty(ref _folderIds, value); 
+            }
+        }
 
         private string _modelName;
         public string ModelName

@@ -79,10 +79,10 @@ namespace ItemsProject.Core.Services
             return folders;
         }
 
-        public ItemModel RemoveItemFromFolder(int itemId, int folderId, string modelName, string modelReleaseDate, string collectionName)
+        public ItemModel RemoveItemFromFolder(int itemId, int folderId)
         {
             ItemModel itemToRemove = _db.GetItemById(itemId);
-            _db.DeleteItem(itemId, folderId, modelName, modelReleaseDate, collectionName);
+            _db.DeleteItem(itemId, folderId);
 
             return itemToRemove;
         }
@@ -143,6 +143,24 @@ namespace ItemsProject.Core.Services
         {
             CancelItemEditingMessage message = new CancelItemEditingMessage(Mvx.IoCProvider.Resolve<BaseViewModel>());
             _messenger.Publish(message);
+        }
+
+        public List<int> GetFolderIdsForItem(int selectedItemID)
+        {
+            List<int> output = _db.GetAllFolderIdsForItem(selectedItemID);
+            return output;        
+        }
+
+        public void AddItemToFolder(int selectedItemId, int selectedFolderId)
+        {
+            _db.AddItemToFolder(selectedItemId, selectedFolderId);
+        }
+
+        public ItemModel DeleteAllItemsFromFolder(int itemId)
+        {
+            ItemModel itemToRemove = _db.GetItemById(itemId);
+            _db.DeleteAllItemsFromFolder(itemId);
+            return itemToRemove;
         }
     }
 }

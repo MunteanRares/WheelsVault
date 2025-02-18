@@ -44,7 +44,6 @@ namespace ItemsProject.Wpf.Views
         private void OnCancelItemEditingMessage(CancelItemEditingMessage cancelItemEditingMessage)
         {
             bool isMouseOverEditingPanel = false;
-            bool isMouseOverComboBox = false;
 
             foreach (StackPanel stackPanel in FindChildrenInTemplates.FindVisualChildren<StackPanel>(this))
             {
@@ -64,6 +63,16 @@ namespace ItemsProject.Wpf.Views
                 var selectedItem = DataContext.GetType().GetProperty("SelectedItem").GetValue(DataContext);
                 cancelItemEditing?.Execute(selectedItem);
             }
+        }
+
+        public CustomPopupPlacement[] CustomPopupPlacementCallback(Size popupSize, Size targetSize, Point Offset)
+        {
+            Point placementPoint = new Point(-popupSize.Width, -popupSize.Height + 35);
+
+            return
+            [
+                new CustomPopupPlacement(placementPoint, PopupPrimaryAxis.Vertical)
+            ];
         }
     }
 }

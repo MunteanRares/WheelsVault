@@ -30,10 +30,7 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands
             FolderModel selectedFolder = _getSelectedFolder();
             List<ItemModel> allFolderItems = _getFolderItems();
             ItemModel itemToRemoveCopy = _dataService.RemoveItemFromFolder(valuePassedInFromButton.Id,
-                                                                           selectedFolder.Id,
-                                                                           valuePassedInFromButton.ModelName,
-                                                                           valuePassedInFromButton.ModelReleaseDate,
-                                                                           valuePassedInFromButton.CollectionName);
+                                                                           selectedFolder.Id);
 
             ItemModel itemToRemove = allFolderItems.Where(i => i.Id == itemToRemoveCopy.Id).FirstOrDefault();
 

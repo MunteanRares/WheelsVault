@@ -11,7 +11,7 @@ namespace ItemsProject.Core.Services
         List<ItemModel> FilterItems(string searchText, List<ItemModel> allFolderItems);
         List<ItemModel> LoadItemsForFolder(FolderModel selectedFolder);
         ObservableCollection<ItemModel> UpdateFolderItems(List<ItemModel> iterateList, ObservableCollection<ItemModel> folderItems);
-        ItemModel RemoveItemFromFolder(int itemId, int folderId, string modelName, string modelReleaseDate, string collectionName);
+        ItemModel RemoveItemFromFolder(int itemId, int folderId);
         FolderModel RemoveFolder(int folderId);
         ObservableCollection<FolderModel> UpdateFolders(List<FolderModel> updatedFolders, ObservableCollection<FolderModel> folders);
         void ExecuteDeleteFolderCommand(CanRemoveFolderMessage message, ICommand command);        
@@ -19,5 +19,8 @@ namespace ItemsProject.Core.Services
         void EditItem(int itemId, string newName, string newReleaseDate, string newCollectionName);
         ObservableCollection<ItemModel> SortItems(string selectedSortOption, List<ItemModel> allFolderItems, ObservableCollection<ItemModel> folderItems);
         void PostCancelEditMessage();
+        List<int> GetFolderIdsForItem(int selectedItemId);
+        void AddItemToFolder(int selectedItemId, int selectedFolderId);
+        ItemModel DeleteAllItemsFromFolder(int id);
     }
 }

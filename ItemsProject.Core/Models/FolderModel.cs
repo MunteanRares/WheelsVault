@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,18 @@ namespace ItemsProject.Core.Models
     public class FolderModel : MvxNotifyPropertyChanged
     {
         public int Id { get; set; }
+
+        public bool IsDefault { get; set; }
+
+        private bool _isChecked;
+        public bool IsChecked
+        {
+            get { return _isChecked; }
+            set
+            {
+                SetProperty(ref _isChecked, value);
+            }
+        }
 
         private string _name;
         public string Name

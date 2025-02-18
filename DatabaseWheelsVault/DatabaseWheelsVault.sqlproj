@@ -79,6 +79,9 @@
     <Build Include="dbo\Store Procedures\spItems_Remove.sql" />
     <Build Include="dbo\Store Procedures\spFolders_EditName.sql" />
     <Build Include="dbo\Store Procedures\spItems_EditItem.sql" />
+    <Build Include="dbo\Store Procedures\spFolders_GetAllFolderIdsForItem.sql" />
+    <Build Include="dbo\Store Procedures\spItems_AddToFolder.sql" />
+    <Build Include="dbo\Store Procedures\spItems_RemoveAllFromFolder.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DatabaseWheelsVault.refactorlog" />

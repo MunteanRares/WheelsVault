@@ -12,6 +12,8 @@ using ItemsProject.Core.Commands.General;
 using System.Diagnostics.Contracts;
 using ItemsProject.Core.Helper_Methods.String_Manipulation;
 using ItemsProject.Core.Commands.BaseViewModelCommands.Opening_Commands;
+using ItemsProject.Core.Commands.BaseViewModelCommands.Item_Commands;
+using DevExpress.Utils.Menu;
 
 
 namespace ItemsProject.Core.ViewModels
@@ -46,7 +48,7 @@ namespace ItemsProject.Core.ViewModels
 			OpenAddItemWindowCommand = new OpenAddItemWindow(_nav, () => SelectedFolder, ClearSearchText, SetWindowStateToFalse);
 			OpenAddFolderWindowCommand = new OpenAddFolderWindow(_nav, SetWindowStateToFalse);
 			OpenDeleteFolderConfirmationCommand = new OpenConfirmationWindow(_nav, DeleteFolderConfirmationMessage, "Confirm Deletion", "pack://application:,,,/Assets/Icons/question-mark.png", SetWindowStateToFalse);
-			OpenPopupCommand = new OpenPopupCommand(_dataService);
+			OpenPopupCommand = new OpenPopupCommand(_dataService, SetSelectedItemFolderIds, SetIsCheckedIfItemInFolder);
 
             // Folder Commands
             DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
@@ -60,9 +62,12 @@ namespace ItemsProject.Core.ViewModels
             CancelItemEditCommand = new CancelItemEdit(CancelItemEditing);		
 			SaveEditItemCommand = new SaveEditItem(_dataService, () => EditingItemName, () => EditingItemReleaseDate, () => EditingItemCollectionName, SaveItemEdit);
 			LoseItemFocusCommand = new CancelItemEditingCommand(_dataService);
+            ToggleItemInFolder = new ToggleItemInFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
+			DeleteAllItemsCommand = new DeleteAllItemsCommand(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
 
-			// Setting Default Values
-			SelectedSortOption = SortOptions[0];
+            // Setting Default Values
+            SelectedSortOption = SortOptions[0];
+			Folders[0].IsDefault = true;
         }
 
         /// <summary>
@@ -86,6 +91,9 @@ namespace ItemsProject.Core.ViewModels
 		public ICommand CancelItemEditCommand { get; }
 		public ICommand SaveEditItemCommand { get; }
 		public ICommand LoseItemFocusCommand { get; }
+        public ICommand ToggleItemInFolder { get; }
+		public ICommand DeleteAllItemsCommand { get; }
+		public ICommand OpenDeleteAllItemsFromFolderCommand { get; }
 
 
         /// <summary>
@@ -94,6 +102,7 @@ namespace ItemsProject.Core.ViewModels
         private void OnAddedItemMessage(AddedItemMessage addedItemMessage)
         {
             _allFolderItems.Add(addedItemMessage.NewItem);
+			//SelectedFolder.Items.Add(addedItemMessage.NewItem);
             FolderItems.Add(addedItemMessage.NewItem);
         }
 
@@ -136,6 +145,13 @@ namespace ItemsProject.Core.ViewModels
             output = $"Are you sure you want to delete the '{folderName}' folder?";
             return output;
         }
+
+		public string DeleteAllItemsConfirmationMessage(string itemName)
+		{
+			string output = string.Empty;
+			output = $"Are you sure you want to delete {itemName} from ALL folders?";
+			return output;
+		}
 
         public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
         {
@@ -241,6 +257,28 @@ namespace ItemsProject.Core.ViewModels
 			);
 		}
 
+		public void SetSelectedItemFolderIds(ItemModel passedItemModel)
+		{
+			List<int> folderIds = _dataService.GetFolderIdsForItem(passedItemModel.Id);
+			SelectedItem = passedItemModel;
+            SelectedItem.FolderIds = folderIds;
+        }
+
+		public void SetIsCheckedIfItemInFolder(ItemModel passedInItemModel)
+		{
+			foreach (FolderModel folder in Folders)
+			{
+				if (passedInItemModel.FolderIds.Contains(folder.Id))
+                {
+                    folder.IsChecked = true;
+                }
+				else
+				{
+					folder.IsChecked = false;
+                }
+            }
+		}
+
 		public void SaveItemEdit()
 		{
 			SelectedItem.ModelName = EditingItemName.Capitalize();
@@ -255,14 +293,25 @@ namespace ItemsProject.Core.ViewModels
         public bool IsFolderSelected => SelectedFolder != null;
 		public bool CanSaveItemEdit => !string.IsNullOrWhiteSpace(EditingItemName) && !string.IsNullOrWhiteSpace(EditingItemReleaseDate) && !string.IsNullOrWhiteSpace(EditingItemCollectionName);
 		public bool CanSaveFolderEdit => !string.IsNullOrWhiteSpace(EditingFolderName);
+		public bool IsFirstFolderSelected => SelectedFolder.Name == "All Cars";
 
 
         /// <summary>
 		///	BASE VIEWMODEL PROPERTIES
 		/// </summary>
         public ObservableCollection<ItemModel> FolderItems { get; private set; }
-        public ObservableCollection<FolderModel> Folders { get; private set; }
-		public ObservableCollection<string> SortOptions { get; private set; } = new ObservableCollection<string>
+       
+        private ObservableCollection<FolderModel> _folders;
+        public ObservableCollection<FolderModel> Folders
+        {
+            get { return _folders; }
+            set
+            {
+                SetProperty(ref _folders, value);
+            }
+        }
+
+        public ObservableCollection<string> SortOptions { get; private set; } = new ObservableCollection<string>
 		{
 			"Date Added",
 			"A-Z",
@@ -280,7 +329,7 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
-		private ItemModel _selectedItem;
+		private ItemModel? _selectedItem;
 		public ItemModel? SelectedItem
 		{
 			get { return _selectedItem; }
@@ -300,7 +349,7 @@ namespace ItemsProject.Core.ViewModels
 				RaisePropertyChanged(() => IsFolderSelected);
 				SelectedItem = null;
 				SelectedSortOption = SortOptions[0];
-				_allFolderItems =_dataService.LoadItemsForFolder(SelectedFolder);
+				_allFolderItems = _dataService.LoadItemsForFolder(SelectedFolder);
 				_searchResult = _dataService.FilterItems(SearchText, _allFolderItems);
                 FolderItems = _dataService.UpdateFolderItems(_searchResult, FolderItems);
             }

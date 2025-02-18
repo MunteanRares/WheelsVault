@@ -21,15 +21,19 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands.Item_Commands
             var values = (object[])parameter;
             FolderModel passedFolder = (FolderModel)values[0];
             ItemModel passedSelectedItem = (ItemModel)values[1];
+            FolderModel passedSelectedFolder = (FolderModel)values[2];
 
             if (passedSelectedItem.FolderIds.Contains(passedFolder.Id))
             {
                 _dataService.RemoveItemFromFolder(passedSelectedItem.Id, passedFolder.Id);
-                List<ItemModel> itemModels = _getAllFolderItems();
-                ItemModel itemToRemove = itemModels.Where(i => i.Id == passedSelectedItem.Id).FirstOrDefault();
-                itemModels.Remove(itemToRemove);
-
-                _updateFolderItems(itemModels);
+                if (passedFolder.Id == passedSelectedFolder.Id)
+                {
+                    List<ItemModel> itemModels = _getAllFolderItems();
+                    ItemModel itemToRemove = itemModels.Where(i => i.Id == passedSelectedItem.Id).FirstOrDefault();
+                    itemModels.Remove(itemToRemove);
+                    _updateFolderItems(itemModels);
+                }
+                
                 passedFolder.IsChecked = false;
                 passedSelectedItem.FolderIds.Remove(passedFolder.Id);
             }

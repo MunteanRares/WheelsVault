@@ -8,6 +8,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Icons\acutal.ico</ApplicationIcon>
     <AssemblyName>WheelsVault</AssemblyName>
+    <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

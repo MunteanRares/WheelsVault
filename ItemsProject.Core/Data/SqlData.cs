@@ -8,6 +8,7 @@ namespace ItemsProject.Core.Data
     {
         private readonly ISqlDataAccess _db;
         private readonly string connectionStringName = "SqlServerDB";
+
         public SqlData(ISqlDataAccess db)
         {
             _db = db;

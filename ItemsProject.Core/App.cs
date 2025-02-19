@@ -18,10 +18,21 @@ namespace ItemsProject.Core
                 .AddJsonFile("appsettings.json");
 
             IConfiguration configuration = builder.Build();
+            Mvx.IoCProvider.RegisterSingleton(configuration);
 
             // Interfaces + Implementations
-            Mvx.IoCProvider.RegisterType<ISqlDataAccess, SqlDataAccess>();
-            Mvx.IoCProvider.RegisterType<IDatabaseData, SqlData>();
+            string dbChoice = configuration.GetValue<string>("DatabaseChoice").ToLower();
+            if (dbChoice == "sqlite")
+            {
+                Mvx.IoCProvider.RegisterType<IDatabaseData, SqliteData>();
+            }
+            else if (dbChoice == "sqlserver")
+            {
+                Mvx.IoCProvider.RegisterType<IDatabaseData, SqlData>();
+            }
+
+            Mvx.IoCProvider.RegisterType<ISqliteDataAccess, SqliteDataAccess>();
+            Mvx.IoCProvider.RegisterType<ISqlDataAccess, SqlDataAccess>();            
             Mvx.IoCProvider.RegisterType<IDataService, DataService>();
             Mvx.IoCProvider.RegisterType<IFolderDataService, FolderDataService>();
             Mvx.IoCProvider.RegisterType<IMessageBoxDataService, MessageBoxDataService>();
@@ -34,7 +45,7 @@ namespace ItemsProject.Core
             Mvx.IoCProvider.RegisterType<AddItemViewModel>();
 
             // Config
-            Mvx.IoCProvider.RegisterSingleton(configuration);
+           
 
             RegisterAppStart<BaseViewModel>();
         }

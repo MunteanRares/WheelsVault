@@ -331,7 +331,7 @@
                   Margin="6 0 0 2"
                   SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                   VerticalAlignment="Center"
-                  TextElement.Foreground="{TemplateBinding Foreground}">
+                  TextElement.Foreground="#09203F">
                     <ContentPresenter.Resources>
                         <Style TargetType="{x:Type TextBlock}" BasedOn="{x:Null}" />
                     </ContentPresenter.Resources>

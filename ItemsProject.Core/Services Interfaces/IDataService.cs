@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using ItemsProject.Core.Messages;
 using ItemsProject.Core.Models;
+using WikiHotWheelsWebScraper.Models;
 
 
 namespace ItemsProject.Core.Services
@@ -22,5 +23,6 @@ namespace ItemsProject.Core.Services
         List<int> GetFolderIdsForItem(int selectedItemId);
         void AddItemToFolder(int selectedItemId, int selectedFolderId);
         ItemModel DeleteAllItemsFromFolder(int id);
+        ObservableCollection<HotWheelsModel> SearchHotWheels(string searchhwText);
     }
 }

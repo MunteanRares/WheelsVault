@@ -7,4 +7,32 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="folderId" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="e9c30cd8-fb84-4373-967a-87aa77869c76" ChangeDateTime="02/24/2025 15:18:09">
+    <Property Name="ElementName" Value="[dbo].[HotwheelsCars].[ToyId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[HotwheelsCars]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="toyNum" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="5c0546b5-5a0c-49ed-9323-ecc22cc21d82" ChangeDateTime="02/24/2025 15:18:37">
+    <Property Name="ElementName" Value="[dbo].[HotwheelsCars].[photoUrk]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[HotwheelsCars]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="photoUrl" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="32d078c5-85b8-4a1f-b0c2-18b389d9a813" ChangeDateTime="02/24/2025 15:19:10">
+    <Property Name="ElementName" Value="[dbo].[HotwheelsCars].[is]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[HotwheelsCars]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="isDefaultPopulated" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="bf46d87f-90e1-43e8-8682-338da1f3c859" ChangeDateTime="02/24/2025 16:03:15">
+    <Property Name="ElementName" Value="[dbo].[HotwheelsCars].[isDefaultPopulated]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[HotwheelsCars]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="isDefaultPopulatd" />
+  </Operation>
 </Operations>

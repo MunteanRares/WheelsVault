@@ -12,21 +12,26 @@ using ItemsProject.Core.Commands.General;
 using ItemsProject.Core.Helper_Methods.String_Manipulation;
 using ItemsProject.Core.Commands.BaseViewModelCommands.Opening_Commands;
 using ItemsProject.Core.Commands.BaseViewModelCommands.Item_Commands;
-
+using WikiHotWheelsWebScraper.Models;
+using Timer = System.Timers.Timer;
+using static System.Net.Mime.MediaTypeNames;
+using System.Runtime.CompilerServices;
 
 namespace ItemsProject.Core.ViewModels
 {
-    public class BaseViewModel : MvxViewModel
-    {
+	public class BaseViewModel : MvxViewModel
+	{
 		private readonly IDatabaseData _db;
 		private readonly IMvxNavigationService _nav;
 		private readonly IDataService _dataService;
 		private readonly List<MvxSubscriptionToken> _tokens = new List<MvxSubscriptionToken>();
 
 		private List<ItemModel> _allFolderItems = new List<ItemModel>();
-        private List<ItemModel> _searchResult = new List<ItemModel>();
+		private List<ItemModel> _searchResult = new List<ItemModel>();
+		private Timer _debounceTimer;
+		private SynchronizationContext _uiContext;
 
-		public BaseViewModel(IMvxNavigationService nav, IDatabaseData db, IDataService dataService, IMvxMessenger messenger)
+        public BaseViewModel(IMvxNavigationService nav, IDatabaseData db, IDataService dataService, IMvxMessenger messenger)
 		{
 			_db = db;
 			_dataService = dataService;
@@ -48,151 +53,169 @@ namespace ItemsProject.Core.ViewModels
 			OpenDeleteFolderConfirmationCommand = new OpenConfirmationWindow(_nav, DeleteFolderConfirmationMessage, "Confirm Deletion", "pack://application:,,,/Assets/Icons/question-mark.png", SetWindowStateToFalse);
 			OpenPopupCommand = new OpenPopupCommand(_dataService, SetSelectedItemFolderIds, SetIsCheckedIfItemInFolder);
 
-            // Folder Commands
-            DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
-            EditModeFoldersCommand = new EditModeFolders(ChangeFolderEditMode);
-            CancelFolderEditCommand = new CancelFolderEdit(CancelFolderEditing);
-            SaveEditFolderCommand = new SaveEditFolder(_dataService, () => EditingFolderName, SaveFolderEdit);
+			// Folder Commands
+			DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
+			EditModeFoldersCommand = new EditModeFolders(ChangeFolderEditMode);
+			CancelFolderEditCommand = new CancelFolderEdit(CancelFolderEditing);
+			SaveEditFolderCommand = new SaveEditFolder(_dataService, () => EditingFolderName, SaveFolderEdit);
 
 			// Item Commands
-            DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems, () => SelectedFolder);
-            EditModeItemCommand = new EditItemFromFolder(EditModeItems);
-            CancelItemEditCommand = new CancelItemEdit(CancelItemEditing);		
+			DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems, () => SelectedFolder);
+			EditModeItemCommand = new EditItemFromFolder(EditModeItems);
+			CancelItemEditCommand = new CancelItemEdit(CancelItemEditing);
 			SaveEditItemCommand = new SaveEditItem(_dataService, () => EditingItemName, () => EditingItemReleaseDate, () => EditingItemCollectionName, SaveItemEdit);
 			LoseItemFocusCommand = new CancelItemEditingCommand(_dataService);
-            ToggleItemInFolder = new ToggleItemInFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
+			ToggleItemInFolder = new ToggleItemInFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
 			DeleteAllItemsCommand = new DeleteAllItemsCommand(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
 
-            // Setting Default Values
-            SelectedSortOption = SortOptions[0];
+			// Setting Default Values
+			SelectedSortOption = SortOptions[0];
 			Folders[0].IsDefault = true;
-        }
+            _uiContext = SynchronizationContext.Current;
+            _debounceTimer = new Timer(1000);
+			_debounceTimer.Elapsed += (sender, e) => DebounceTimer_Tick();
+			_debounceTimer.AutoReset = false;
+		}
 
-        /// <summary>
+		/// <summary>
 		/// COLLECTION OF COMMAND DECLARATION
 		/// </summary>
 		// Opening Commands
-        public ICommand OpenAddItemWindowCommand { get; }
+		public ICommand OpenAddItemWindowCommand { get; }
 		public ICommand OpenAddFolderWindowCommand { get; }
-        public ICommand OpenDeleteFolderConfirmationCommand { get; }
-        public ICommand OpenPopupCommand { get; }
+		public ICommand OpenDeleteFolderConfirmationCommand { get; }
+		public ICommand OpenPopupCommand { get; }
 
-        // Folder Commands
-        public ICommand DeleteFolderCommand { get; }
+		// Folder Commands
+		public ICommand DeleteFolderCommand { get; }
 		public ICommand EditModeFoldersCommand { get; }
-        public ICommand CancelFolderEditCommand { get; }
-        public ICommand SaveEditFolderCommand { get; }
+		public ICommand CancelFolderEditCommand { get; }
+		public ICommand SaveEditFolderCommand { get; }
 
-        // Item Commands
-        public ICommand DeleteItemFromFolderCommand { get; }
-        public ICommand EditModeItemCommand { get; }        
+		// Item Commands
+		public ICommand DeleteItemFromFolderCommand { get; }
+		public ICommand EditModeItemCommand { get; }
 		public ICommand CancelItemEditCommand { get; }
 		public ICommand SaveEditItemCommand { get; }
 		public ICommand LoseItemFocusCommand { get; }
-        public ICommand ToggleItemInFolder { get; }
+		public ICommand ToggleItemInFolder { get; }
 		public ICommand DeleteAllItemsCommand { get; }
 		public ICommand OpenDeleteAllItemsFromFolderCommand { get; }
 
 
-        /// <summary>
+		/// <summary>
 		///	FUNCTIONS THAT CALL WHENEVER THIS VIEWMODEL GETS MESSAGES
 		/// </summary>
-        private void OnAddedItemMessage(AddedItemMessage addedItemMessage)
-        {
-            _allFolderItems.Add(addedItemMessage.NewItem);
-            FolderItems.Add(addedItemMessage.NewItem);
-        }
+		/// 
+		private void DebounceTimer_Tick()
+		{
+			_debounceTimer.Stop();
+			if (SearchhwText != "Add HotWheels..." && SearchhwText.Length > 2)
+			{
+                SearchhwResult = _dataService.SearchHotWheels(SearchhwText);
+            }
+			if ((SearchhwText.Length < 3 || string.IsNullOrWhiteSpace(SearchhwText) || SearchhwText == "Add HotWheels...") && SearchhwResult != null)
+			{
+				_uiContext.Send(x => SearchhwResult.Clear(), null);
+            }
+		}
 
-        private void OnAddedFolderMessage(AddedFolderMessage addedFolderMessage)
-        {
-            Folders.Add(addedFolderMessage.NewFolder);
-        }
+		private void OnAddedItemMessage(AddedItemMessage addedItemMessage)
+		{
+			_allFolderItems.Add(addedItemMessage.NewItem);
+			FolderItems.Add(addedItemMessage.NewItem);
+		}
 
-        private void OnRemoveFolderMessage(CanRemoveFolderMessage message)
-        {
+		private void OnAddedFolderMessage(AddedFolderMessage addedFolderMessage)
+		{
+			Folders.Add(addedFolderMessage.NewFolder);
+		}
+
+		private void OnRemoveFolderMessage(CanRemoveFolderMessage message)
+		{
 			_dataService.ExecuteDeleteFolderCommand(message, DeleteFolderCommand);
-        }
+		}
 
 		private void OnChangeWindowStateMessage(ChangeWindowStateMessage changeWindowStateMessage)
 		{
 			IsWindowEnabled = changeWindowStateMessage.ChangeWindowState;
 		}
 
-        /// <summary>
+		/// <summary>
 		/// GENERAL HELPER FUNCTIONS
 		/// </summary>
-        private void UnsubscribeMessages()
-        {
-            foreach (MvxSubscriptionToken token in _tokens)
-            {
-                token.Dispose();
-            }
+		private void UnsubscribeMessages()
+		{
+			foreach (MvxSubscriptionToken token in _tokens)
+			{
+				token.Dispose();
+			}
 
-            _tokens.Clear();
-        }
+			_tokens.Clear();
+		}
 
-        public void ClearSearchText()
-        {
-            SearchText = string.Empty;
-        }
+		public void ClearSearchText()
+		{
+			SearchText = string.Empty;
+		}
 
-        public string DeleteFolderConfirmationMessage(string folderName)
-        {
-            string output = string.Empty;
-            output = $"Are you sure you want to delete the '{folderName}' folder?";
-            return output;
-        }
+		public string DeleteFolderConfirmationMessage(string folderName)
+		{
+			string output = string.Empty;
+			output = $"Are you sure you want to delete the '{folderName}' folder?";
+			return output;
+		}
 
-        public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
-        {
-            _allFolderItems = updatedItems;
-            FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
-        }
+		public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
+		{
+			_allFolderItems = updatedItems;
+			FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
+		}
 
-        public void ExecuteFolderRemoved(List<FolderModel> updatedFolders)
-        {
-            Folders = _dataService.UpdateFolders(updatedFolders, Folders);
-        }
+		public void ExecuteFolderRemoved(List<FolderModel> updatedFolders)
+		{
+			Folders = _dataService.UpdateFolders(updatedFolders, Folders);
+		}
 
-        public void SetWindowStateToFalse()
-        {
-            IsWindowEnabled = false;
-        }
+		public void SetWindowStateToFalse()
+		{
+			IsWindowEnabled = false;
+		}
 
-        public void ChangeEditMode<T>(T passedModel, bool isEditing, Action<T> setEditAction, Action<T, bool> setEditingFlag)
-        {
-            if (isEditing)
-            {
-                setEditAction(passedModel);
-            }
+		public void ChangeEditMode<T>(T passedModel, bool isEditing, Action<T> setEditAction, Action<T, bool> setEditingFlag)
+		{
+			if (isEditing)
+			{
+				setEditAction(passedModel);
+			}
 
-            setEditingFlag(passedModel, isEditing);
-        }
+			setEditingFlag(passedModel, isEditing);
+		}
 
-        public void CancelEdit<T>(T model, Action<T> revertEditAction, Action<bool> setEditingFlag)
-        {
-            revertEditAction(model);
-            setEditingFlag(false);
-        }
+		public void CancelEdit<T>(T model, Action<T> revertEditAction, Action<bool> setEditingFlag)
+		{
+			revertEditAction(model);
+			setEditingFlag(false);
+		}
 
-        // FUNCTIONS - FOLDER EDITING
+		// FUNCTIONS - FOLDER EDITING
 		public void ChangeFolderEditMode(FolderModel passedFolder, bool isEditing)
 		{
 			ChangeEditMode<FolderModel>(
 				passedFolder,
 				isEditing,
-				model => 
-				{ 
-					EditingFolderName = model.Name; 
-				}, 
-				(model, isEditing) => 
+				model =>
+				{
+					EditingFolderName = model.Name;
+				},
+				(model, isEditing) =>
 				{
 					SelectedFolder = model;
 					model.IsEditing = isEditing;
 				});
 		}
 
-        public void CancelFolderEditing(FolderModel passedFolderModel)
+		public void CancelFolderEditing(FolderModel passedFolderModel)
 		{
 			CancelEdit<FolderModel>(
 				passedFolderModel,
@@ -215,20 +238,20 @@ namespace ItemsProject.Core.ViewModels
 		// FUNCTIONS - ITEM EDITING
 		public void EditModeItems(ItemModel selectedItem, bool value)
 		{
-            if (value)
-            {
+			if (value)
+			{
 				BeginItemEdit(selectedItem);
-            }
+			}
 			SelectedItem = selectedItem;
 			selectedItem.IsEditing = value;
-        }
+		}
 
 		public void BeginItemEdit(ItemModel selectedItem)
 		{
 			EditingItemName = selectedItem.ModelName;
-            EditingItemReleaseDate = selectedItem.ModelReleaseDate;
-            EditingItemCollectionName = selectedItem.CollectionName;
-        }
+			EditingItemReleaseDate = selectedItem.ModelReleaseDate;
+			EditingItemCollectionName = selectedItem.CollectionName;
+		}
 
 		public void CancelItemEditing(ItemModel passedItemModel)
 		{
@@ -251,22 +274,22 @@ namespace ItemsProject.Core.ViewModels
 		{
 			List<int> folderIds = _dataService.GetFolderIdsForItem(passedItemModel.Id);
 			SelectedItem = passedItemModel;
-            SelectedItem.FolderIds = folderIds;
-        }
+			SelectedItem.FolderIds = folderIds;
+		}
 
 		public void SetIsCheckedIfItemInFolder(ItemModel passedItemModel)
 		{
 			foreach (FolderModel folder in Folders)
 			{
 				if (passedItemModel.FolderIds.Contains(folder.Id))
-                {
-                    folder.IsChecked = true;
-                }
+				{
+					folder.IsChecked = true;
+				}
 				else
 				{
 					folder.IsChecked = false;
-                }
-            }
+				}
+			}
 		}
 
 		public void SaveItemEdit()
@@ -277,31 +300,31 @@ namespace ItemsProject.Core.ViewModels
 			SelectedItem.IsEditing = false;
 		}
 
-        /// <summary>
+		/// <summary>
 		/// LIST OF VALIDATION FUNCTIONS THAT CHANGE HOW THE UI RESPONDS
 		/// </summary>
-        public bool IsFolderSelected => SelectedFolder != null;
+		public bool IsFolderSelected => SelectedFolder != null;
 		public bool CanSaveItemEdit => !string.IsNullOrWhiteSpace(EditingItemName) && !string.IsNullOrWhiteSpace(EditingItemReleaseDate) && !string.IsNullOrWhiteSpace(EditingItemCollectionName);
 		public bool CanSaveFolderEdit => !string.IsNullOrWhiteSpace(EditingFolderName);
 		public bool IsFirstFolderSelected => SelectedFolder.Name == "All Cars";
 
 
-        /// <summary>
+		/// <summary>
 		///	BASE VIEWMODEL PROPERTIES
 		/// </summary>
-        public ObservableCollection<ItemModel> FolderItems { get; private set; }
-       
-        private ObservableCollection<FolderModel> _folders;
-        public ObservableCollection<FolderModel> Folders
-        {
-            get { return _folders; }
-            set
-            {
-                SetProperty(ref _folders, value);
-            }
-        }
+		public ObservableCollection<ItemModel> FolderItems { get; private set; }
 
-        public ObservableCollection<string> SortOptions { get; private set; } = new ObservableCollection<string>
+		private ObservableCollection<FolderModel> _folders;
+		public ObservableCollection<FolderModel> Folders
+		{
+			get { return _folders; }
+			set
+			{
+				SetProperty(ref _folders, value);
+			}
+		}
+
+		public ObservableCollection<string> SortOptions { get; private set; } = new ObservableCollection<string>
 		{
 			"Date Added",
 			"A-Z",
@@ -312,12 +335,24 @@ namespace ItemsProject.Core.ViewModels
 		public string SelectedSortOption
 		{
 			get { return _selectedSortOption; }
-			set 
-			{ 
-				SetProperty(ref _selectedSortOption, value );
+			set
+			{
+				SetProperty(ref _selectedSortOption, value);
 				FolderItems = _dataService.SortItems(SelectedSortOption, _allFolderItems, FolderItems);
 			}
 		}
+
+		private ObservableCollection<HotWheelsModel> _searchhwResult;
+
+		public ObservableCollection<HotWheelsModel> SearchhwResult
+		{
+			get { return _searchhwResult; }
+			set
+			{ 
+				SetProperty(ref _searchhwResult, value);
+            }
+		}
+
 
 		private ItemModel? _selectedItem;
 		public ItemModel? SelectedItem
@@ -328,6 +363,20 @@ namespace ItemsProject.Core.ViewModels
 				SetProperty(ref _selectedItem, value);
 			}
 		}
+
+		private string _searchhwText = "Add HotWheels...";
+
+		public string SearchhwText
+        {
+			get { return _searchhwText; }
+			set 
+			{ 
+				SetProperty(ref _searchhwText, value);
+				_debounceTimer.Stop();
+				_debounceTimer.Start();
+            }
+		}
+
 
 		private FolderModel _selectedFolder;
 		public FolderModel SelectedFolder
@@ -415,9 +464,9 @@ namespace ItemsProject.Core.ViewModels
 
 		// WHEN CLOSING APP
 		public override void ViewDestroy(bool viewFinishing = true)
-        {
-            base.ViewDestroy(viewFinishing);
-            UnsubscribeMessages();
-        }
+		{
+			base.ViewDestroy(viewFinishing);
+			UnsubscribeMessages();
+		}
     }
 }

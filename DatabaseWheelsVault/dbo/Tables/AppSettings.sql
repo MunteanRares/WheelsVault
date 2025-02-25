@@ -1,0 +1,5 @@
+﻿CREATE TABLE [dbo].[AppSettings]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [isDbPopulated] BIT NOT NULL DEFAULT 0
+)

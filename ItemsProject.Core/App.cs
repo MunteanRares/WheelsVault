@@ -6,18 +6,20 @@ using Microsoft.Extensions.Configuration;
 using MvvmCross;
 using MvvmCross.IoC;
 using MvvmCross.ViewModels;
+using WikiHotWheelsWebScraper.Services;
 
 namespace ItemsProject.Core
 {
     public class App : MvxApplication
     {
-        public override void Initialize()
+        public override async void Initialize()
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json");
 
             IConfiguration configuration = builder.Build();
+            
             Mvx.IoCProvider.RegisterSingleton(configuration);
 
             // Interfaces + Implementations
@@ -29,23 +31,25 @@ namespace ItemsProject.Core
             else if (dbChoice == "sqlserver")
             {
                 Mvx.IoCProvider.RegisterType<IDatabaseData, SqlData>();
+                
             }
 
+            Mvx.IoCProvider.RegisterType<ISqlDataAccess, SqlDataAccess>();
             Mvx.IoCProvider.RegisterType<ISqliteDataAccess, SqliteDataAccess>();
-            Mvx.IoCProvider.RegisterType<ISqlDataAccess, SqlDataAccess>();            
+            Mvx.IoCProvider.RegisterType<IScrapeHotWheelsWiki, ScrapeHotWheelsWiki>();
+            Mvx.IoCProvider.Resolve<IDatabaseData>().DefaultHotwheelsDbPopulation();
+            
             Mvx.IoCProvider.RegisterType<IDataService, DataService>();
             Mvx.IoCProvider.RegisterType<IFolderDataService, FolderDataService>();
             Mvx.IoCProvider.RegisterType<IMessageBoxDataService, MessageBoxDataService>();
             Mvx.IoCProvider.RegisterType<IItemDataService, ItemDataService>();
+           
 
             // ViewModels
             Mvx.IoCProvider.RegisterType<BaseViewModel>();
             Mvx.IoCProvider.RegisterType<AddFolderViewModel>();
             Mvx.IoCProvider.RegisterType<CustomMessageBoxViewModel>();
             Mvx.IoCProvider.RegisterType<AddItemViewModel>();
-
-            // Config
-           
 
             RegisterAppStart<BaseViewModel>();
         }

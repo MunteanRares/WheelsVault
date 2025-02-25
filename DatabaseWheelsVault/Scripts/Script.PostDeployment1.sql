@@ -15,3 +15,9 @@ begin
     insert into Folders (name, isDefault)
     values ('All Cars', 1)
 end
+
+if not exists(select 1 from Appsettings)
+begin
+    insert into AppSettings(isDbPopulated)
+    values(0)
+end

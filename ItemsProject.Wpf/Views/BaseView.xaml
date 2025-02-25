@@ -314,7 +314,7 @@
             </Grid.ColumnDefinitions>
 
             <Button MinHeight="40" FontSize="20" Margin="0 30 0 0" mvx:Bi.nd="Command OpenAddFolderWindowCommand">
-                <TextBlock Foreground="#09203F" Text="+Add Folder">
+                <TextBlock Foreground="#09203F" Text="+ Add Folder">
                 </TextBlock>
             </Button>
 
@@ -530,7 +530,7 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2.1*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Row="0" Grid.Column="0" Margin="15 0 0 0" Orientation="Horizontal">
@@ -586,18 +586,139 @@
                 </StackPanel>
             </StackPanel>
 
-
-            <Button 
-                FontSize="20"
+            <StackPanel 
                 Grid.Column="2"
-                IsEnabled="{Binding IsFolderSelected}"
-                Width="160"
-                HorizontalAlignment="Right"
-                Margin="0 0 25 0"
-                mvx:Bi.nd="Command OpenAddItemWindowCommand">
-                <TextBlock Foreground="#09203F" Text="+Add Item">
-                </TextBlock>
-            </Button>
+                Orientation="Horizontal"
+                HorizontalAlignment="Right">
+                <TextBox 
+                    x:Name="hotwheelsAddTextBox"                    
+                    FontSize="20"
+                    Background="#fff"
+                    Width="300"
+                    Text="{Binding SearchhwText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Height="30"
+                    TextAlignment="Left"
+                    Foreground="Gray"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    HorizontalAlignment="Right"
+                    LostFocus="hotwheelsAddTextBox_LostFocus"
+                    GotFocus="hotwheelsAddTextBox_GotFocus"
+                    Margin="0 0 40 0"
+                    PreviewKeyDown="hotwheelsAddTextBox_PreviewKeyDown">
+                </TextBox>
+
+                <Popup
+                    IsOpen="True"
+                    StaysOpen="True"
+                    Placement="Bottom"
+                    PopupAnimation="Fade"
+                    HorizontalOffset="-400"
+                    PlacementTarget="{Binding ElementName=hotwheelsAddTextBox}"
+                    Width="700">
+                    <ListBox
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                            ItemsSource="{Binding SearchhwResult}"
+                            MaxHeight="400"
+                            ScrollViewer.VerticalScrollBarVisibility="Visible">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Margin" Value="0 0 0 8"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid
+                                    x:Name="mainItemGrid"
+                                    Height="100"
+                                    Width="700">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Image
+                                        Grid.Column="0"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ToolTipService.InitialShowDelay="0"
+                                        Source="{Binding PhotoURL}">
+                                        <Image.ToolTip>
+                                            <ToolTip
+                                                Placement="Left">
+                                                <Image Source="{Binding PhotoURL}" Width="350"/>
+                                            </ToolTip>
+                                        </Image.ToolTip>
+                                    </Image>
+
+                                    <TextBlock
+                                        Margin="10 0 0 0"
+                                        Foreground="#09203F"
+                                        FontSize="18"
+                                        VerticalAlignment="Center"
+                                        TextWrapping="Wrap"
+                                        Grid.Column="1"
+                                        Text="{Binding ModelName}"
+                                        HorizontalAlignment="left">
+                                    </TextBlock>
+
+                                    <Grid
+                                        Height="{Binding Path=ActualHeight, ElementName=mainItemGrid}"
+                                        Grid.Column="2">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock
+                                            Grid.Row="0"
+                                            FontSize="16"
+                                            Text="Prod. Year"
+                                            Foreground="#9009203F"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Top">
+                                        </TextBlock>
+                                        
+                                        <TextBlock
+                                            Grid.Row="1"
+                                            Margin="0 0 0 10"
+                                            Foreground="#09203F"
+                                            FontSize="18"
+                                            VerticalAlignment="Center"
+                                            TextWrapping="Wrap"
+                                            Text="{Binding YearProduced}"
+                                            HorizontalAlignment="Center">
+                                        </TextBlock>
+                                    </Grid>
+                                    
+                                    <Border
+                                        Grid.ColumnSpan="3"
+                                        Grid.Column="0"
+                                        Margin="0 3 0 0"
+                                        BorderThickness="0 0 0 2"
+                                        BorderBrush="#09203F">
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Popup>
+
+                <Button 
+                    FontSize="20"
+    
+                    IsEnabled="{Binding IsFolderSelected}"
+                    Width="160"
+                    HorizontalAlignment="Right"
+                    Margin="0 0 25 0"
+                    mvx:Bi.nd="Command OpenAddItemWindowCommand">
+                    <TextBlock Foreground="#09203F" Text="+ Custom Item">
+                    </TextBlock>
+                </Button>
+            </StackPanel>
+
+            
 
             <ListView Grid.Row="2"
                       Grid.Column="0"

@@ -1,9 +1,9 @@
-﻿using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using DevExpress.Data.Async.Helpers;
 using ItemsProject.Core.Messages;
 using ItemsProject.Core.ViewModels;
@@ -11,6 +11,7 @@ using ItemsProject.Wpf.Helper_Functions;
 using MvvmCross;
 using MvvmCross.Platforms.Wpf.Views;
 using MvvmCross.Plugin.Messenger;
+
 
 
 namespace ItemsProject.Wpf.Views
@@ -73,6 +74,36 @@ namespace ItemsProject.Wpf.Views
             [
                 new CustomPopupPlacement(placementPoint, PopupPrimaryAxis.Vertical)
             ];
+        }
+
+        private void hotwheelsAddTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (hotwheelsAddTextBox.Text == "Add HotWheels...")
+            {
+                hotwheelsAddTextBox.Text = "";
+                hotwheelsAddTextBox.Foreground = Brushes.Black;
+            }
+        }
+
+        private void hotwheelsAddTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            hotwheelsAddTextBox.Clear();
+
+            if (string.IsNullOrEmpty(hotwheelsAddTextBox.Text))
+            {
+                hotwheelsAddTextBox.Text = "Add HotWheels...";
+                hotwheelsAddTextBox.Foreground = Brushes.Gray;
+            }
+        }
+
+        private void hotwheelsAddTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                FocusManager.SetFocusedElement(FocusManager.GetFocusScope(hotwheelsAddTextBox), null);
+                Keyboard.ClearFocus();
+                e.Handled = true;
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using ItemsProject.Core.Databases;
 using ItemsProject.Core.Helper_Methods.String_Manipulation;
 using ItemsProject.Core.Models;
-using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
+using WikiHotWheelsWebScraper.Models;
 
 namespace ItemsProject.Core.Data
 {
@@ -156,6 +156,16 @@ namespace ItemsProject.Core.Data
         {
             string sqlStatement = "select * from Folders where Folders.Id = @folderId";
             _db.SaveData(sqlStatement, new { folderId }, connectionStringName);
+        }
+
+        public List<HotWheelsModel> SearchHotWheels(string searchhwText)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IDatabaseData.DefaultHotwheelsDbPopulation()
+        {
+            throw new NotImplementedException();
         }
     }
 }

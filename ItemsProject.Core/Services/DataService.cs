@@ -7,6 +7,7 @@ using ItemsProject.Core.ViewModels;
 using MvvmCross;
 using MvvmCross.Navigation;
 using MvvmCross.Plugin.Messenger;
+using WikiHotWheelsWebScraper.Models;
 
 
 namespace ItemsProject.Core.Services
@@ -160,6 +161,12 @@ namespace ItemsProject.Core.Services
             ItemModel itemToRemove = _db.GetItemById(itemId);
             _db.DeleteAllItemsFromFolder(itemId);
             return itemToRemove;
+        }
+
+        public ObservableCollection<HotWheelsModel> SearchHotWheels(string searchhwText)
+        {
+            ObservableCollection<HotWheelsModel> searchResult = new ObservableCollection<HotWheelsModel>(_db.SearchHotWheels(searchhwText));
+            return searchResult;
         }
     }
 }

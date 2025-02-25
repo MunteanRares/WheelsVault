@@ -1,17 +1,85 @@
 ﻿using ItemsProject.Core.Databases;
 using ItemsProject.Core.Helper_Methods.String_Manipulation;
 using ItemsProject.Core.Models;
+using WikiHotWheelsWebScraper.Models;
+using WikiHotWheelsWebScraper.Services;
 
 namespace ItemsProject.Core.Data
 {
     public class SqlData : IDatabaseData
     {
         private readonly ISqlDataAccess _db;
+        private readonly IScrapeHotWheelsWiki _scrapeService;
         private readonly string connectionStringName = "SqlServerDB";
 
-        public SqlData(ISqlDataAccess db)
+        public SqlData(ISqlDataAccess db, IScrapeHotWheelsWiki scrapeService)
         {
             _db = db;
+            _scrapeService = scrapeService;
+        }
+
+        public async void DefaultHotwheelsDbPopulation()
+        {
+            int isDbPopulated = IsDbPopulated();
+            await _scrapeService.InitializeAsync();
+            if (isDbPopulated == 0)
+            {
+                List<int> availableYears = _scrapeService.GetAllAvailableYears();
+                for (int year = 1980; year <= availableYears.Last(); year++)
+                {
+                    List<HotWheelsModel> hotWheelsModels = await _scrapeService.DefaultDataBasePopulation(year);
+                    foreach (HotWheelsModel car in hotWheelsModels)
+                    {
+                        _db.SaveData("dbo.spHotwheelsCars_InsertCar",
+                                     new
+                                     {
+                                         modelName = car.ModelName,
+                                         seriesName = car.SeriesName,
+                                         seriesNum = car.SeriesNum,
+                                         photoUrl = car.PhotoURL,
+                                         yearProduced = car.YearProduced,
+                                         yearProducedNum = car.YearProducedNum,
+                                         toyNum = car.ToyNum
+                                     },
+                                     connectionStringName,
+                                     true);
+                    }
+                }
+
+                SetDbToPopulated();
+            }
+            else
+            {
+                List<int> availableYears = _scrapeService.GetAllAvailableYears();
+                List<HotWheelsModel> hotWheelsModels = await _scrapeService.DefaultDataBasePopulation(availableYears.Last());
+                foreach (HotWheelsModel car in hotWheelsModels)
+                {
+                    _db.SaveData("dbo.spHotwheelsCars_UpdateCurrentYear",
+                                 new
+                                 {
+                                     modelName = car.ModelName,
+                                     seriesName = car.SeriesName,
+                                     seriesNum = car.SeriesNum,
+                                     photoUrl = car.PhotoURL,
+                                     yearProduced = car.YearProduced,
+                                     yearProducedNum = car.YearProducedNum,
+                                     toyNum = car.ToyNum
+                                 },
+                                 connectionStringName,
+                                 true);
+                }
+            }
+        }
+
+        public int IsDbPopulated()
+        {
+            int output = _db.LoadData<int, dynamic>("dbo.spAppSettings_IsDbPopulated", new { }, connectionStringName, true).First();
+            return output;
+        }
+
+        public void SetDbToPopulated()
+        {
+            _db.SaveData("dbo.spAppSettings_SetDbToPopulated", new { }, connectionStringName, true);
         }
 
         public List<ItemModel> GetAllItems()
@@ -92,6 +160,12 @@ namespace ItemsProject.Core.Data
         public void DeleteAllItemsFromFolder(int itemId)
         {
             _db.SaveData("dbo.spItems_RemoveAllFromFolder", new { itemId }, connectionStringName, true);
+        }
+
+        public List<HotWheelsModel> SearchHotWheels(string searchhwText)
+        {
+            List<HotWheelsModel> searchResult = _db.LoadData<HotWheelsModel, dynamic>("dbo.spHotwheelsCars_FindCarByText", new { searchhwText }, connectionStringName, true);
+            return searchResult;
         }
     }
 }

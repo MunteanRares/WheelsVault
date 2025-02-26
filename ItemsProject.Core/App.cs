@@ -19,7 +19,7 @@ namespace ItemsProject.Core
                 .AddJsonFile("appsettings.json");
 
             IConfiguration configuration = builder.Build();
-            
+
             Mvx.IoCProvider.RegisterSingleton(configuration);
 
             // Interfaces + Implementations
@@ -31,19 +31,23 @@ namespace ItemsProject.Core
             else if (dbChoice == "sqlserver")
             {
                 Mvx.IoCProvider.RegisterType<IDatabaseData, SqlData>();
-                
+
             }
 
             Mvx.IoCProvider.RegisterType<ISqlDataAccess, SqlDataAccess>();
             Mvx.IoCProvider.RegisterType<ISqliteDataAccess, SqliteDataAccess>();
             Mvx.IoCProvider.RegisterType<IScrapeHotWheelsWiki, ScrapeHotWheelsWiki>();
-            Mvx.IoCProvider.Resolve<IDatabaseData>().DefaultHotwheelsDbPopulation();
-            
+            if (Mvx.IoCProvider.CanResolve<IDatabaseData>())
+            {
+                Mvx.IoCProvider.Resolve<IDatabaseData>()?.DefaultHotwheelsDbPopulation();
+            }
+
+
             Mvx.IoCProvider.RegisterType<IDataService, DataService>();
             Mvx.IoCProvider.RegisterType<IFolderDataService, FolderDataService>();
             Mvx.IoCProvider.RegisterType<IMessageBoxDataService, MessageBoxDataService>();
             Mvx.IoCProvider.RegisterType<IItemDataService, ItemDataService>();
-           
+
 
             // ViewModels
             Mvx.IoCProvider.RegisterType<BaseViewModel>();

@@ -14,8 +14,7 @@ using ItemsProject.Core.Commands.BaseViewModelCommands.Opening_Commands;
 using ItemsProject.Core.Commands.BaseViewModelCommands.Item_Commands;
 using WikiHotWheelsWebScraper.Models;
 using Timer = System.Timers.Timer;
-using static System.Net.Mime.MediaTypeNames;
-using System.Runtime.CompilerServices;
+
 
 namespace ItemsProject.Core.ViewModels
 {
@@ -29,7 +28,7 @@ namespace ItemsProject.Core.ViewModels
 		private List<ItemModel> _allFolderItems = new List<ItemModel>();
 		private List<ItemModel> _searchResult = new List<ItemModel>();
 		private Timer _debounceTimer;
-		private SynchronizationContext _uiContext;
+		private SynchronizationContext? _uiContext;
 
         public BaseViewModel(IMvxNavigationService nav, IDatabaseData db, IDataService dataService, IMvxMessenger messenger)
 		{
@@ -68,8 +67,11 @@ namespace ItemsProject.Core.ViewModels
 			ToggleItemInFolder = new ToggleItemInFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
 			DeleteAllItemsCommand = new DeleteAllItemsCommand(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
 
-			// Setting Default Values
-			SelectedSortOption = SortOptions[0];
+			// HotWheels Commands
+			AddHotWheelsCommand = new AddHotWheelsCommand(_dataService);
+
+            // Setting Default Values
+            SelectedSortOption = SortOptions[0];
 			Folders[0].IsDefault = true;
             _uiContext = SynchronizationContext.Current;
             _debounceTimer = new Timer(1000);
@@ -102,12 +104,15 @@ namespace ItemsProject.Core.ViewModels
 		public ICommand DeleteAllItemsCommand { get; }
 		public ICommand OpenDeleteAllItemsFromFolderCommand { get; }
 
+		// HotWheels Commands
+		public ICommand AddHotWheelsCommand { get; }
 
-		/// <summary>
-		///	FUNCTIONS THAT CALL WHENEVER THIS VIEWMODEL GETS MESSAGES
-		/// </summary>
-		/// 
-		private void DebounceTimer_Tick()
+
+        /// <summary>
+        ///	FUNCTIONS THAT CALL WHENEVER THIS VIEWMODEL GETS MESSAGES
+        /// </summary>
+        /// 
+        private void DebounceTimer_Tick()
 		{
 			_debounceTimer.Stop();
 			if (SearchhwText != "Add HotWheels..." && SearchhwText.Length > 2)
@@ -116,7 +121,10 @@ namespace ItemsProject.Core.ViewModels
             }
 			if ((SearchhwText.Length < 3 || string.IsNullOrWhiteSpace(SearchhwText) || SearchhwText == "Add HotWheels...") && SearchhwResult != null)
 			{
-				_uiContext.Send(x => SearchhwResult.Clear(), null);
+				if (_uiContext != null)
+				{
+                    _uiContext.Send(x => SearchhwResult.Clear(), null);
+                }
             }
 		}
 

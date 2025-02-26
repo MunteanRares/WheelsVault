@@ -76,6 +76,9 @@ namespace ItemsProject.Wpf.Views
             ];
         }
 
+        /// <summary>
+        /// TEXTBOX SEARCHHWTEXTBOX HANDLERS
+        /// </summary>
         private void hotwheelsAddTextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             if (hotwheelsAddTextBox.Text == "Add HotWheels...")
@@ -102,6 +105,14 @@ namespace ItemsProject.Wpf.Views
             {
                 FocusManager.SetFocusedElement(FocusManager.GetFocusScope(hotwheelsAddTextBox), null);
                 Keyboard.ClearFocus();
+                e.Handled = true;
+            }
+        }
+
+        private void hotwheelsAddTextBox_PreviewLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (hotWheelsPopup.IsMouseOver)
+            {
                 e.Handled = true;
             }
         }

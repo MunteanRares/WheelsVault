@@ -25,7 +25,7 @@ namespace ItemsProject.Core.Data
             if (isDbPopulated == 0)
             {
                 List<int> availableYears = _scrapeService.GetAllAvailableYears();
-                for (int year = 1980; year <= availableYears.Last(); year++)
+                for (int year = availableYears.Last(); year <= 1980; year--)
                 {
                     List<HotWheelsModel> hotWheelsModels = await _scrapeService.DefaultDataBasePopulation(year);
                     foreach (HotWheelsModel car in hotWheelsModels)

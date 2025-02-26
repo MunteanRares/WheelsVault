@@ -1,8 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[spItems_CreateItem]
 	@FolderId int,
-	@ModelName nvarchar(50),
+	@ModelName nvarchar(100),
 	@ModelReleaseDate nvarchar(10),
-	@CollectionName nvarchar(50)
+	@CollectionName nvarchar(50),
+	@IsCustom bit
 AS
 begin 
 	set nocount on;
@@ -10,8 +11,8 @@ begin
 	declare @addedItemID int;
 	declare @defaultFolderId int;
 	
-	insert into dbo.Items (modelName, modelReleaseDate, collectionName)
-	values(@ModelName, @ModelReleaseDate, @CollectionName)
+	insert into dbo.Items (modelName, seriesName, yearProduced, isCustom)
+	values(@ModelName, @CollectionName, @ModelReleaseDate, @IsCustom)
 	set @addedItemID = SCOPE_IDENTITY()
 
 	select @defaultFolderId = Folders.Id

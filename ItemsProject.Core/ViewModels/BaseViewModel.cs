@@ -14,6 +14,7 @@ using ItemsProject.Core.Commands.BaseViewModelCommands.Opening_Commands;
 using ItemsProject.Core.Commands.BaseViewModelCommands.Item_Commands;
 using WikiHotWheelsWebScraper.Models;
 using Timer = System.Timers.Timer;
+using ItemsProject.Core.Commands.BaseViewModelCommands.HotWheels_Commands;
 
 
 namespace ItemsProject.Core.ViewModels
@@ -68,10 +69,10 @@ namespace ItemsProject.Core.ViewModels
 			DeleteAllItemsCommand = new DeleteAllItemsCommand(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
 
 			// HotWheels Commands
-			AddHotWheelsCommand = new AddHotWheelsCommand(_dataService);
+			AddHotWheelsCommand = new AddHotWheelsCommand(_dataService, UpdateFolders);
 
-            // Setting Default Values
-            SelectedSortOption = SortOptions[0];
+			// Setting Default Values
+			SelectedSortOption = SortOptions[0];
 			Folders[0].IsDefault = true;
             _uiContext = SynchronizationContext.Current;
             _debounceTimer = new Timer(1000);
@@ -130,9 +131,8 @@ namespace ItemsProject.Core.ViewModels
 
 		private void OnAddedItemMessage(AddedItemMessage addedItemMessage)
 		{
-			_allFolderItems.Add(addedItemMessage.NewItem);
-			FolderItems.Add(addedItemMessage.NewItem);
-		}
+			UpdateFolders(addedItemMessage.NewItem);
+        }
 
 		private void OnAddedFolderMessage(AddedFolderMessage addedFolderMessage)
 		{
@@ -161,6 +161,12 @@ namespace ItemsProject.Core.ViewModels
 
 			_tokens.Clear();
 		}
+
+		private void UpdateFolders(ItemModel newItem)
+		{
+            _allFolderItems.Add(newItem);
+            FolderItems.Add(newItem);
+        }
 
 		public void ClearSearchText()
 		{
@@ -257,8 +263,8 @@ namespace ItemsProject.Core.ViewModels
 		public void BeginItemEdit(ItemModel selectedItem)
 		{
 			EditingItemName = selectedItem.ModelName;
-			EditingItemReleaseDate = selectedItem.ModelReleaseDate;
-			EditingItemCollectionName = selectedItem.CollectionName;
+			EditingItemReleaseDate = selectedItem.YearProduced;
+			EditingItemCollectionName = selectedItem.SeriesName;
 		}
 
 		public void CancelItemEditing(ItemModel passedItemModel)
@@ -268,8 +274,8 @@ namespace ItemsProject.Core.ViewModels
 				model =>
 				{
 					EditingItemName = model.ModelName;
-					EditingItemReleaseDate = model.ModelReleaseDate;
-					EditingItemCollectionName = model.CollectionName;
+					EditingItemReleaseDate = model.YearProduced;
+					EditingItemCollectionName = model.SeriesName;
 				},
 				(flag) =>
 				{
@@ -303,8 +309,8 @@ namespace ItemsProject.Core.ViewModels
 		public void SaveItemEdit()
 		{
 			SelectedItem.ModelName = EditingItemName.Capitalize();
-			SelectedItem.ModelReleaseDate = EditingItemReleaseDate;
-			SelectedItem.CollectionName = EditingItemCollectionName.ToUpper();
+			SelectedItem.YearProduced = EditingItemReleaseDate;
+			SelectedItem.SeriesName = EditingItemCollectionName.ToUpper();
 			SelectedItem.IsEditing = false;
 		}
 
@@ -314,13 +320,14 @@ namespace ItemsProject.Core.ViewModels
 		public bool IsFolderSelected => SelectedFolder != null;
 		public bool CanSaveItemEdit => !string.IsNullOrWhiteSpace(EditingItemName) && !string.IsNullOrWhiteSpace(EditingItemReleaseDate) && !string.IsNullOrWhiteSpace(EditingItemCollectionName);
 		public bool CanSaveFolderEdit => !string.IsNullOrWhiteSpace(EditingFolderName);
-		public bool IsFirstFolderSelected => SelectedFolder.Name == "All Cars";
+		public bool IsFirstFolderSelected => SelectedFolder != null && SelectedFolder.Name == "All Cars";
+		public bool IsPopupHwOpened => SearchhwResult != null && SearchhwResult.Count > 0;
 
 
-		/// <summary>
-		///	BASE VIEWMODEL PROPERTIES
-		/// </summary>
-		public ObservableCollection<ItemModel> FolderItems { get; private set; }
+        /// <summary>
+        ///	BASE VIEWMODEL PROPERTIES
+        /// </summary>
+        public ObservableCollection<ItemModel> FolderItems { get; private set; }
 
 		private ObservableCollection<FolderModel> _folders;
 		public ObservableCollection<FolderModel> Folders
@@ -358,6 +365,7 @@ namespace ItemsProject.Core.ViewModels
 			set
 			{ 
 				SetProperty(ref _searchhwResult, value);
+				RaisePropertyChanged(() => IsPopupHwOpened);
             }
 		}
 
@@ -394,7 +402,7 @@ namespace ItemsProject.Core.ViewModels
 			{ 
 				SetProperty(ref _selectedFolder, value);
 				RaisePropertyChanged(() => IsFolderSelected);
-				SelectedItem = null;
+                SelectedItem = null;
 				SelectedSortOption = SortOptions[0];
 				_allFolderItems = _dataService.LoadItemsForFolder(SelectedFolder);
 				_searchResult = _dataService.FilterItems(SearchText, _allFolderItems);

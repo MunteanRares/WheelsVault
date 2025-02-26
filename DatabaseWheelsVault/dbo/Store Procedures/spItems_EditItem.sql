@@ -7,6 +7,6 @@ AS
 begin
 	set nocount on;
 	update dbo.Items
-	set modelName = @newName, modelReleaseDate = @newReleaseDate, collectionName = @newCollectionName
+	set modelName = @newName, yearProduced = @newReleaseDate, seriesName = @newCollectionName
 	where Id = @itemId
 end

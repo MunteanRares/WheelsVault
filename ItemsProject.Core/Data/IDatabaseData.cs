@@ -8,7 +8,7 @@ namespace ItemsProject.Core.Data
         List<ItemModel> GetAllItems();
         public List<FolderModel> GetAllFolders();
         public List<ItemModel> GetItemsByFolderId(int folderId);
-        public ItemModel CreateNewItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName);
+        public ItemModel CreateCustomItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName);
         public FolderModel CreateNewFolder(string folderName);
         public ItemModel GetItemById(int itemId);
         public void DeleteItem(int itemId, int folderId);
@@ -21,5 +21,6 @@ namespace ItemsProject.Core.Data
         void DeleteAllItemsFromFolder(int itemId);
         void DefaultHotwheelsDbPopulation();
         List<HotWheelsModel> SearchHotWheels(string searchhwText);
+        ItemModel AddHotWheelsModel(string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL);
     }
 }

@@ -24,5 +24,6 @@ namespace ItemsProject.Core.Services
         void AddItemToFolder(int selectedItemId, int selectedFolderId);
         ItemModel DeleteAllItemsFromFolder(int id);
         ObservableCollection<HotWheelsModel> SearchHotWheels(string searchhwText);
+        ItemModel AddHotWheelsModel(string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL);
     }
 }

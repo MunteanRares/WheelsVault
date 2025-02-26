@@ -48,8 +48,8 @@ namespace ItemsProject.Core.Services
                 List<ItemModel> filteredItems = allFolderItems.Where
                     (i =>
                         (i.ModelName.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
-                        (i.CollectionName.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
-                        (i.ModelReleaseDate.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                        (i.SeriesName.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
+                        (i.YearProduced.Contains(searchText, StringComparison.OrdinalIgnoreCase))
                     ).ToList();
                 searchResult = filteredItems;
             }
@@ -167,6 +167,12 @@ namespace ItemsProject.Core.Services
         {
             ObservableCollection<HotWheelsModel> searchResult = new ObservableCollection<HotWheelsModel>(_db.SearchHotWheels(searchhwText));
             return searchResult;
+        }
+
+        public ItemModel AddHotWheelsModel(string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
+        {
+            ItemModel output =  _db.AddHotWheelsModel(modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL);
+            return output;   
         }
     }
 }

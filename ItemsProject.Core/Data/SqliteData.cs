@@ -33,7 +33,7 @@ namespace ItemsProject.Core.Data
             return output;
         }
 
-        public ItemModel CreateNewItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName)
+        public ItemModel CreateCustomItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName)
         {
             string sqlStatement = "select Id from Folders where IsDefault = 1";
             int defaultFolderId = _db.LoadData<int, dynamic>(sqlStatement, new { }, connectionStringName).First();
@@ -164,6 +164,11 @@ namespace ItemsProject.Core.Data
         }
 
         void IDatabaseData.DefaultHotwheelsDbPopulation()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ItemModel AddHotWheelsModel(string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
         {
             throw new NotImplementedException();
         }

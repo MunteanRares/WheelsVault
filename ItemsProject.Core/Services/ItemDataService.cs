@@ -19,7 +19,7 @@ namespace ItemsProject.Core.Services
 
         public void AddItem(int folderId, string modelName, string modelReleaseDate, string collectionName)
         {
-            ItemModel newItem = _db.CreateNewItem(folderId, modelName, modelReleaseDate, collectionName);
+            ItemModel newItem = _db.CreateCustomItem(folderId, modelName, modelReleaseDate, collectionName);
             var message = new AddedItemMessage(Mvx.IoCProvider.Resolve<AddItemViewModel>(), newItem);
             _messenger.Publish(message);
         }

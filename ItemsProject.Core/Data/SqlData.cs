@@ -25,11 +25,25 @@ namespace ItemsProject.Core.Data
             if (isDbPopulated == 0)
             {
                 List<int> availableYears = _scrapeService.GetAllAvailableYears();
-                for (int year = availableYears.Last(); year <= 1980; year--)
+                for (int year = availableYears.Last(); year >= 1980; year--)
                 {
                     List<HotWheelsModel> hotWheelsModels = await _scrapeService.DefaultDataBasePopulation(year);
                     foreach (HotWheelsModel car in hotWheelsModels)
                     {
+                        if (string.IsNullOrWhiteSpace(car.SeriesNum))
+                        {
+                            car.SeriesNum = "-";
+                        }
+                        else if (string.IsNullOrWhiteSpace(car.YearProducedNum))
+                        {
+                            car.YearProducedNum = "-";
+                        }
+                        else if (string.IsNullOrWhiteSpace(car.ToyNum))
+                        {
+                            car.ToyNum = "-";
+                        }
+
+
                         _db.SaveData("dbo.spHotwheelsCars_InsertCar",
                                      new
                                      {
@@ -100,9 +114,9 @@ namespace ItemsProject.Core.Data
             return output;
         }
 
-        public ItemModel CreateNewItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName)
+        public ItemModel CreateCustomItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName)
         {
-            _db.SaveData("dbo.spItems_CreateItem", new { FolderId, ModelName = ModelName.Capitalize(), ModelReleaseDate, CollectionName = CollectionName.ToUpper() }, connectionStringName, true);
+            _db.SaveData("dbo.spItems_CreateItem", new { FolderId, ModelName = ModelName.Capitalize(), ModelReleaseDate, CollectionName = CollectionName.ToUpper(), IsCustom = 1 }, connectionStringName, true);
             ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetLast", new { }, connectionStringName, true).First();
             return output;
         }
@@ -166,6 +180,13 @@ namespace ItemsProject.Core.Data
         {
             List<HotWheelsModel> searchResult = _db.LoadData<HotWheelsModel, dynamic>("dbo.spHotwheelsCars_FindCarByText", new { searchhwText }, connectionStringName, true);
             return searchResult;
+        }
+
+        public ItemModel AddHotWheelsModel(string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
+        {
+            _db.SaveData("dbo.Items_AddHotWheelsModel", new { modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL, isCustom = 0 }, connectionStringName, true);
+            ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetLast", new { }, connectionStringName, true).First();
+            return output;
         }
     }
 }

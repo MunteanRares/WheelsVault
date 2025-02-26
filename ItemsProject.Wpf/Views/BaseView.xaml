@@ -246,6 +246,7 @@
         <conv:BooleanInverseConverter x:Key="BooleanInverseConverter"/>
         <conv:BooleanVisibilityConverterInverse x:Key="BooleanVisibilityConverterInverse"/>
         <conv:MultiBindingConverter x:Key="MultiBindingConverter"/>
+        <conv:MultiBooleanVisibilityConverter x:Key="MultiBooleanVisibilityConverter"/>
     </views:MvxWpfView.Resources>
 
     <Grid
@@ -590,7 +591,7 @@
                 Grid.Column="2"
                 Orientation="Horizontal"
                 HorizontalAlignment="Right">
-                <TextBox 
+                <TextBox
                     x:Name="hotwheelsAddTextBox"                    
                     FontSize="20"
                     Background="#fff"
@@ -599,6 +600,7 @@
                     Height="30"
                     TextAlignment="Left"
                     Foreground="Gray"
+                    IsEnabled="{Binding IsFolderSelected}"
                     VerticalAlignment="Center"
                     VerticalContentAlignment="Center"
                     HorizontalContentAlignment="Center"
@@ -612,14 +614,14 @@
 
                 <Popup
                     x:Name="hotWheelsPopup" 
-                    IsOpen="True"
-                    StaysOpen="True"
+                    IsOpen="{Binding IsPopupHwOpened, Mode=OneWay}"
+                    StaysOpen="False"
                     Placement="Bottom"
-                    PopupAnimation="Fade"
+                    PopupAnimation="Slide"
                     HorizontalOffset="-400"
                     PlacementTarget="{Binding ElementName=hotwheelsAddTextBox}"
                     Width="700">
-                    <ListBox
+                    <ListBox                        
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                         ItemsSource="{Binding SearchhwResult}"
                         MaxHeight="400"
@@ -823,7 +825,6 @@
 
                 <Button 
                     FontSize="20"
-    
                     IsEnabled="{Binding IsFolderSelected}"
                     Width="160"
                     HorizontalAlignment="Right"
@@ -837,38 +838,59 @@
             
 
             <ListView Grid.Row="2"
+                      ScrollViewer.CanContentScroll="False"
                       Grid.Column="0"
+                      ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                      ScrollViewer.VerticalScrollBarVisibility="Visible"
                       Grid.ColumnSpan="2"
                       ItemsSource="{Binding FolderItems}"
                       SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       Background="Transparent"
                       BorderThickness="0"
                       Focusable="False"
-                      Margin="0 10 40 0">
+                      Margin="0 5 20 0">
 
                 <ListView.Resources>
+
                     <Style TargetType="{x:Type ListViewItem}">
                         <Style.Setters>
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="Margin" Value="0 5 0 0"/>
+                            <Setter Property="Margin" Value="0 25 25 0"/>
                             <Setter Property="Focusable" Value="False"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                        <Grid Background="{TemplateBinding Background}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                            <ContentPresenter Margin="15 15 15 15"/>
-                                            <Border BorderThickness="0 0 0 2" BorderBrush="#A1A1A1" Opacity="0.8" CornerRadius="0"></Border>
-                                        </Grid>
+                                        <Border
+                                            Background="{TemplateBinding Background}"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            CornerRadius="6">
+                                            <Grid>
+                                                <ContentPresenter Margin="10"/>
+                                                <Border BorderThickness="0 0 0 2" BorderBrush="#A1A1A1" Opacity="0.8" CornerRadius="4"></Border>
+                                            </Grid>
+                                            
+                                        </Border>
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
                         </Style.Setters>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="#445765"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
                 </ListView.Resources>
 
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <DockPanel>
+                        <Grid>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="auto"/>
@@ -881,16 +903,207 @@
                                     <RowDefinition Height="auto"/>
                                 </Grid.RowDefinitions>
 
-                                <StackPanel
+                                <Grid
+                                    Height="150"
+                                    x:Name="listviewItemShowGrid"
                                     HorizontalAlignment="Left"
                                     Grid.Column="0" Grid.Row="0"
-                                    Orientation="Horizontal"
                                     Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverterInverse}}">
-                                    <TextBlock 
-                                        Margin="0 0 10 0"  
-                                        Text="{Binding ModelName}"/>
-                                    <TextBlock Text="{Binding ModelReleaseDate}"/>
-                                </StackPanel>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="330"/>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="290"/>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image
+                                        Margin="10 0 0 0"
+                                        Grid.Column="0"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Source="{Binding PhotoURL}"
+                                        ToolTipService.InitialShowDelay="0">
+                                        <Image.ToolTip>
+                                            <ToolTip 
+                                                Placement="Right">
+                                                <Image
+                                                    Source="{Binding PhotoURL}"
+                                                    Width="350"/>
+                                            </ToolTip>
+                                        </Image.ToolTip>
+                                    </Image>
+
+                                    <StackPanel
+                                        Margin="15 10 15 0"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Center"
+                                        Orientation="Vertical">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            Foreground="Gray"
+                                            Text="Model Name"/>
+
+                                        <TextBlock 
+                                            TextWrapping="Wrap"
+                                            Margin="0 30 0 0"
+                                            VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Center"
+                                            Text="{Binding ModelName}"/>
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Margin="15 10 15 0"
+                                        Grid.Column="2"
+                                        HorizontalAlignment="Center"
+                                        Orientation="Vertical">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            Foreground="Gray"
+                                            Text="Prod. Year"/>
+
+                                        <TextBlock 
+                                            Margin="0 30 0 0"
+                                            VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Center"
+                                            Text="{Binding YearProduced}"/>
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Margin="15 10 15 0"
+                                        Grid.Column="3"
+                                        HorizontalAlignment="Center"
+                                        Orientation="Vertical">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            Foreground="Gray"
+                                            Text="Series"/>
+
+                                        <TextBlock
+                                            Margin="0 30 0 0"
+                                            TextWrapping="Wrap"
+                                            VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Center"
+                                            Text="{Binding SeriesName}"/>
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Margin="15 10 15 0"
+                                        Grid.Column="4"
+                                        HorizontalAlignment="Center"
+                                        Orientation="Vertical">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            Foreground="Gray"
+                                            Text="Series #"/>
+
+                                        <TextBlock 
+                                            Margin="0 30 0 0"
+                                            VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Center"
+                                            Text="{Binding SeriesNum}"/>
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Margin="15 10 15 0"
+                                        Grid.Column="5"
+                                        HorizontalAlignment="Center"
+                                        Orientation="Vertical">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            Foreground="Gray"
+                                            Text="Toy Code"/>
+
+                                        <TextBlock 
+                                            Margin="0 30 0 0"
+                                            VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Center"
+                                            Text="{Binding ToyNum}"/>
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Margin="15 10 15 0"
+                                        Grid.Column="6"
+                                        HorizontalAlignment="Center"
+                                        Orientation="Vertical">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            Foreground="Gray"
+                                            Text="Year #"/>
+
+                                        <TextBlock
+                                            Margin="0 30 0 0"
+                                            VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Center"
+                                            Text="{Binding YearProducedNum}"/>
+                                    </StackPanel>
+                                    
+                                    <Button 
+                                        Grid.Column="7"
+                                        
+                                        Style="{StaticResource BorderlessButton}"
+                                        Command="{Binding DataContext.EditModeItemCommand,
+                                                    RelativeSource={RelativeSource FindAncestor,
+                                                    AncestorType={x:Type views:IMvxWpfView}}}"
+                                        CommandParameter="{Binding .}"                                
+                                        Margin="0 0 10 0" Height="40"
+                                        Grid.Row="0" HorizontalAlignment="Right">
+                                        <Button.Visibility>
+                                            <MultiBinding Converter="{StaticResource MultiBooleanVisibilityConverter}">
+                                                <Binding Path="IsEditing"/>
+                                                <Binding Path="IsCustom"/>
+                                            </MultiBinding>
+                                        </Button.Visibility>
+                                        <TextBlock FontWeight="Bold" Padding="15 0" Text="Edit" Foreground="#a1a1a1"/>
+                                    </Button>
+                                    
+                                    <Button
+                                        Grid.Column="8"
+                                        Command="{Binding DataContext.OpenPopupCommand, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"
+                                        CommandParameter="{Binding .}"
+                                        x:Name="menuOptionsButton"
+                                        Focusable="True"
+                                        Margin="0 0 10 0"
+                                        Padding="15 0"
+                                        FontFamily="pack://application:,,,/Assets/Fonts/#Font Awesome 6 Free Solid"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource BorderlessButton}">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="Transparent"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                        <TextBlock 
+                                            x:Name="textBlockMenu"
+                                            Text="&#xf141;">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Setters>
+                                                        <Setter Property="Foreground" Value="#a1a1a1"/>
+                                                    </Style.Setters>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Foreground" Value="#fff"/>
+                                                            <Setter Property="RenderTransform">
+                                                                <Setter.Value>
+                                                                    <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Button>
+                                </Grid>
 
                                 <StackPanel
                                     x:Name="stackPanelItemEdit">
@@ -940,11 +1153,6 @@
                                     </StackPanel>
 
                                     <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
-                                        <TextBlock Margin="0 6 10 0" Text="Series:"/>
-                                        <TextBlock
-                                            Margin="0 6 0 0"
-                                            Text="{Binding CollectionName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverterInverse}}"/>
                                         <TextBox
                                                 Margin="0 6 0 0"
                                                 MinWidth="100"
@@ -1221,7 +1429,7 @@
                                                                     BorderBrush="Transparent"
                                                                     BorderThickness="0"
                                                                     Padding="0">
-                                                                     <ContentPresenter
+                                                                    <ContentPresenter
                                                                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                                                         RecognizesAccessKey="True"/>
@@ -1269,69 +1477,10 @@
                                             </TextBlock.Style>
                                         </TextBlock>
                                     </Button>
-
-
                                 </ListBox>
                             </Popup>
 
-                            <Button
-                                Command="{Binding DataContext.OpenPopupCommand, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"
-                                CommandParameter="{Binding .}"
-                                x:Name="menuOptionsButton"
-                                Focusable="True"   
-                                DockPanel.Dock="Right"
-                                Margin="0 0 10 0"
-                                Padding="15 0"
-                                FontFamily="pack://application:,,,/Assets/Fonts/#Font Awesome 6 Free Solid"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center">
-                                <Button.Style>
-                                    <Style TargetType="Button" BasedOn="{StaticResource BorderlessButton}">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="Transparent"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                                <TextBlock 
-                                    x:Name="textBlockMenu"
-                                    Text="&#xf141;">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Style.Setters>
-                                                <Setter Property="Foreground" Value="#a1a1a1"/>
-                                            </Style.Setters>
-                                            <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Foreground" Value="#fff"/>
-                                                    <Setter Property="RenderTransform">
-                                                        <Setter.Value>
-                                                            <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                    <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                            </Button>
-
-
-
-                            <Button 
-                                Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverterInverse}}"
-                                Style="{StaticResource BorderlessButton}"
-                                Command="{Binding DataContext.EditModeItemCommand,
-                                            RelativeSource={RelativeSource FindAncestor,
-                                            AncestorType={x:Type views:IMvxWpfView}}}"
-                                CommandParameter="{Binding .}"                                
-                                Margin="0 0 10 0" Height="40"
-                                DockPanel.Dock="Right"
-                                Grid.Row="0" HorizontalAlignment="Right">
-                                <TextBlock FontWeight="Bold" Padding="15 0" Text="Edit" Foreground="#a1a1a1"/>
-                            </Button>
+                            
 
                             <Button
                                 Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}"
@@ -1342,7 +1491,6 @@
                                 Height="40"
                                 Grid.Column="2"
                                 Grid.Row="0"
-                                DockPanel.Dock="Right"
                                 HorizontalAlignment="Right"
                                 IsEnabled="{Binding DataContext.CanSaveItemEdit, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}">
                                 <Button.Style>
@@ -1371,7 +1519,7 @@
                                     FontWeight="Bold" Padding="15 0" Text="Cancel" Foreground="#a1a1a1"/>
                             </Button>
 
-                        </DockPanel>
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

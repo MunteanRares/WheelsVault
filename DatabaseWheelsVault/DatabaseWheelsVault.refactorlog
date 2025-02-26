@@ -35,4 +35,25 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="isDefaultPopulatd" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="be329426-e10d-4d14-acef-d2afdc395b7b" ChangeDateTime="02/26/2025 13:53:24">
+    <Property Name="ElementName" Value="[dbo].[Items].[modelReleaseDate]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Items]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="yearProduced" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="8527150d-9015-4e85-8f5c-a677a618c7be" ChangeDateTime="02/26/2025 13:53:36">
+    <Property Name="ElementName" Value="[dbo].[Items].[collectionName]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Items]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="seriesName" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="8de95643-20fe-4027-943c-d37935dee63b" ChangeDateTime="02/26/2025 13:53:56">
+    <Property Name="ElementName" Value="[dbo].[Items].[yearProduced]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Items]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="seriesName" />
+  </Operation>
 </Operations>

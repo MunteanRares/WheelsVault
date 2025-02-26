@@ -1,4 +1,5 @@
-﻿using MvvmCross.ViewModels;
+﻿using DevExpress.XtraExport;
+using MvvmCross.ViewModels;
 
 namespace ItemsProject.Core.Models
 {
@@ -27,23 +28,73 @@ namespace ItemsProject.Core.Models
             }
         }
 
-        private string _modelReleaseDate;
-        public string ModelReleaseDate
+        private string _yearProduced;
+        public string YearProduced
         {
-            get { return _modelReleaseDate; }
+            get { return _yearProduced; }
             set
             {
-                SetProperty(ref _modelReleaseDate, value);
+                SetProperty(ref _yearProduced, value);
             }
         }
 
-        private string _collectionName;
-        public string CollectionName
+        private string _yearProducedNum;
+        public string YearProducedNum
         {
-            get { return _collectionName; }
+            get { return _yearProducedNum; }
+            set 
+            {
+                SetProperty(ref _yearProducedNum, value);
+            }
+        }
+
+        private string _seriesName;
+        public string SeriesName
+        {
+            get { return _seriesName; }
             set
             {
-                SetProperty(ref _collectionName, value);
+                SetProperty(ref _seriesName, value);
+            }
+        }
+
+        private string _seriesNum;
+        public string SeriesNum
+        {
+            get { return _seriesNum; }
+            set 
+            {
+                SetProperty(ref _seriesNum, value);
+            }
+        }
+
+        private string _toyNum;
+        public string ToyNum
+        {
+            get { return _toyNum; }
+            set
+            {
+                SetProperty(ref _toyNum, value);
+            }
+        }
+
+        private string _photoURL;
+        public string PhotoURL
+        {
+            get { return _photoURL; }
+            set
+            {
+                SetProperty(ref _photoURL, value);
+            }
+        }
+
+        private bool _isCustom;
+        public bool IsCustom
+        {
+            get { return _isCustom; }
+            set
+            { 
+                SetProperty(ref _isCustom, value);
             }
         }
 

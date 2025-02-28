@@ -19,44 +19,47 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </views:MvxWpfView.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="4.5*"/>
-            <RowDefinition Height="4.5*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <ProgressBar
-            VerticalAlignment="Bottom"
-            Grid.Row="0"
-            Width="60"
-            Value="0"
-            Margin="0 0 0 30"
-            IsIndeterminate="True"
-            Style="{StaticResource MaterialDesignCircularProgressBar}"/>
-        <StackPanel
-            Grid.Row="1"
-            Margin="0 20 0 0"
-            VerticalAlignment="Top">
+    <materialDesign:Card
+        materialDesign:UniformCornerRadius="15">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="4.5*"/>
+                <RowDefinition Height="4.5*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ProgressBar
+                VerticalAlignment="Bottom"
+                Grid.Row="0"
+                Width="60"
+                Value="0"
+                Margin="0 0 0 30"
+                IsIndeterminate="True"
+                Style="{StaticResource MaterialDesignCircularProgressBar}"/>
+            <StackPanel
+                Grid.Row="1"
+                Margin="0 20 0 0"
+                VerticalAlignment="Top">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Text="Fetching data"
+                    FontSize="22"
+                    Foreground="#333"/>
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="18"
+                    Text="Please wait..."
+                    Foreground="#333"/>
+            </StackPanel>
             <TextBlock
+                Grid.Row="2"
+                Foreground="#777"
+                FontSize="14"
                 HorizontalAlignment="Center"
-                Text="Fetching data"
-                FontSize="22"
-                Foreground="#333"/>
-            <TextBlock
-                HorizontalAlignment="Center"
-                FontSize="18"
-                Text="Please wait..."
-                Foreground="#333"/>
-        </StackPanel>
-        <TextBlock
-            Grid.Row="2"
-            Foreground="#777"
-            FontSize="14"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Text="© Muntean Rares">
+                VerticalAlignment="Center"
+                Text="© Muntean Rares">
             
-        </TextBlock>
+            </TextBlock>
         
-    </Grid>
+        </Grid>
+    </materialDesign:Card>
 </views:MvxWpfView>

@@ -77,6 +77,7 @@ namespace ItemsProject.Core.ViewModels
 			// Setting Default Values
 			SelectedSortOption = SortOptions[0];
 			Folders[0].IsDefault = true;
+			TotalHotWheelsCount = _db.GetAllItems().Count;
             _uiContext = SynchronizationContext.Current;
             _debounceTimer = new Timer(1000);
 			_debounceTimer.Elapsed += (sender, e) => DebounceTimer_Tick();
@@ -169,6 +170,7 @@ namespace ItemsProject.Core.ViewModels
 		{
             _allFolderItems.Add(newItem);
             FolderItems.Add(newItem);
+			TotalHotWheelsCount += 1;
         }
 
 		public void ClearSearchText()
@@ -187,6 +189,7 @@ namespace ItemsProject.Core.ViewModels
 		{
 			_allFolderItems = updatedItems;
 			FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
+			TotalHotWheelsCount = _db.GetAllItems().Count;
 		}
 
 		public void ExecuteFolderRemoved(List<FolderModel> updatedFolders)
@@ -489,6 +492,19 @@ namespace ItemsProject.Core.ViewModels
 			{ 
 				SetProperty(ref _isLoadingData, value);
             }
+		}
+
+		private int _totalHotWheelsCount = 0;
+		public int TotalHotWheelsCount
+        {
+			get
+			{ 
+				return _totalHotWheelsCount; 
+			}
+			set 
+			{
+                SetProperty(ref _totalHotWheelsCount, value);
+			}
 		}
 
 

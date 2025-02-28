@@ -531,17 +531,18 @@
         <Grid Margin="40 15 0 0" Grid.Row="2" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.1*"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2.1*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-
+            
             <StackPanel Grid.Row="0" Grid.Column="0" Margin="15 0 0 0" Orientation="Horizontal">
 
                 <Border Height="30">
-                    <TextBlock Margin="0 5 0 0" Text="Search" VerticalAlignment="Center"/>
+                    <TextBlock Margin="0 0 5 0" Text="Search" VerticalAlignment="Center"/>
                 </Border>
 
                 <TextBox 
@@ -591,7 +592,8 @@
                 </StackPanel>
             </StackPanel>
 
-            <StackPanel 
+            <StackPanel
+                Margin="0 0 60 0"
                 Grid.Column="2"
                 Orientation="Horizontal"
                 HorizontalAlignment="Right">
@@ -833,27 +835,40 @@
                     IsEnabled="{Binding IsFolderSelected}"
                     Width="160"
                     HorizontalAlignment="Right"
-                    Margin="0 0 25 0"
+                    Margin="0 0 0 0"
                     mvx:Bi.nd="Command OpenAddItemWindowCommand">
                     <TextBlock Foreground="#09203F" Text="+ Custom Item">
                     </TextBlock>
                 </Button>
             </StackPanel>
 
-            
+            <StackPanel
+                Grid.Row="2"
+                Margin="15 0 0 0"
+                Orientation="Horizontal">
+                <TextBlock
+                    Foreground="#b3b3b3"
+                    FontSize="18"
+                    Text="Unique HotWheels: "/>
+                <TextBlock
+                    Foreground="#b3b3b3"
+                    FontSize="18"
+                    Text="{Binding TotalHotWheelsCount}"/>
+            </StackPanel>
 
-            <ListView Grid.Row="2"
-                      ScrollViewer.CanContentScroll="False"
-                      Grid.Column="0"
-                      ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                      ScrollViewer.VerticalScrollBarVisibility="Visible"
-                      Grid.ColumnSpan="2"
-                      ItemsSource="{Binding FolderItems}"
-                      SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      Background="Transparent"
-                      BorderThickness="0"
-                      Focusable="False"
-                      Margin="0 5 20 0">
+            <ListView
+                Grid.Row="3"
+                ScrollViewer.CanContentScroll="False"
+                Grid.Column="0"
+                ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                ScrollViewer.VerticalScrollBarVisibility="Visible"
+                Grid.ColumnSpan="2"
+                ItemsSource="{Binding FolderItems}"
+                SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                Background="Transparent"
+                BorderThickness="0"
+                Focusable="False"
+                Margin="0 5 0 0">
 
                 <ListView.Resources>
 

@@ -9,6 +9,5 @@
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Title="Wheels Vault" MinHeight="600" MinWidth="1150" WindowStartupLocation="CenterScreen" WindowState="Maximized">
-    <Grid>
-    </Grid>
+    <Grid></Grid>
 </views:MvxWindow>

@@ -1,4 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[Items_AddHotWheelsModel]
+	@folderId int,
 	@modelName nvarchar(100),
 	@seriesName nvarchar(100),
 	@seriesNum nvarchar(15),
@@ -23,4 +24,10 @@ begin
 
 	insert into dbo.FolderItems (folderId, itemId)
 	values (@defaultFolderId, @addedItemId)
+
+	if (@defaultFolderId != @folderId)
+	begin
+		insert into dbo.FolderItems (folderId, itemId)
+		values (@folderId, @addedItemID)
+	end
 end

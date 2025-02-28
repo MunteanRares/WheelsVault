@@ -4,28 +4,30 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using DevExpress.Data.Async.Helpers;
 using ItemsProject.Core.Messages;
-using ItemsProject.Core.ViewModels;
 using ItemsProject.Wpf.Helper_Functions;
 using MvvmCross;
 using MvvmCross.Platforms.Wpf.Views;
 using MvvmCross.Plugin.Messenger;
 
 
-
 namespace ItemsProject.Wpf.Views
 {
     public partial class BaseView : MvxWpfView
     {
-        private readonly IMvxMessenger _messenger;
+        private readonly IMvxMessenger? _messenger;
         private readonly List<MvxSubscriptionToken> _tokens = new List<MvxSubscriptionToken>();
         protected bool isDropDownOpened = false;
 
         public BaseView()
         {
             InitializeComponent();
-            _messenger = Mvx.IoCProvider.Resolve<IMvxMessenger>();
+            Window window = Application.Current.MainWindow;
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            window.WindowState = WindowState.Maximized;
+            window.MinHeight = 650;
+            window.MinWidth = 1200;
+            _messenger = Mvx.IoCProvider?.Resolve<IMvxMessenger>();
             _tokens.Add(_messenger.Subscribe<CancelItemEditingMessage>(OnCancelItemEditingMessage));
         }
 
@@ -81,7 +83,7 @@ namespace ItemsProject.Wpf.Views
         /// </summary>
         private void hotwheelsAddTextBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (hotwheelsAddTextBox.Text == "Add HotWheels...")
+            if (hotwheelsAddTextBox.Text == " Add HotWheels...")
             {
                 hotwheelsAddTextBox.Text = "";
                 hotwheelsAddTextBox.Foreground = Brushes.Black;
@@ -94,18 +96,8 @@ namespace ItemsProject.Wpf.Views
 
             if (string.IsNullOrEmpty(hotwheelsAddTextBox.Text))
             {
-                hotwheelsAddTextBox.Text = "Add HotWheels...";
+                hotwheelsAddTextBox.Text = " Add HotWheels...";
                 hotwheelsAddTextBox.Foreground = Brushes.Gray;
-            }
-        }
-
-        private void hotwheelsAddTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Escape)
-            {
-                FocusManager.SetFocusedElement(FocusManager.GetFocusScope(hotwheelsAddTextBox), null);
-                Keyboard.ClearFocus();
-                e.Handled = true;
             }
         }
 
@@ -116,5 +108,23 @@ namespace ItemsProject.Wpf.Views
                 e.Handled = true;
             }
         }
+
+        private void hotwheelsAddTextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!hotWheelsPopup.IsMouseOver)
+            {
+                mainGrid.Focus();
+            }
+        }
+
+        //POPUP HANDLERS    
+        private void hotWheelsPopup_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!hotwheelsAddTextBox.IsMouseOver)
+            {
+                mainGrid.Focus();
+            }
+        }
+
     }
 }

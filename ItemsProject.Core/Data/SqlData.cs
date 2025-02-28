@@ -18,13 +18,12 @@ namespace ItemsProject.Core.Data
             _scrapeService = scrapeService;
         }
 
-        public async void DefaultHotwheelsDbPopulation()
+        public async Task DefaultHotwheelsDbPopulation()
         {
             int isDbPopulated = IsDbPopulated();
-            await _scrapeService.InitializeAsync();
             if (isDbPopulated == 0)
             {
-                List<int> availableYears = _scrapeService.GetAllAvailableYears();
+                List<int> availableYears = await _scrapeService.GetAllAvailableYears();
                 for (int year = availableYears.Last(); year >= 1980; year--)
                 {
                     List<HotWheelsModel> hotWheelsModels = await _scrapeService.DefaultDataBasePopulation(year);
@@ -64,7 +63,7 @@ namespace ItemsProject.Core.Data
             }
             else
             {
-                List<int> availableYears = _scrapeService.GetAllAvailableYears();
+                List<int> availableYears = await _scrapeService.GetAllAvailableYears();
                 List<HotWheelsModel> hotWheelsModels = await _scrapeService.DefaultDataBasePopulation(availableYears.Last());
                 foreach (HotWheelsModel car in hotWheelsModels)
                 {
@@ -182,9 +181,9 @@ namespace ItemsProject.Core.Data
             return searchResult;
         }
 
-        public ItemModel AddHotWheelsModel(string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
+        public ItemModel AddHotWheelsModel(int folderId, string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
         {
-            _db.SaveData("dbo.Items_AddHotWheelsModel", new { modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL, isCustom = 0 }, connectionStringName, true);
+            _db.SaveData("dbo.Items_AddHotWheelsModel", new { folderId, modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL, isCustom = 0 }, connectionStringName, true);
             ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetLast", new { }, connectionStringName, true).First();
             return output;
         }

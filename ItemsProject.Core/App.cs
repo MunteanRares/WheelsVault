@@ -6,13 +6,14 @@ using Microsoft.Extensions.Configuration;
 using MvvmCross;
 using MvvmCross.IoC;
 using MvvmCross.ViewModels;
+using Nito.AsyncEx;
 using WikiHotWheelsWebScraper.Services;
 
 namespace ItemsProject.Core
 {
     public class App : MvxApplication
     {
-        public override async void Initialize()
+        public override void Initialize()
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -31,16 +32,15 @@ namespace ItemsProject.Core
             else if (dbChoice == "sqlserver")
             {
                 Mvx.IoCProvider.RegisterType<IDatabaseData, SqlData>();
-
             }
 
             Mvx.IoCProvider.RegisterType<ISqlDataAccess, SqlDataAccess>();
             Mvx.IoCProvider.RegisterType<ISqliteDataAccess, SqliteDataAccess>();
             Mvx.IoCProvider.RegisterType<IScrapeHotWheelsWiki, ScrapeHotWheelsWiki>();
-            if (Mvx.IoCProvider.CanResolve<IDatabaseData>())
-            {
-                Mvx.IoCProvider.Resolve<IDatabaseData>()?.DefaultHotwheelsDbPopulation();
-            }
+            //if (Mvx.IoCProvider.CanResolve<IDatabaseData>())
+            //{
+            //    AsyncContext.Run(Mvx.IoCProvider.Resolve<IDatabaseData>().DefaultHotwheelsDbPopulation);
+            //}
 
 
             Mvx.IoCProvider.RegisterType<IDataService, DataService>();
@@ -54,8 +54,9 @@ namespace ItemsProject.Core
             Mvx.IoCProvider.RegisterType<AddFolderViewModel>();
             Mvx.IoCProvider.RegisterType<CustomMessageBoxViewModel>();
             Mvx.IoCProvider.RegisterType<AddItemViewModel>();
+            Mvx.IoCProvider.RegisterType<SplashScreenViewModel>();
 
-            RegisterAppStart<BaseViewModel>();
+            RegisterAppStart<SplashScreenViewModel>();
         }
     }
 }

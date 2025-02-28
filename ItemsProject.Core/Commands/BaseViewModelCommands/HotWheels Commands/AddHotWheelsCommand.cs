@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DevExpress.Utils;
 using ItemsProject.Core.Commands.General;
 using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;
@@ -14,16 +15,19 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands.HotWheels_Commands
     {
         private readonly IDataService _dataService;
         private readonly Action<ItemModel> _updateFolders;
-        public AddHotWheelsCommand(IDataService dataService, Action<ItemModel> updateFolders)
+        private readonly Func<FolderModel> _getSelectedFolder;
+        public AddHotWheelsCommand(IDataService dataService, Action<ItemModel> updateFolders, Func<FolderModel> getSelectedFolder)
         {
             _dataService = dataService;
             _updateFolders = updateFolders;
+            _getSelectedFolder = getSelectedFolder;
         }
 
         public override void Execute(object? parameter)
         {
             HotWheelsModel hotwheels = (HotWheelsModel)parameter;
-            ItemModel addedItem =  _dataService.AddHotWheelsModel(hotwheels.ModelName, hotwheels.SeriesName, hotwheels.SeriesNum, hotwheels.YearProduced, hotwheels.YearProducedNum, hotwheels.ToyNum, hotwheels.PhotoURL);
+            int folderId = _getSelectedFolder().Id;
+            ItemModel addedItem =  _dataService.AddHotWheelsModel(folderId, hotwheels.ModelName, hotwheels.SeriesName, hotwheels.SeriesNum, hotwheels.YearProduced, hotwheels.YearProducedNum, hotwheels.ToyNum, hotwheels.PhotoURL);
             _updateFolders(addedItem);
         }
     }

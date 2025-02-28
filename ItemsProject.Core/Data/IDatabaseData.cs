@@ -19,8 +19,8 @@ namespace ItemsProject.Core.Data
         List<int> GetAllFolderIdsForItem(int selectedItemID);
         void AddItemToFolder(int selectedItemId, int selectedFolderId);
         void DeleteAllItemsFromFolder(int itemId);
-        void DefaultHotwheelsDbPopulation();
+        Task DefaultHotwheelsDbPopulation();
         List<HotWheelsModel> SearchHotWheels(string searchhwText);
-        ItemModel AddHotWheelsModel(string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL);
+        ItemModel AddHotWheelsModel(int folderId, string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL);
     }
 }

@@ -9,7 +9,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:conv="clr-namespace:ItemsProject.Wpf.Converters"
         xmlns:local="clr-namespace:ItemsProject.Wpf.Views" xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.AeroLite"
-    mc:Ignorable="d" 
+        mc:Ignorable="d" 
         FontSize="22"
         Background="#09203F"
         FontFamily="pack://application:,,,/WheelsVault;component/Assets/Fonts/#Fredoka Medium"        
@@ -299,6 +299,10 @@
             <Grid.Background>
                 <SolidColorBrush Color="#06162c" Opacity="0.7"/>
             </Grid.Background>
+            <TextBlock
+                Text="Is Loading..."
+                Visibility="{Binding IsLoadingData, Converter={StaticResource BooleanVisibilityConverter}}">
+            </TextBlock>
         </Grid>
 
         <Grid x:Name="actualGridWidth" Grid.Row="1" Grid.Column="0">
@@ -608,8 +612,8 @@
                     Margin="0 0 40 0"
                     LostFocus="hotwheelsAddTextBox_LostFocus"
                     GotFocus="hotwheelsAddTextBox_GotFocus"
-                    PreviewKeyDown="hotwheelsAddTextBox_PreviewKeyDown"
-                    PreviewLostKeyboardFocus="hotwheelsAddTextBox_PreviewLostKeyboardFocus">
+                    PreviewLostKeyboardFocus="hotwheelsAddTextBox_PreviewLostKeyboardFocus"
+                    PreviewMouseDown="hotwheelsAddTextBox_PreviewMouseDown">
                 </TextBox>
 
                 <Popup
@@ -620,7 +624,8 @@
                     PopupAnimation="Slide"
                     HorizontalOffset="-400"
                     PlacementTarget="{Binding ElementName=hotwheelsAddTextBox}"
-                    Width="700">
+                    Width="700"
+                    PreviewMouseDown="hotWheelsPopup_PreviewMouseDown">
                     <ListBox                        
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                         ItemsSource="{Binding SearchhwResult}"

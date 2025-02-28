@@ -163,12 +163,12 @@ namespace ItemsProject.Core.Data
             throw new NotImplementedException();
         }
 
-        void IDatabaseData.DefaultHotwheelsDbPopulation()
+        Task IDatabaseData.DefaultHotwheelsDbPopulation()
         {
             throw new NotImplementedException();
         }
 
-        public ItemModel AddHotWheelsModel(string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
+        public ItemModel AddHotWheelsModel(int folderId, string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
         {
             throw new NotImplementedException();
         }

@@ -17,6 +17,7 @@
     <None Remove="Assets\Fonts\Fredoka-Medium.ttf" />
     <None Remove="Assets\Icons\question-mark.png" />
     <None Remove="Assets\Icons\warning-sign.png" />
+    <None Remove="Assets\Pngs\logo.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     <PackageReference Include="MvvmCross" Version="9.3.1" />
     <PackageReference Include="MvvmCross.Platforms.Wpf" Version="9.3.1" />
@@ -45,6 +47,9 @@
     <Resource Include="Assets\Fonts\Fredoka-Medium.ttf" />
     <Resource Include="Assets\Icons\question-mark.png" />
     <Resource Include="Assets\Icons\warning-sign.png" />
+    <Resource Include="Assets\Pngs\logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

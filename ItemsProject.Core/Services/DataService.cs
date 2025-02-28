@@ -169,9 +169,9 @@ namespace ItemsProject.Core.Services
             return searchResult;
         }
 
-        public ItemModel AddHotWheelsModel(string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
+        public ItemModel AddHotWheelsModel(int folderId, string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
         {
-            ItemModel output =  _db.AddHotWheelsModel(modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL);
+            ItemModel output =  _db.AddHotWheelsModel(folderId, modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL);
             return output;   
         }
     }

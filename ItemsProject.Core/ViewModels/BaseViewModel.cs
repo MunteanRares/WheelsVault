@@ -15,6 +15,9 @@ using ItemsProject.Core.Commands.BaseViewModelCommands.Item_Commands;
 using WikiHotWheelsWebScraper.Models;
 using Timer = System.Timers.Timer;
 using ItemsProject.Core.Commands.BaseViewModelCommands.HotWheels_Commands;
+using MvvmCross;
+using System.Security.Permissions;
+using MvvmCross.Core;
 
 
 namespace ItemsProject.Core.ViewModels
@@ -69,7 +72,7 @@ namespace ItemsProject.Core.ViewModels
 			DeleteAllItemsCommand = new DeleteAllItemsCommand(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
 
 			// HotWheels Commands
-			AddHotWheelsCommand = new AddHotWheelsCommand(_dataService, UpdateFolders);
+			AddHotWheelsCommand = new AddHotWheelsCommand(_dataService, UpdateFolders, () => SelectedFolder);
 
 			// Setting Default Values
 			SelectedSortOption = SortOptions[0];
@@ -124,7 +127,7 @@ namespace ItemsProject.Core.ViewModels
 			{
 				if (_uiContext != null)
 				{
-                    _uiContext.Send(x => SearchhwResult.Clear(), null);
+                    _uiContext.Send(x => SearchhwResult = null, null);
                 }
             }
 		}
@@ -380,7 +383,7 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
-		private string _searchhwText = "Add HotWheels...";
+		private string _searchhwText = " Add HotWheels...";
 
 		public string SearchhwText
         {
@@ -477,6 +480,17 @@ namespace ItemsProject.Core.ViewModels
                 RaisePropertyChanged(() => CanSaveItemEdit);
             }
 		}
+
+		private bool _isLoadingData;
+		public bool IsLoadingData
+		{
+			get { return _isLoadingData; }
+			set 
+			{ 
+				SetProperty(ref _isLoadingData, value);
+            }
+		}
+
 
 		// WHEN CLOSING APP
 		public override void ViewDestroy(bool viewFinishing = true)

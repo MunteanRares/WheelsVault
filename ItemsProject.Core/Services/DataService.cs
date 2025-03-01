@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Runtime.InteropServices.Marshalling;
 using System.Windows.Input;
 using ItemsProject.Core.Data;
 using ItemsProject.Core.Messages;
@@ -173,6 +174,30 @@ namespace ItemsProject.Core.Services
         {
             ItemModel output =  _db.AddHotWheelsModel(folderId, modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL);
             return output;   
+        }
+
+        public int GetAllHotWheelsCount()
+        {
+            int output = _db.GetAllNonCustom().Count;
+            return output;
+        }
+
+        public List<FolderModel> GetAllFolders()
+        {
+            List<FolderModel> output = _db.GetAllFolders();
+            return output;
+        }
+
+        public int GetAllCarsCount()
+        {
+            int output = _db.GetAllQuantities();
+            return output;
+        }
+
+        public ItemModel RemoveOneQuantity(ItemModel? itemModel)
+        {
+            ItemModel output = _db.RemoveOneQuantity(itemModel);
+            return output;
         }
     }
 }

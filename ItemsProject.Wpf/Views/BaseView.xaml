@@ -8,6 +8,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:conv="clr-namespace:ItemsProject.Wpf.Converters"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:ItemsProject.Wpf.Views" xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.AeroLite"
         mc:Ignorable="d" 
         FontSize="22"
@@ -530,7 +531,7 @@
 
         <Grid Margin="40 15 0 0" Grid.Row="2" Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.1*"/>
+                <RowDefinition Height="0.15*"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
@@ -538,323 +539,372 @@
                 <ColumnDefinition Width="2.1*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            
-            <StackPanel Grid.Row="0" Grid.Column="0" Margin="15 0 0 0" Orientation="Horizontal">
 
-                <Border Height="30">
-                    <TextBlock Margin="0 0 5 0" Text="Search" VerticalAlignment="Center"/>
-                </Border>
+            <WrapPanel
+                Grid.Row="0"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center">
+                <StackPanel
+                    Margin="0 0 0 0"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal">
 
-                <TextBox 
-                    Name="searchTextBox"
-                    Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    FontSize="20"
-                    Padding="2"
-                    Grid.Column="0"
-                    MaxWidth="400"
-                    Width="200"
-                    Height="30"
-                    Margin="10 0 0 0"/>
+                    <Border Height="30">
+                        <TextBlock Margin="0 0 5 0" Text="Search" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <TextBox 
+                        Name="searchTextBox"
+                        Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        FontSize="20"
+                        Padding="2"
+                        Grid.Column="0"
+                        MaxWidth="400"
+                        Width="200"
+                        Height="30"
+                        Margin="10 0 40 0"/>
+
+                    <StackPanel 
+                        Margin="0 0 0 0"
+                        Orientation="Horizontal"
+                        Grid.Row="1" 
+                        Grid.Column="0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                        <TextBlock
+                            Text="Sort By"
+                            VerticalAlignment="Center">
+                        </TextBlock>
+
+                        <ComboBox 
+                            x:Name="comboBoxSort"
+                            Template="{DynamicResource RoundComboBox}"
+                            IsEnabled="{Binding IsFolderSelected}"
+                            ItemsSource="{Binding SortOptions}"
+                            SelectedItem="{Binding SelectedSortOption}"
+                            Margin="10 0 140 0"
+                            Height="{Binding Path=ActualHeight, ElementName=searchTextBox}"
+                            Width="150"
+                            Focusable="True">
+                            <ComboBox.Resources>
+                                <Style TargetType="TextBlock" BasedOn="{x:Null}">
+                                    <Setter Property="Foreground" Value="#09203F"/>
+                                </Style>
+                            </ComboBox.Resources>
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Foreground="#09203F"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel
+                    Margin="0 0 0 0"
+                    Grid.Column="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+                    <TextBox
+                        x:Name="hotwheelsAddTextBox"                    
+                        FontSize="20"
+                        Background="#fff"
+                        Width="300"
+                        Text="{Binding SearchhwText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Height="30"
+                        TextAlignment="Left"
+                        Foreground="Gray"
+                        IsEnabled="{Binding IsFolderSelected}"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        HorizontalAlignment="Right"
+                        Margin="0 0 40 0"
+                        LostFocus="hotwheelsAddTextBox_LostFocus"
+                        GotFocus="hotwheelsAddTextBox_GotFocus"
+                        PreviewLostKeyboardFocus="hotwheelsAddTextBox_PreviewLostKeyboardFocus"
+                        PreviewMouseDown="hotwheelsAddTextBox_PreviewMouseDown">
+                    </TextBox>
+
+                    <Popup
+                        x:Name="hotWheelsPopup" 
+                        IsOpen="{Binding IsPopupHwOpened, Mode=OneWay}"
+                        StaysOpen="False"
+                        Placement="Bottom"
+                        PopupAnimation="Slide"
+                        HorizontalOffset="-400"
+                        PlacementTarget="{Binding ElementName=hotwheelsAddTextBox}"
+                        Width="700"
+                        PreviewMouseDown="hotWheelsPopup_PreviewMouseDown">
+                        <ListBox                        
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                            ItemsSource="{Binding SearchhwResult}"
+                            MaxHeight="400"
+                            ScrollViewer.VerticalScrollBarVisibility="Visible">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem">
+                                                <ContentPresenter/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Margin" Value="8"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Button
+                                        Command="{Binding DataContext.AddHotWheelsCommand, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
+                                        CommandParameter="{Binding .}"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{x:Null}">
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="Margin" Value="0"/>
+                                                <Setter Property="Padding" Value="0"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Name="border" 
+                                                                CornerRadius="6"
+                                                                Background="{TemplateBinding Background}">
+                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Background" Value="#4009203F" />
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Cursor" Value="Hand"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                        <Grid
+                                            x:Name="mainItemGrid"
+                                            Height="100"
+                                            Width="700">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="180"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="160"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Image
+                                                Grid.Column="0"
+                                                Margin="10 0 0 0"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                ToolTipService.InitialShowDelay="0"
+                                                Source="{Binding PhotoURL}">
+                                                <Image.ToolTip>
+                                                    <ToolTip
+                                                        Placement="Left">
+                                                        <Image Source="{Binding PhotoURL}" Width="350"/>
+                                                    </ToolTip>
+                                                </Image.ToolTip>
+                                            </Image>
+
+                                            <TextBlock
+                                                Margin="10 0 0 0"
+                                                Foreground="#09203F"
+                                                FontSize="18"
+                                                VerticalAlignment="Center"
+                                                TextWrapping="Wrap"
+                                                Grid.Column="1"
+                                                Text="{Binding ModelName}"
+                                                HorizontalAlignment="left">
+                                            </TextBlock>
+
+                                            <Grid
+                                                Margin="10 0 0 10"
+                                                HorizontalAlignment="Left"
+                                                Height="{Binding Path=ActualHeight, ElementName=mainItemGrid}"
+                                                Grid.Column="2">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                <TextBlock
+                                                    Margin="0 8 0 0"
+                                                    Grid.Row="0"
+                                                    FontSize="16"
+                                                    Text="Prod. Year"
+                                                    Foreground="#9009203F"
+                                                    HorizontalAlignment="center"
+                                                    VerticalAlignment="Top">
+                                                </TextBlock>
+
+                                                <TextBlock
+                                                    Grid.Row="1"
+                                                    Margin="0 0 0 10"
+                                                    Foreground="#09203F"
+                                                    FontSize="18"
+                                                    VerticalAlignment="Center"
+                                                    TextWrapping="Wrap"
+                                                    Text="{Binding YearProduced}"
+                                                    HorizontalAlignment="Center">
+                                                </TextBlock>
+                                            </Grid>
+
+                                            <Grid
+                                                HorizontalAlignment="Center"
+                                                Margin="0 0 0 10"
+                                                Height="{Binding Path=ActualHeight, ElementName=mainItemGrid}"
+                                                Grid.Column="3">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                <TextBlock
+                                                    Grid.Row="0"
+                                                    Margin="0 8 0 0"
+                                                    FontSize="16"
+                                                    Text="Series"
+                                                    Foreground="#9009203F"
+                                                    HorizontalAlignment="center"
+                                                    VerticalAlignment="Top">
+                                                </TextBlock>
+
+                                                <TextBlock
+                                                    Grid.Row="1"
+                                                    Margin="10 0 0 10"
+                                                    Foreground="#09203F"
+                                                    FontSize="18"
+                                                    VerticalAlignment="Center"
+                                                    TextWrapping="Wrap"
+                                                    Text="{Binding SeriesName}"
+                                                    HorizontalAlignment="Center">
+                                                </TextBlock>
+                                            </Grid>
+
+                                            <Grid
+                                                HorizontalAlignment="Center"
+                                                Margin="0 0 0 0"
+                                                Height="{Binding Path=ActualHeight, ElementName=mainItemGrid}"
+                                                Grid.Column="4">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                <TextBlock
+                                                    Grid.Row="0"
+                                                    Margin="0 8 0 0"
+                                                    FontSize="16"
+                                                    Text="Toy Code"
+                                                    Foreground="#9009203F"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Top">
+                                                </TextBlock>
+
+                                                <TextBlock
+                                                    Grid.Row="1"
+                                                    Margin="0 0 0 10"
+                                                    Foreground="#09203F"
+                                                    FontSize="18"
+                                                    VerticalAlignment="Center"
+                                                    TextWrapping="Wrap"
+                                                    Text="{Binding ToyNum}"
+                                                    HorizontalAlignment="Center">
+                                                </TextBlock>
+                                            </Grid>
+
+                                            <Border
+                                                x:Name="separationBorder"
+                                                Grid.ColumnSpan="5"
+                                                Grid.Column="0"
+                                                Margin="0 0 38 0"
+                                                BorderThickness="0 0 0 2"
+                                                BorderBrush="#4009203F"
+                                                CornerRadius="4">
+                                            </Border>
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Popup>
+
+                    <Button 
+                        FontSize="20"
+                        IsEnabled="{Binding IsFolderSelected}"
+                        Width="160"
+                        HorizontalAlignment="Right"
+                        Margin="0 0 0 0"
+                        mvx:Bi.nd="Command OpenAddItemWindowCommand">
+                        <TextBlock Foreground="#09203F" Text="+ Custom Item">
+                        </TextBlock>
+                    </Button>
+                </StackPanel>
+            </WrapPanel>
+
+            <WrapPanel
+                Grid.Row="1"
+                Margin="30 0 0 0"
+                VerticalAlignment="Top"
+                Orientation="Horizontal">
+                <StackPanel
+                    Orientation="Horizontal">
+                    <TextBlock
+                        Foreground="#b3b3b3"
+                        FontSize="18"
+                        Text="Unique HotWheels: "/>
+                    <TextBlock
+                        Foreground="#b3b3b3"
+                        FontSize="18"
+                        Text="{Binding TotalHotWheelsCount}"/>
+                </StackPanel>
+                
+                <StackPanel
+                    Margin="30 0 0 0"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        Foreground="#b3b3b3"
+                        FontSize="18"
+                        Text="Total Cars: "/>
+                    <TextBlock
+                        Foreground="#b3b3b3"
+                        FontSize="18"
+                        Text="{Binding TotalCarsCount}"/>
+                </StackPanel>
 
                 <StackPanel 
-                    Margin="25 0 0 0"
-                    Orientation="Horizontal"
-                    Grid.Row="1" 
-                    Grid.Column="0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
+                    Visibility="{Binding IsFolderSelected, Converter={StaticResource BooleanVisibilityConverter}}"
+                    Margin="30 0 0 0"
+                    Orientation="Horizontal">
                     <TextBlock
-                        Text="Sort By"
-                        VerticalAlignment="Center">
+                        Foreground="#b3b3b3"
+                        FontSize="18">
+                        <Run
+                            Text="'"/>
+                        <Run
+                            Text="{Binding SelectedFolder.Name}"/>
+                        <Run
+                            Text="' "/>
                     </TextBlock>
-
-                    <ComboBox 
-                        x:Name="comboBoxSort"
-                        Template="{DynamicResource RoundComboBox}"
-                        IsEnabled="{Binding IsFolderSelected}"
-                        ItemsSource="{Binding SortOptions}"
-                        SelectedItem="{Binding SelectedSortOption}"
-                        Margin="10 0 0 0"
-                        Height="{Binding Path=ActualHeight, ElementName=searchTextBox}"
-                        Width="150"
-                        Focusable="True">
-                        <ComboBox.Resources>
-                            <Style TargetType="TextBlock" BasedOn="{x:Null}">
-                                <Setter Property="Foreground" Value="#09203F"/>
-                            </Style>
-                        </ComboBox.Resources>
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding}" Foreground="#09203F"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
+                    <TextBlock
+                        Foreground="#b3b3b3"
+                        FontSize="18"
+                        Text=" Count: "/>
+                    <TextBlock
+                        Foreground="#b3b3b3"
+                        FontSize="18"
+                        Text="{Binding TotalFolderCarsCount}"/>
                 </StackPanel>
-            </StackPanel>
-
-            <StackPanel
-                Margin="0 0 60 0"
-                Grid.Column="2"
-                Orientation="Horizontal"
-                HorizontalAlignment="Right">
-                <TextBox
-                    x:Name="hotwheelsAddTextBox"                    
-                    FontSize="20"
-                    Background="#fff"
-                    Width="300"
-                    Text="{Binding SearchhwText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    Height="30"
-                    TextAlignment="Left"
-                    Foreground="Gray"
-                    IsEnabled="{Binding IsFolderSelected}"
-                    VerticalAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    HorizontalAlignment="Right"
-                    Margin="0 0 40 0"
-                    LostFocus="hotwheelsAddTextBox_LostFocus"
-                    GotFocus="hotwheelsAddTextBox_GotFocus"
-                    PreviewLostKeyboardFocus="hotwheelsAddTextBox_PreviewLostKeyboardFocus"
-                    PreviewMouseDown="hotwheelsAddTextBox_PreviewMouseDown">
-                </TextBox>
-
-                <Popup
-                    x:Name="hotWheelsPopup" 
-                    IsOpen="{Binding IsPopupHwOpened, Mode=OneWay}"
-                    StaysOpen="False"
-                    Placement="Bottom"
-                    PopupAnimation="Slide"
-                    HorizontalOffset="-400"
-                    PlacementTarget="{Binding ElementName=hotwheelsAddTextBox}"
-                    Width="700"
-                    PreviewMouseDown="hotWheelsPopup_PreviewMouseDown">
-                    <ListBox                        
-                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                        ItemsSource="{Binding SearchhwResult}"
-                        MaxHeight="400"
-                        ScrollViewer.VerticalScrollBarVisibility="Visible">
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ListBoxItem">
-                                            <ContentPresenter/>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter Property="Margin" Value="8"/>
-                            </Style>
-                        </ListBox.ItemContainerStyle>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Button
-                                    Command="{Binding DataContext.AddHotWheelsCommand, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
-                                    CommandParameter="{Binding .}"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch">
-                                    <Button.Style>
-                                        <Style TargetType="Button" BasedOn="{x:Null}">
-                                            <Setter Property="Background" Value="Transparent"/>
-                                            <Setter Property="BorderBrush" Value="Transparent"/>
-                                            <Setter Property="BorderThickness" Value="0"/>
-                                            <Setter Property="Margin" Value="0"/>
-                                            <Setter Property="Padding" Value="0"/>
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border Name="border" 
-                                                            CornerRadius="6"
-                                                            Background="{TemplateBinding Background}">
-                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                        </Border>
-                                                        <ControlTemplate.Triggers>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter Property="Background" Value="#4009203F" />
-                                                            </Trigger>
-                                                        </ControlTemplate.Triggers>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-
-                                            <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Cursor" Value="Hand"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Button.Style>
-                                    <Grid
-                                        x:Name="mainItemGrid"
-                                        Height="100"
-                                        Width="700">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="100"/>
-                                            <ColumnDefinition Width="180"/>
-                                            <ColumnDefinition Width="100"/>
-                                            <ColumnDefinition Width="160"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <Image
-                                            Grid.Column="0"
-                                            Margin="10 0 0 0"
-                                            VerticalAlignment="Center"
-                                            HorizontalAlignment="Center"
-                                            ToolTipService.InitialShowDelay="0"
-                                            Source="{Binding PhotoURL}">
-                                            <Image.ToolTip>
-                                                <ToolTip
-                                                    Placement="Left">
-                                                    <Image Source="{Binding PhotoURL}" Width="350"/>
-                                                </ToolTip>
-                                            </Image.ToolTip>
-                                        </Image>
-
-                                        <TextBlock
-                                            Margin="10 0 0 0"
-                                            Foreground="#09203F"
-                                            FontSize="18"
-                                            VerticalAlignment="Center"
-                                            TextWrapping="Wrap"
-                                            Grid.Column="1"
-                                            Text="{Binding ModelName}"
-                                            HorizontalAlignment="left">
-                                        </TextBlock>
-
-                                        <Grid
-                                            Margin="10 0 0 10"
-                                            HorizontalAlignment="Left"
-                                            Height="{Binding Path=ActualHeight, ElementName=mainItemGrid}"
-                                            Grid.Column="2">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="auto"/>
-                                                <RowDefinition Height="*"/>
-                                            </Grid.RowDefinitions>
-                                            <TextBlock
-                                                Margin="0 8 0 0"
-                                                Grid.Row="0"
-                                                FontSize="16"
-                                                Text="Prod. Year"
-                                                Foreground="#9009203F"
-                                                HorizontalAlignment="center"
-                                                VerticalAlignment="Top">
-                                            </TextBlock>
-                                        
-                                            <TextBlock
-                                                Grid.Row="1"
-                                                Margin="0 0 0 10"
-                                                Foreground="#09203F"
-                                                FontSize="18"
-                                                VerticalAlignment="Center"
-                                                TextWrapping="Wrap"
-                                                Text="{Binding YearProduced}"
-                                                HorizontalAlignment="Center">
-                                            </TextBlock>
-                                        </Grid>
-
-                                        <Grid
-                                            HorizontalAlignment="Center"
-                                            Margin="0 0 0 10"
-                                            Height="{Binding Path=ActualHeight, ElementName=mainItemGrid}"
-                                            Grid.Column="3">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="auto"/>
-                                                <RowDefinition Height="*"/>
-                                            </Grid.RowDefinitions>
-                                            <TextBlock
-                                                Grid.Row="0"
-                                                Margin="0 8 0 0"
-                                                FontSize="16"
-                                                Text="Series"
-                                                Foreground="#9009203F"
-                                                HorizontalAlignment="center"
-                                                VerticalAlignment="Top">
-                                            </TextBlock>
-
-                                            <TextBlock
-                                                Grid.Row="1"
-                                                Margin="10 0 0 10"
-                                                Foreground="#09203F"
-                                                FontSize="18"
-                                                VerticalAlignment="Center"
-                                                TextWrapping="Wrap"
-                                                Text="{Binding SeriesName}"
-                                                HorizontalAlignment="Center">
-                                            </TextBlock>
-                                        </Grid>
-
-                                        <Grid
-                                            HorizontalAlignment="Center"
-                                            Margin="0 0 0 0"
-                                            Height="{Binding Path=ActualHeight, ElementName=mainItemGrid}"
-                                            Grid.Column="4">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="auto"/>
-                                                <RowDefinition Height="*"/>
-                                            </Grid.RowDefinitions>
-                                            <TextBlock
-                                                Grid.Row="0"
-                                                Margin="0 8 0 0"
-                                                FontSize="16"
-                                                Text="Toy Code"
-                                                Foreground="#9009203F"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Top">
-                                            </TextBlock>
-
-                                            <TextBlock
-                                                Grid.Row="1"
-                                                Margin="0 0 0 10"
-                                                Foreground="#09203F"
-                                                FontSize="18"
-                                                VerticalAlignment="Center"
-                                                TextWrapping="Wrap"
-                                                Text="{Binding ToyNum}"
-                                                HorizontalAlignment="Center">
-                                            </TextBlock>
-                                        </Grid>
-
-                                        <Border
-                                            x:Name="separationBorder"
-                                            Grid.ColumnSpan="5"
-                                            Grid.Column="0"
-                                            Margin="0 0 38 0"
-                                            BorderThickness="0 0 0 2"
-                                            BorderBrush="#4009203F"
-                                            CornerRadius="4">
-                                        </Border>
-                                    </Grid>
-                                </Button>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Popup>
-
-                <Button 
-                    FontSize="20"
-                    IsEnabled="{Binding IsFolderSelected}"
-                    Width="160"
-                    HorizontalAlignment="Right"
-                    Margin="0 0 0 0"
-                    mvx:Bi.nd="Command OpenAddItemWindowCommand">
-                    <TextBlock Foreground="#09203F" Text="+ Custom Item">
-                    </TextBlock>
-                </Button>
-            </StackPanel>
-
-            <StackPanel
-                Grid.Row="2"
-                Margin="15 0 0 0"
-                Orientation="Horizontal">
-                <TextBlock
-                    Foreground="#b3b3b3"
-                    FontSize="18"
-                    Text="Unique HotWheels: "/>
-                <TextBlock
-                    Foreground="#b3b3b3"
-                    FontSize="18"
-                    Text="{Binding TotalHotWheelsCount}"/>
-            </StackPanel>
+            </WrapPanel>
 
             <ListView
                 Grid.Row="3"
@@ -871,7 +921,6 @@
                 Margin="0 5 0 0">
 
                 <ListView.Resources>
-
                     <Style TargetType="{x:Type ListViewItem}">
                         <Style.Setters>
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -913,8 +962,8 @@
                         <Grid>
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
@@ -926,19 +975,18 @@
                                 <Grid
                                     Height="150"
                                     x:Name="listviewItemShowGrid"
-                                    HorizontalAlignment="Left"
                                     Grid.Column="0" Grid.Row="0"
                                     Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverterInverse}}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="200"/>
-                                        <ColumnDefinition Width="330"/>
+                                        <ColumnDefinition Width="180"/>
+                                        <ColumnDefinition Width="310"/>
                                         <ColumnDefinition Width="150"/>
                                         <ColumnDefinition Width="290"/>
-                                        <ColumnDefinition Width="150"/>
-                                        <ColumnDefinition Width="150"/>
-                                        <ColumnDefinition Width="150"/>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition Width="135"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <Image
                                         Margin="10 0 0 0"
@@ -1079,6 +1127,58 @@
                                         </Button.Visibility>
                                         <TextBlock FontWeight="Bold" Padding="15 0" Text="Edit" Foreground="#a1a1a1"/>
                                     </Button>
+
+                                    <Grid
+                                        Grid.Column="7"
+                                        Margin="0 5 0 0"
+                                        VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Button
+                                            Command="{Binding DataContext.RemoveOneQuantityCommand, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"
+                                            CommandParameter="{Binding .}"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Grid.Column="0"
+                                            Content="-"
+                                            Margin="0 0 0 0">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{x:Null}">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Quantity}" Value="1">
+                                                            <Setter Property="IsEnabled" Value="False"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                        
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            Grid.Column="1"
+                                            Margin="0 0 0 0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding Quantity}">
+                                        </TextBlock>
+
+                                        <Button
+                                            Command="{Binding DataContext.AddHotWheelsCommand, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"
+                                            CommandParameter="{Binding .}"
+                                            HorizontalAlignment="Right"
+                                            Style="{x:Null}"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Grid.Column="2"
+                                            Content="+"
+                                            Margin="5 0 0 0">
+                                            
+                                        </Button>
+                                    </Grid>
+                                    
                                     
                                     <Button
                                         Grid.Column="8"
@@ -1086,10 +1186,10 @@
                                         CommandParameter="{Binding .}"
                                         x:Name="menuOptionsButton"
                                         Focusable="True"
-                                        Margin="0 0 10 0"
+                                        Margin="0 10 10 0"
                                         Padding="15 0"
                                         FontFamily="pack://application:,,,/Assets/Fonts/#Font Awesome 6 Free Solid"
-                                        HorizontalAlignment="Center"
+                                        HorizontalAlignment="Right"
                                         VerticalAlignment="Center">
                                         <Button.Style>
                                             <Style TargetType="Button" BasedOn="{StaticResource BorderlessButton}">
@@ -1100,7 +1200,9 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Button.Style>
-                                        <TextBlock 
+                                        
+                                        <TextBlock
+                                            Margin="0 0 15 0"
                                             x:Name="textBlockMenu"
                                             Text="&#xf141;">
                                             <TextBlock.Style>

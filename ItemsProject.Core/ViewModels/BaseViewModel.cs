@@ -24,7 +24,6 @@ namespace ItemsProject.Core.ViewModels
 {
 	public class BaseViewModel : MvxViewModel
 	{
-		private readonly IDatabaseData _db;
 		private readonly IMvxNavigationService _nav;
 		private readonly IDataService _dataService;
 		private readonly List<MvxSubscriptionToken> _tokens = new List<MvxSubscriptionToken>();
@@ -34,13 +33,12 @@ namespace ItemsProject.Core.ViewModels
 		private Timer _debounceTimer;
 		private SynchronizationContext? _uiContext;
 
-        public BaseViewModel(IMvxNavigationService nav, IDatabaseData db, IDataService dataService, IMvxMessenger messenger)
+        public BaseViewModel(IMvxNavigationService nav, IDataService dataService, IMvxMessenger messenger)
 		{
-			_db = db;
 			_dataService = dataService;
 			_nav = nav;
 
-			Folders = new ObservableCollection<FolderModel>(_db.GetAllFolders());
+			Folders = new ObservableCollection<FolderModel>(_dataService.GetAllFolders());
 			FolderItems = new ObservableCollection<ItemModel>();
 
 			// Messages
@@ -73,11 +71,14 @@ namespace ItemsProject.Core.ViewModels
 
 			// HotWheels Commands
 			AddHotWheelsCommand = new AddHotWheelsCommand(_dataService, UpdateFolders, () => SelectedFolder);
+			RemoveOneQuantityCommand = new RemoveOneQuantityCommand(_dataService, UpdateFolders);
 
-			// Setting Default Values
-			SelectedSortOption = SortOptions[0];
+            // Setting Default Values
+            SelectedSortOption = SortOptions[0];
 			Folders[0].IsDefault = true;
-			TotalHotWheelsCount = _db.GetAllItems().Count;
+			TotalHotWheelsCount = _dataService.GetAllHotWheelsCount();
+			TotalCarsCount = _dataService.GetAllCarsCount();
+
             _uiContext = SynchronizationContext.Current;
             _debounceTimer = new Timer(1000);
 			_debounceTimer.Elapsed += (sender, e) => DebounceTimer_Tick();
@@ -111,6 +112,7 @@ namespace ItemsProject.Core.ViewModels
 
 		// HotWheels Commands
 		public ICommand AddHotWheelsCommand { get; }
+		public ICommand RemoveOneQuantityCommand { get; }
 
 
         /// <summary>
@@ -168,9 +170,14 @@ namespace ItemsProject.Core.ViewModels
 
 		private void UpdateFolders(ItemModel newItem)
 		{
-            _allFolderItems.Add(newItem);
-            FolderItems.Add(newItem);
-			TotalHotWheelsCount += 1;
+			if (newItem.Quantity == 1)
+			{
+                _allFolderItems.Add(newItem);
+                FolderItems.Add(newItem);
+            }
+			
+			FolderItems = _dataService.UpdateFolderItems(_dataService.LoadItemsForFolder(SelectedFolder), FolderItems);
+			UpdateCarCounts();
         }
 
 		public void ClearSearchText()
@@ -189,8 +196,9 @@ namespace ItemsProject.Core.ViewModels
 		{
 			_allFolderItems = updatedItems;
 			FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
-			TotalHotWheelsCount = _db.GetAllItems().Count;
-		}
+
+			UpdateCarCounts();
+        }
 
 		public void ExecuteFolderRemoved(List<FolderModel> updatedFolders)
 		{
@@ -201,6 +209,13 @@ namespace ItemsProject.Core.ViewModels
 		{
 			IsWindowEnabled = false;
 		}
+
+		private void UpdateCarCounts()
+		{
+            TotalHotWheelsCount = _dataService.GetAllHotWheelsCount();
+            TotalCarsCount = _dataService.GetAllCarsCount();
+            TotalFolderCarsCount = FolderItems.Count();
+        }
 
 		public void ChangeEditMode<T>(T passedModel, bool isEditing, Action<T> setEditAction, Action<T, bool> setEditingFlag)
 		{
@@ -410,9 +425,10 @@ namespace ItemsProject.Core.ViewModels
 				RaisePropertyChanged(() => IsFolderSelected);
                 SelectedItem = null;
 				SelectedSortOption = SortOptions[0];
-				_allFolderItems = _dataService.LoadItemsForFolder(SelectedFolder);
+                _allFolderItems = _dataService.LoadItemsForFolder(SelectedFolder);
 				_searchResult = _dataService.FilterItems(SearchText, _allFolderItems);
                 FolderItems = _dataService.UpdateFolderItems(_searchResult, FolderItems);
+                TotalFolderCarsCount = FolderItems.Count();
             }
 		}
 
@@ -498,15 +514,32 @@ namespace ItemsProject.Core.ViewModels
 		public int TotalHotWheelsCount
         {
 			get
-			{ 
-				return _totalHotWheelsCount; 
-			}
+			{ return _totalHotWheelsCount; }
 			set 
 			{
                 SetProperty(ref _totalHotWheelsCount, value);
 			}
 		}
 
+		private int _totalCarsCount;
+		public int TotalCarsCount
+        {
+			get { return _totalCarsCount; }
+			set 
+			{
+				SetProperty(ref _totalCarsCount, value);
+			}
+		}
+
+		private int _totalFolderCarsCount;
+		public int TotalFolderCarsCount
+        {
+			get { return _totalFolderCarsCount; }
+			set 
+			{ 
+				SetProperty(ref _totalFolderCarsCount, value);
+			}
+		}
 
 		// WHEN CLOSING APP
 		public override void ViewDestroy(bool viewFinishing = true)

@@ -25,5 +25,9 @@ namespace ItemsProject.Core.Services
         ItemModel DeleteAllItemsFromFolder(int id);
         ObservableCollection<HotWheelsModel> SearchHotWheels(string searchhwText);
         ItemModel AddHotWheelsModel(int folderId, string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL);
+        int GetAllHotWheelsCount();
+        List<FolderModel> GetAllFolders();
+        int GetAllCarsCount();
+        ItemModel RemoveOneQuantity(ItemModel? itemModel);
     }
 }

@@ -109,6 +109,18 @@ namespace ItemsProject.Core.Models
             }
         }
 
+        private int _quantity;
+        public int Quantity
+        {
+            get { return _quantity; }
+            set 
+            { 
+                SetProperty(ref _quantity, value);
+                RaisePropertyChanged(() => Quantity);
+            }
+        }
+
+
         private bool _isPopupOpened;
         public bool IsPopupOpened
         {

@@ -8,5 +8,6 @@
     [yearProducedNum] NVARCHAR(50) NULL, 
     [toyNum] NVARCHAR(15) NULL, 
     [photoUrl] NVARCHAR(1000) NULL, 
-    [isCustom] BIT NOT NULL
+    [isCustom] BIT NOT NULL, 
+    [quantity] INT NOT NULL DEFAULT 1
 )

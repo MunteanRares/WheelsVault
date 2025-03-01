@@ -184,7 +184,37 @@ namespace ItemsProject.Core.Data
         public ItemModel AddHotWheelsModel(int folderId, string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
         {
             _db.SaveData("dbo.Items_AddHotWheelsModel", new { folderId, modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL, isCustom = 0 }, connectionStringName, true);
-            ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetLast", new { }, connectionStringName, true).First();
+            ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetUnique", new { modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL, isCustom = 0 }, connectionStringName, true).First();
+            //ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetLast", new { }, connectionStringName, true).First();
+            return output;
+        }
+
+        public List<ItemModel> GetAllNonCustom()
+        {
+            List<ItemModel> output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetAllNonCustom", new {}, connectionStringName, true);
+            return output;
+        }
+
+        public int GetAllQuantities()
+        {
+            int output = _db.LoadData<int, dynamic>("dbo.spItems_GetAllQuantities", new { }, connectionStringName, true).FirstOrDefault();
+            return output;
+        }
+
+        public ItemModel RemoveOneQuantity(ItemModel? itemModel)
+        {
+            _db.SaveData("dbo.spItems_RemoveOneQuantity", new { itemId = itemModel.Id }, connectionStringName, true);
+            ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetUnique",
+                                             new { modelName = itemModel.ModelName,
+                                                 seriesName = itemModel.SeriesName,
+                                                 seriesNum = itemModel.SeriesNum,
+                                                 yearProduced = itemModel.YearProduced,
+                                                 yearProducedNum = itemModel.YearProducedNum,
+                                                 toyNum = itemModel.ToyNum,
+                                                 photoURL = itemModel.PhotoURL,
+                                                 isCustom = 0 },
+                                             connectionStringName,
+                                             true).First();
             return output;
         }
     }

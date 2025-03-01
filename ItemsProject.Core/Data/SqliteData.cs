@@ -172,5 +172,20 @@ namespace ItemsProject.Core.Data
         {
             throw new NotImplementedException();
         }
+
+        public List<ItemModel> GetAllNonCustom()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetAllQuantities()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ItemModel RemoveOneQuantity(ItemModel? itemModel)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

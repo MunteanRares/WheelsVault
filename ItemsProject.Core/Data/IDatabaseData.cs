@@ -22,5 +22,8 @@ namespace ItemsProject.Core.Data
         Task DefaultHotwheelsDbPopulation();
         List<HotWheelsModel> SearchHotWheels(string searchhwText);
         ItemModel AddHotWheelsModel(int folderId, string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL);
+        List<ItemModel> GetAllNonCustom();
+        int GetAllQuantities();
+        ItemModel RemoveOneQuantity(ItemModel? itemModel);
     }
 }

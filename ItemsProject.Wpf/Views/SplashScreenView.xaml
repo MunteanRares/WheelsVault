@@ -19,6 +19,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </views:MvxWpfView.Resources>
+    
     <materialDesign:Card
         materialDesign:UniformCornerRadius="15">
         <Grid>

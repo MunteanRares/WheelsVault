@@ -15,9 +15,6 @@ using ItemsProject.Core.Commands.BaseViewModelCommands.Item_Commands;
 using WikiHotWheelsWebScraper.Models;
 using Timer = System.Timers.Timer;
 using ItemsProject.Core.Commands.BaseViewModelCommands.HotWheels_Commands;
-using MvvmCross;
-using System.Security.Permissions;
-using MvvmCross.Core;
 
 
 namespace ItemsProject.Core.ViewModels
@@ -78,6 +75,7 @@ namespace ItemsProject.Core.ViewModels
 			Folders[0].IsDefault = true;
 			TotalHotWheelsCount = _dataService.GetAllHotWheelsCount();
 			TotalCarsCount = _dataService.GetAllCarsCount();
+			AppVersion = "1.1.5.0";
 
             _uiContext = SynchronizationContext.Current;
             _debounceTimer = new Timer(1000);
@@ -521,6 +519,18 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
+		private string _appVersion;
+
+		public string AppVersion
+		{
+			get { return _appVersion; }
+			set 
+			{
+				SetProperty(ref _appVersion, value);
+			}
+		}
+
+
 		private int _totalCarsCount;
 		public int TotalCarsCount
         {
@@ -541,11 +551,12 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
+
 		// WHEN CLOSING APP
 		public override void ViewDestroy(bool viewFinishing = true)
 		{
-			base.ViewDestroy(viewFinishing);
-			UnsubscribeMessages();
+            UnsubscribeMessages();
+            base.ViewDestroy(viewFinishing);
 		}
     }
 }

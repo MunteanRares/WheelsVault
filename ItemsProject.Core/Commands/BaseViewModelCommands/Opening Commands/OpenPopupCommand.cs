@@ -9,7 +9,7 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands.Opening_Commands
         private readonly Action<ItemModel> _setSelectedItemFolderIds;   
         private readonly Action<ItemModel> _setCheckedToFolders;
 
-        public OpenPopupCommand(IDataService dataService, Action<ItemModel> setSelectedItemFolderIds, Action<ItemModel> setCheckedToFolders)
+        public OpenPopupCommand(Action<ItemModel> setSelectedItemFolderIds, Action<ItemModel> setCheckedToFolders)
         {
             _setSelectedItemFolderIds = setSelectedItemFolderIds;
             _setCheckedToFolders = setCheckedToFolders;

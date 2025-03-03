@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:conv="clr-namespace:ItemsProject.Wpf.Converters"
+    xmlns:helpers="clr-namespace:ItemsProject.Wpf.Helper_Functions"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:local="clr-namespace:ItemsProject.Wpf.Views" xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.AeroLite"
     mc:Ignorable="d" 
@@ -174,13 +175,13 @@
                         <ColumnDefinition MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" Width="0"/>
                     </Grid.ColumnDefinitions>
                     <Popup IsHitTestVisible="False"
-       StaysOpen="False"
-       x:Name="PART_Popup" AllowsTransparency="true"
-       Grid.ColumnSpan="2" IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-       Margin="0"
-       Placement="Custom"
-       CustomPopupPlacementCallback="CustomPopupPlacementCallback"
-       PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}">
+                       StaysOpen="False"
+                       x:Name="PART_Popup" AllowsTransparency="true"
+                       Grid.ColumnSpan="2" IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                       Margin="0"
+                       Placement="Custom"
+                       CustomPopupPlacementCallback="CustomPopupPlacementCallback"
+                       PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}">
                         <Border CornerRadius="4" Margin="0" x:Name="dropDownBorder" Background="#556D7E" BorderThickness="2" BorderBrush="#CCCCCCCC">
                             <ScrollViewer HorizontalScrollBarVisibility="Disabled" Margin="0" x:Name="DropDownScrollViewer">
                                 <Grid Margin="0" x:Name="grid" RenderOptions.ClearTypeHint="Enabled">
@@ -193,23 +194,23 @@
                         </Border>
                     </Popup>
                     <ToggleButton x:Name="toggleButton"
-              Background="{TemplateBinding Background}"
-              BorderBrush="{TemplateBinding BorderBrush}"
-              BorderThickness="0"
-              Grid.ColumnSpan="2"
-              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-              Style="{StaticResource ComboBoxToggleButton}"/>
+                      Background="{TemplateBinding Background}"
+                      BorderBrush="{TemplateBinding BorderBrush}"
+                      BorderThickness="0"
+                      Grid.ColumnSpan="2"
+                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                      Style="{StaticResource ComboBoxToggleButton}"/>
                     <ContentPresenter x:Name="contentPresenter"
-                  ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
-                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                  ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                  IsHitTestVisible="False" Margin="0"
-                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                            ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                            ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            IsHitTestVisible="False" Margin="0"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                     </ContentPresenter>
                     <TextBlock 
-                        Foreground="#E0E9F2"
+                        Foreground="Black"
                         Padding="10 6"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
@@ -256,7 +257,6 @@
                     </Trigger>
                 </ControlTemplate.Triggers>
             </ControlTemplate>
-
         </ResourceDictionary>
         
         
@@ -339,14 +339,15 @@
                 </Grid.ColumnDefinitions>
 
                 <Button
-                MinHeight="35"
-                FontSize="20"
-                Padding="30 0 30 0"
-                MaxWidth="180"
-                Margin="0 30 0 0"
-                materialDesign:ButtonAssist.CornerRadius="5"
-                materialDesign:ElevationAssist.Elevation="Dp2"
-                Command="{Binding OpenAddFolderWindowCommand}">
+                    MinHeight="35"
+                    FontSize="20"
+                    Padding="30 0 30 0"
+                    MaxWidth="180"
+                    Margin="0 30 0 0"
+                    HorizontalContentAlignment="Stretch"
+                    materialDesign:ButtonAssist.CornerRadius="5"
+                    materialDesign:ElevationAssist.Elevation="Dp2"
+                    Command="{Binding OpenAddFolderWindowCommand}">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
                             <Style.Triggers>
@@ -356,7 +357,10 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
-                    <TextBlock Foreground="AliceBlue" Text="+ Add Folder">
+                    <TextBlock>
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Text="+ Add Folder"/>
                     </TextBlock>
                 </Button>
 
@@ -376,6 +380,11 @@
                             <Setter Property="Margin" Value="0 2"/>
                             <Setter Property="materialDesign:ListBoxItemAssist.CornerRadius" Value="5"/>
                             <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                </Trigger>
+                            </Style.Triggers>
                         </Style>
                     </ListView.ItemContainerStyle>
 
@@ -693,23 +702,30 @@
                             PreviewMouseDown="hotwheelsAddTextBox_PreviewMouseDown">
                         </TextBox>
 
-                        <Popup
-                        x:Name="hotWheelsPopup" 
-                        IsOpen="{Binding IsPopupHwOpened, Mode=OneWay}"
-                        StaysOpen="False"
-                        Placement="Bottom"
-                        PopupAnimation="Slide"
-                        HorizontalOffset="-400"
-                        PlacementTarget="{Binding ElementName=hotwheelsAddTextBox}"
-                        Width="700"
-                        PreviewMouseDown="hotWheelsPopup_PreviewMouseDown">
-                            <ListBox                        
-                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                            ItemsSource="{Binding SearchhwResult}"
-                            MaxHeight="400"
-                            ScrollViewer.VerticalScrollBarVisibility="Visible">
+                        <materialDesign:PopupBox
+                            x:Name="hotWheelsPopup" 
+                            materialDesign:IsPopupOpen="{Binding IsPopupHwOpened, Mode=OneWay}"
+                            StaysOpen="True"
+                            materialDesign:PlacementMode="BottomAndAlignRightEdges"
+                            PopupHorizontalOffset="-35"
+                            PopupVerticalOffset="10">
+                            <materialDesign:PopupBox.ToggleContent>
+                                <materialDesign:PackIcon
+                                    IsHitTestVisible="False"
+                                    Kind="None"
+                                    Width="0">
+                                </materialDesign:PackIcon>
+                            </materialDesign:PopupBox.ToggleContent>
+
+                            <ListBox
+                                x:Name="searchResultListBox"
+                                Style="{StaticResource MaterialDesignNavigationListBox}"
+                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                ItemsSource="{Binding SearchhwResult}"
+                                MaxHeight="400"
+                                ScrollViewer.VerticalScrollBarVisibility="Disabled">
                                 <ListBox.ItemContainerStyle>
-                                    <Style TargetType="ListBoxItem">
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignCardsListBoxItem}">
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="ListBoxItem">
@@ -723,45 +739,17 @@
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Button
-                                        Command="{Binding DataContext.AddHotWheelsCommand, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
-                                        CommandParameter="{Binding .}"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch">
-                                            <Button.Style>
-                                                <Style TargetType="Button" BasedOn="{x:Null}">
-                                                    <Setter Property="Background" Value="Transparent"/>
-                                                    <Setter Property="BorderBrush" Value="Transparent"/>
-                                                    <Setter Property="BorderThickness" Value="0"/>
-                                                    <Setter Property="Margin" Value="0"/>
-                                                    <Setter Property="Padding" Value="0"/>
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="Button">
-                                                                <Border Name="border" 
-                                                                CornerRadius="6"
-                                                                Background="{TemplateBinding Background}">
-                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                                </Border>
-                                                                <ControlTemplate.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter Property="Background" Value="#4009203F" />
-                                                                    </Trigger>
-                                                                </ControlTemplate.Triggers>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Cursor" Value="Hand"/>
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Button.Style>
-                                            <Grid
-                                            x:Name="mainItemGrid"
                                             Height="100"
-                                            Width="700">
+                                            Style="{StaticResource MaterialDesignFlatSecondaryButton}"
+                                            materialDesign:RippleAssist.IsDisabled="True"
+                                            Command="{Binding DataContext.AddHotWheelsCommand, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
+                                            CommandParameter="{Binding .}"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch">
+                                            <Grid
+                                                x:Name="mainItemGrid"
+                                                Height="100"
+                                                Width="700">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="100"/>
                                                     <ColumnDefinition Width="180"/>
@@ -771,139 +759,139 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <Image
-                                                Grid.Column="0"
-                                                Margin="10 0 0 0"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Center"
-                                                ToolTipService.InitialShowDelay="0"
-                                                Source="{Binding PhotoURL}">
+                                                    Grid.Column="0"
+                                                    Margin="10 0 0 0"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    ToolTipService.InitialShowDelay="0"
+                                                    Source="{Binding PhotoURL}">
                                                     <Image.ToolTip>
                                                         <ToolTip
-                                                        Placement="Left">
+                                                            Placement="Left">
                                                             <Image Source="{Binding PhotoURL}" Width="350"/>
                                                         </ToolTip>
                                                     </Image.ToolTip>
                                                 </Image>
 
                                                 <TextBlock
-                                                Margin="10 0 0 0"
-                                                Foreground="#09203F"
-                                                FontSize="18"
-                                                VerticalAlignment="Center"
-                                                TextWrapping="Wrap"
-                                                Grid.Column="1"
-                                                Text="{Binding ModelName}"
-                                                HorizontalAlignment="left">
+                                                    Margin="10 0 0 0"
+                                                    Foreground="#09203F"
+                                                    FontSize="18"
+                                                    VerticalAlignment="Center"
+                                                    TextWrapping="Wrap"
+                                                    Grid.Column="1"
+                                                    Text="{Binding ModelName}"
+                                                    HorizontalAlignment="left">
                                                 </TextBlock>
 
                                                 <Grid
-                                                Margin="10 0 0 10"
-                                                HorizontalAlignment="Left"
-                                                Height="{Binding Path=ActualHeight, ElementName=mainItemGrid}"
-                                                Grid.Column="2">
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="auto"/>
-                                                        <RowDefinition Height="*"/>
-                                                    </Grid.RowDefinitions>
-                                                    <TextBlock
-                                                    Margin="0 8 0 0"
-                                                    Grid.Row="0"
-                                                    FontSize="16"
-                                                    Text="Prod. Year"
-                                                    Foreground="#9009203F"
-                                                    HorizontalAlignment="center"
-                                                    VerticalAlignment="Top">
-                                                    </TextBlock>
-
-                                                    <TextBlock
-                                                    Grid.Row="1"
-                                                    Margin="0 0 0 10"
-                                                    Foreground="#09203F"
-                                                    FontSize="18"
-                                                    VerticalAlignment="Center"
-                                                    TextWrapping="Wrap"
-                                                    Text="{Binding YearProduced}"
-                                                    HorizontalAlignment="Center">
-                                                    </TextBlock>
-                                                </Grid>
-
-                                                <Grid
-                                                HorizontalAlignment="Center"
-                                                Margin="0 0 0 10"
-                                                Height="{Binding Path=ActualHeight, ElementName=mainItemGrid}"
-                                                Grid.Column="3">
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="auto"/>
-                                                        <RowDefinition Height="*"/>
-                                                    </Grid.RowDefinitions>
-                                                    <TextBlock
-                                                    Grid.Row="0"
-                                                    Margin="0 8 0 0"
-                                                    FontSize="16"
-                                                    Text="Series"
-                                                    Foreground="#9009203F"
-                                                    HorizontalAlignment="center"
-                                                    VerticalAlignment="Top">
-                                                    </TextBlock>
-
-                                                    <TextBlock
-                                                    Grid.Row="1"
                                                     Margin="10 0 0 10"
-                                                    Foreground="#09203F"
-                                                    FontSize="18"
-                                                    VerticalAlignment="Center"
-                                                    TextWrapping="Wrap"
-                                                    Text="{Binding SeriesName}"
-                                                    HorizontalAlignment="Center">
-                                                    </TextBlock>
-                                                </Grid>
-
-                                                <Grid
-                                                HorizontalAlignment="Center"
-                                                Margin="0 0 0 0"
-                                                Height="{Binding Path=ActualHeight, ElementName=mainItemGrid}"
-                                                Grid.Column="4">
+                                                    HorizontalAlignment="Left"
+                                                    Height="{Binding Path=ActualHeight, ElementName=mainItemGrid}"
+                                                    Grid.Column="2">
                                                     <Grid.RowDefinitions>
                                                         <RowDefinition Height="auto"/>
                                                         <RowDefinition Height="*"/>
                                                     </Grid.RowDefinitions>
                                                     <TextBlock
-                                                    Grid.Row="0"
-                                                    Margin="0 8 0 0"
-                                                    FontSize="16"
-                                                    Text="Toy Code"
-                                                    Foreground="#9009203F"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Top">
+                                                        Margin="0 8 0 0"
+                                                        Grid.Row="0"
+                                                        FontSize="16"
+                                                        Text="Prod. Year"
+                                                        Foreground="#9009203F"
+                                                        HorizontalAlignment="center"
+                                                        VerticalAlignment="Top">
                                                     </TextBlock>
 
                                                     <TextBlock
-                                                    Grid.Row="1"
+                                                        Grid.Row="1"
+                                                        Margin="0 0 0 10"
+                                                        Foreground="#09203F"
+                                                        FontSize="18"
+                                                        VerticalAlignment="Center"
+                                                        TextWrapping="Wrap"
+                                                        Text="{Binding YearProduced}"
+                                                        HorizontalAlignment="Center">
+                                                    </TextBlock>
+                                                </Grid>
+
+                                                <Grid
+                                                    HorizontalAlignment="Center"
                                                     Margin="0 0 0 10"
-                                                    Foreground="#09203F"
-                                                    FontSize="18"
-                                                    VerticalAlignment="Center"
-                                                    TextWrapping="Wrap"
-                                                    Text="{Binding ToyNum}"
-                                                    HorizontalAlignment="Center">
+                                                    Height="{Binding Path=ActualHeight, ElementName=mainItemGrid}"
+                                                    Grid.Column="3">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="auto"/>
+                                                        <RowDefinition Height="*"/>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock
+                                                        Grid.Row="0"
+                                                        Margin="0 8 0 0"
+                                                        FontSize="16"
+                                                        Text="Series"
+                                                        Foreground="#9009203F"
+                                                        HorizontalAlignment="center"
+                                                        VerticalAlignment="Top">
+                                                    </TextBlock>
+
+                                                    <TextBlock
+                                                        Grid.Row="1"
+                                                        Margin="10 0 0 10"
+                                                        Foreground="#09203F"
+                                                        FontSize="18"
+                                                        VerticalAlignment="Center"
+                                                        TextWrapping="Wrap"
+                                                        Text="{Binding SeriesName}"
+                                                        HorizontalAlignment="Center">
+                                                    </TextBlock>
+                                                </Grid>
+
+                                                <Grid
+                                                    HorizontalAlignment="Center"
+                                                    Margin="0 0 0 0"
+                                                    Height="{Binding Path=ActualHeight, ElementName=mainItemGrid}"
+                                                    Grid.Column="4">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="auto"/>
+                                                        <RowDefinition Height="*"/>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock
+                                                        Grid.Row="0"
+                                                        Margin="0 8 0 0"
+                                                        FontSize="16"
+                                                        Text="Toy Code"
+                                                        Foreground="#9009203F"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Top">
+                                                    </TextBlock>
+
+                                                    <TextBlock
+                                                        Grid.Row="1"
+                                                        Margin="0 0 0 10"
+                                                        Foreground="#09203F"
+                                                        FontSize="18"
+                                                        VerticalAlignment="Center"
+                                                        TextWrapping="Wrap"
+                                                        Text="{Binding ToyNum}"
+                                                        HorizontalAlignment="Center">
                                                     </TextBlock>
                                                 </Grid>
 
                                                 <Border
-                                                x:Name="separationBorder"
-                                                Grid.ColumnSpan="5"
-                                                Grid.Column="0"
-                                                Margin="0 0 38 0"
-                                                BorderThickness="0 0 0 2"
-                                                BorderBrush="#4009203F"
-                                                CornerRadius="4">
+                                                    x:Name="separationBorder"
+                                                    Grid.ColumnSpan="5"
+                                                    Grid.Column="0"
+                                                    Margin="0 0 38 0"
+                                                    BorderThickness="0 0 0 2"
+                                                    BorderBrush="#4009203F"
+                                                    CornerRadius="4">
                                                 </Border>
                                             </Grid>
                                         </Button>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
-                        </Popup>
+                        </materialDesign:PopupBox>
 
                         <Button 
                         FontSize="20"
@@ -1170,14 +1158,14 @@
                                         </StackPanel>
 
                                         <Button 
-                                        Grid.Column="7"                                        
-                                        Style="{StaticResource BorderlessButton}"
-                                        Command="{Binding DataContext.EditModeItemCommand,
-                                                    RelativeSource={RelativeSource FindAncestor,
-                                                    AncestorType={x:Type views:IMvxWpfView}}}"
-                                        CommandParameter="{Binding .}"                                
-                                        Margin="0 0 10 0" Height="40"
-                                        Grid.Row="0" HorizontalAlignment="Right">
+                                            Grid.Column="7"                                        
+                                            Style="{StaticResource BorderlessButton}"
+                                            Command="{Binding DataContext.EditModeItemCommand,
+                                                        RelativeSource={RelativeSource FindAncestor,
+                                                        AncestorType={x:Type views:IMvxWpfView}}}"
+                                            CommandParameter="{Binding .}"                                
+                                            Margin="0 0 10 0" Height="40"
+                                            Grid.Row="0" HorizontalAlignment="Right">
                                             <Button.Visibility>
                                                 <MultiBinding Converter="{StaticResource MultiBooleanVisibilityConverter}">
                                                     <Binding Path="IsEditing"/>
@@ -1368,10 +1356,13 @@
                                 </Grid>
 
                                 <materialDesign:PopupBox
+                                    x:Name="popupBoxMenu"
                                     Margin="0 0 42 0"
-                                    StaysOpen="True"
+                                    IsHitTestVisible="False"
+                                    materialDesign:StaysOpen="True"
                                     materialDesign:IsPopupOpen="{Binding IsPopupOpened, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     HorizontalAlignment="Right"
+                                    materialDesign:PopupUniformCornerRadius="6"
                                     materialDesign:PlacementMode="LeftAndAlignMiddles">
                                     <materialDesign:PopupBox.ToggleContent>
                                         <materialDesign:PackIcon
@@ -1380,297 +1371,188 @@
                                     </materialDesign:PopupBox.ToggleContent>
 
                                     <ListBox
-                                        Background="#556D7E"
                                         x:Name="listBoxPopupMenu"
-                                        BorderThickness="2"
+                                        BorderThickness="0"
+                                        HorizontalContentAlignment="Stretch"
                                         Padding="0">
-                                        <ListBox.Resources>
-                                            <Style TargetType="{x:Type ListBox}">
-                                                <Style.Setters>
-                                                    <Setter Property="BorderBrush">
-                                                        <Setter.Value>
-                                                            <SolidColorBrush Color="#CCCCCCCC"/>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Style.Setters>
+                                        <ListBox.ItemContainerStyle>
+                                            <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignNavigationListBoxItem}">
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="Padding" Value="0"/>
+                                                <Setter Property="Margin" Value="4 0 4 2"/>
                                             </Style>
+                                        </ListBox.ItemContainerStyle>
 
-                                            <Style TargetType="{x:Type ListBoxItem}">
-                                                <Style.Setters>
-                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                                    <Setter Property="Margin" Value="0 0 0 0"/>
-                                                    <Setter Property="FontSize" Value="18"/>
-                                                    <Setter Property="Focusable" Value="False"/>
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                                                <Grid Background="{TemplateBinding Background}"  VerticalAlignment="Stretch">
-                                                                    <ContentPresenter Margin="0"/>
-                                                                </Grid>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Style.Setters>
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Background">
-                                                            <Setter.Value>
-                                                                <SolidColorBrush Color="#445765"/>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="CornerRadius" Value="3"/>
-                                            </Style>
-                                        </ListBox.Resources>
-
-                                        <ComboBox
-                                            x:Name="comboBoxChooseFolder"
-                                            IsReadOnly="True"
-                                            IsEditable="True"
-                                            Template="{DynamicResource ComboBoxTemplate1}"
-                                            ItemsSource="{Binding DataContext.Folders, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"
-                                            Text="Add To Folder">
-                                            <ComboBox.Resources>
-                                                <Style TargetType="{x:Type ComboBoxItem}">
-                                                    <Setter Property="Margin" Value="0"/>
-                                                    <Setter Property="BorderThickness" Value="0"/>
-                                                    <Setter Property="Background" Value="Transparent"/>
-                                                    <Setter Property="Padding" Value="0"/>
-                                                </Style>
-                                            </ComboBox.Resources>
-                                            <ComboBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Grid>
-                                                        <Button
-                                                            x:Name="addToFolderBtn"
-                                                            Command="{Binding DataContext.ToggleItemInFolder, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"
-                                                            Background="#556D7E"
-                                                            HorizontalContentAlignment="Left"
-                                                            Width="{Binding Path=ActualWidth, ElementName=toggleButton}"
-                                                            BorderThickness="0">
-                                                            <Button.CommandParameter>
-                                                                <MultiBinding Converter="{StaticResource MultiBindingConverter}">
-                                                                    <Binding Path="."/>
-                                                                    <Binding Path="DataContext.SelectedItem" RelativeSource="{RelativeSource AncestorType={x:Type views:IMvxWpfView}}"/>
-                                                                    <Binding Path="DataContext.SelectedFolder" RelativeSource="{RelativeSource AncestorType={x:Type views:IMvxWpfView}}"/>
-                                                                </MultiBinding>
-                                                            </Button.CommandParameter>
-
-                                                            <Button.Resources>
-                                                                <Style TargetType="Button">
-                                                                    <Style.Setters>
-                                                                        <Setter Property="BorderBrush">
-                                                                            <Setter.Value>
-                                                                                <SolidColorBrush Color="#cccccc" Opacity="0.8"/>
-                                                                            </Setter.Value>
-                                                                        </Setter>
-                                                                        <Setter Property="Template">
-                                                                            <Setter.Value>
-                                                                                <ControlTemplate TargetType="Button">
-                                                                                    <Border
-                                                                                        x:Name="border"
-                                                                                        Background="{TemplateBinding Background}"
-                                                                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                                                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                                                                        Padding="{TemplateBinding Padding}"
-                                                                                        CornerRadius="0">
-                                                                                        <ContentPresenter
-                                                                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                                                            RecognizesAccessKey="True"/>
-                                                                                    </Border>
-                                                                                    <ControlTemplate.Triggers>
-                                                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                                                            <Setter TargetName="border" Property="Background" Value="#445765"/>
-                                                                                        </Trigger>
-                                                                                    </ControlTemplate.Triggers>
-                                                                                </ControlTemplate>
-                                                                            </Setter.Value>
-                                                                        </Setter>
-                                                                    </Style.Setters>
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding IsDefault}" Value="True">
-                                                                            <Setter Property="IsHitTestVisible" Value="False"/>
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </Button.Resources>
-                                                            <TextBlock
-                                                                Grid.Column="0"
-                                                                Text="{Binding Name}"
-                                                                TextTrimming="CharacterEllipsis"
-                                                                MaxWidth="125"
-                                                                FontSize="18">
-                                                                <TextBlock.Style>
-                                                                    <Style TargetType="TextBlock">
-                                                                        <Style.Setters>
-                                                                            <Setter Property="Margin" Value="10 4"/>
-                                                                            <Setter Property="Foreground" Value="#E0E9F2"/>
-                                                                        </Style.Setters>
-                                                                    </Style>
-                                                                </TextBlock.Style>
-                                                            </TextBlock>
-                                                        </Button>
-
-                                                        <CheckBox
-                                                            IsChecked="{Binding IsChecked}"
-                                                            VerticalAlignment="Center"
-                                                            HorizontalAlignment="Right"
-                                                            Margin="0 2 10 0"
-                                                            IsHitTestVisible="False">
-                                                            <CheckBox.Style>
-                                                                <Style TargetType="CheckBox">
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding IsDefault}" Value="True">
-                                                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </CheckBox.Style>
-                                                        </CheckBox>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </ComboBox.ItemTemplate>
-                                        </ComboBox>
-
-                                        <Button
-                                            Background="#556D7E"
-                                            HorizontalAlignment="Left"
-                                            Command="{Binding DataContext.DeleteItemFromFolderCommand, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"
-                                            CommandParameter="{Binding DataContext.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}">
-                                            <Button.Resources>
-                                                <Style TargetType="Button" BasedOn="{x:Null}">
-                                                    <Style.Setters>
-                                                        <Setter Property="BorderThickness" Value="0"/>
-                                                        <Setter Property="Template">
-                                                            <Setter.Value>
-                                                                <ControlTemplate TargetType="Button">
-                                                                    <Border
-                                                                        x:Name="border"
-                                                                        Background="Transparent"
-                                                                        BorderBrush="Transparent"
-                                                                        BorderThickness="0"
-                                                                        Padding="0">
-                                                                        <ContentPresenter
-                                                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                                            RecognizesAccessKey="True"/>
-                                                                    </Border>
-                                                                    <ControlTemplate.Triggers>
-                                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                                            <Setter TargetName="border" Property="Background" Value="#445765"/>
-                                                                        </Trigger>
-                                                                    </ControlTemplate.Triggers>
-                                                                </ControlTemplate>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </Style.Setters>
-                                                </Style>
-                                            </Button.Resources>
+                                        <Grid>
                                             <TextBlock
-                                                TextTrimming="CharacterEllipsis">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="auto"/>
-                                                        <ColumnDefinition Width="auto"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock 
-                                                        Grid.Column="0" 
-                                                        Text="&#xf00d;" 
-                                                        FontFamily="pack://application:,,,/Assets/Fonts/#Font Awesome 6 Free Solid" 
-                                                        FontSize="16"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"/>
-                                                    <TextBlock
-                                                        Grid.Column="1"
-                                                        Margin="10 0 0 0"
-                                                        VerticalAlignment="Center"
-                                                        Text="Remove from Folder" 
-                                                        FontSize="18"/>
-                                                </Grid>
-        
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Style.Setters>
-                                                            <Setter Property="Margin" Value="10 4"/>
-                                                            <Setter Property="Foreground" Value="#E0E9F2"/>
-                                                        </Style.Setters>
+                                                Margin="15 0 0 0"
+                                                Panel.ZIndex="22"
+                                                FontSize="18"
+                                                Foreground="#555"
+                                                IsHitTestVisible="False"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Left"
+                                                Text="Add To Folder"/>
+
+                                            <ComboBox
+                                                DropDownClosed="comboBoxChooseFolder_DropDownClosed"
+                                                Panel.ZIndex="0"
+                                                x:Name="comboBoxChooseFolder"
+                                                IsReadOnly="True"
+                                                HorizontalContentAlignment="Left"
+                                                IsEditable="False"
+                                                Padding="0 6 12 6"
+                                                BorderThickness="0"
+                                                Foreground="Black"
+                                                ItemsSource="{Binding DataContext.Folders, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}">
+                                                <ComboBox.ItemContainerStyle>
+                                                    <Style TargetType="ComboBoxItem" BasedOn="{StaticResource MaterialDesignComboBoxItemStyle}">
+                                                        <Setter Property="Padding" Value="0"/>
+                                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                                         <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding DataContext.IsFirstFolderSelected, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}" Value="True">
-                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <DataTrigger Binding="{Binding IsDefault}" Value="True">
+                                                                <Setter Property="IsEnabled" Value="False"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
-                                                </TextBlock.Style>          
-                                            </TextBlock>
+                                                </ComboBox.ItemContainerStyle>
+
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <Button
+                                                                x:Name="addToFolderBtn"
+                                                                Command="{Binding DataContext.ToggleItemInFolder, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"
+                                                                HorizontalAlignment="Stretch"
+                                                                BorderThickness="0">
+                                                                <Button.CommandParameter>
+                                                                    <MultiBinding Converter="{StaticResource MultiBindingConverter}">
+                                                                        <Binding Path="."/>
+                                                                        <Binding Path="DataContext.SelectedItem" RelativeSource="{RelativeSource AncestorType={x:Type views:IMvxWpfView}}"/>
+                                                                        <Binding Path="DataContext.SelectedFolder" RelativeSource="{RelativeSource AncestorType={x:Type views:IMvxWpfView}}"/>
+                                                                    </MultiBinding>
+                                                                </Button.CommandParameter>
+
+                                                                <Button.Resources>
+                                                                    <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatLightButton}">
+                                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsDefault}" Value="True">
+                                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                                                <Setter Property="Foreground" Value="#555"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Button.Resources>
+                                                                <TextBlock
+                                                                    Foreground="#555"
+                                                                    Grid.Column="0"
+                                                                    Text="{Binding Name}"
+                                                                    TextTrimming="CharacterEllipsis"
+                                                                    FontSize="18">
+                                                                </TextBlock>
+                                                            </Button>
+
+                                                            <CheckBox
+                                                                IsChecked="{Binding IsChecked}"
+                                                                VerticalAlignment="Center"
+                                                                HorizontalAlignment="Right"
+                                                                Margin="0 2 10 0"
+                                                                IsHitTestVisible="False">
+                                                                <CheckBox.Style>
+                                                                    <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsDefault}" Value="True">
+                                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </CheckBox.Style>
+                                                            </CheckBox>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+                                        </Grid>
+
+                                        <Button
+                                            Background="Transparent"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalContentAlignment="Center"
+                                            Padding="10 0"
+                                            Margin="-5 -5"
+                                            Command="{Binding DataContext.DeleteItemFromFolderCommand, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"
+                                            CommandParameter="{Binding DataContext.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}">
+                                            <Button.Resources>
+                                                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatLightButton}">
+                                                    <Setter Property="Height" Value="45"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#e6e6e6"/>
+                                                        </Trigger>
+                                                        <DataTrigger Binding="{Binding DataContext.SelectedFolder.IsDefault, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Resources>
+                                            <StackPanel
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Foreground="#555"
+                                                    Grid.Column="0"
+                                                    Margin="10 0 0 0"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Text="Remove from folder" 
+                                                    FontSize="18"/>
+                                                <materialDesign:PackIcon
+                                                    Foreground="#777"
+                                                    Grid.Column="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Width="22"
+                                                    Margin="42 0 0 0"
+                                                    Height="22"
+                                                    Kind="Remove"/>
+                                            </StackPanel>         
                                         </Button>
 
                                         <Button
-                                            Background="#556D7E"
-                                            HorizontalAlignment="Left"
+                                            Background="Transparent"
+                                            HorizontalAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            Padding="10 0"
+                                            Margin="-5 -5"
+                                            Height="45"
+                                            Style="{StaticResource MaterialDesignFlatLightButton}"
                                             Command="{Binding DataContext.DeleteAllItemsCommand, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}"
                                             CommandParameter="{Binding DataContext.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type views:IMvxWpfView}}}">
-                                            <Button.Resources>
-                                                <Style TargetType="Button" BasedOn="{x:Null}">
-                                                    <Style.Setters>
-                                                        <Setter Property="BorderThickness" Value="0"/>
-                                                        <Setter Property="Template">
-                                                            <Setter.Value>
-                                                                <ControlTemplate TargetType="Button">
-                                                                    <Border
-                                                                        x:Name="border"
-                                                                        Background="Transparent"
-                                                                        BorderBrush="Transparent"
-                                                                        BorderThickness="0"
-                                                                        Padding="0">
-                                                                        <ContentPresenter
-                                                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                                            RecognizesAccessKey="True"/>
-                                                                    </Border>
-                                                                    <ControlTemplate.Triggers>
-                                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                                            <Setter TargetName="border" Property="Background" Value="#445765"/>
-                                                                        </Trigger>
-                                                                    </ControlTemplate.Triggers>
-                                                                </ControlTemplate>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </Style.Setters>
-                                                </Style>
-                                            </Button.Resources>
                                             <TextBlock
+                                                VerticalAlignment="Center"
+                                                Foreground="#888"
+                                                FontSize="18"
                                                 TextTrimming="CharacterEllipsis">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="auto"/>
-                                                        <ColumnDefinition Width="auto"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock 
-                                                        Grid.Column="0" 
-                                                        Text="&#xf1f8;" 
-                                                        FontFamily="pack://application:,,,/Assets/Fonts/#Font Awesome 6 Free Solid" 
-                                                        FontSize="14"
-                                                        HorizontalAlignment="Left"
-                                                        VerticalAlignment="Center"/>
+                                                <StackPanel
+                                                    Orientation="Horizontal">
                                                     <TextBlock
-                                                        Grid.Column="1"
+                                                        Foreground="#555"
+                                                        Grid.Column="0"
                                                         Margin="10 0 0 0"
                                                         HorizontalAlignment="Right"
                                                         VerticalAlignment="Center"
-                                                        Text="Remove from all Folders" 
+                                                        Text="Remove from all folders" 
                                                         FontSize="18"/>
-                                                </Grid>
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock" BasedOn="{x:Null}">
-                                                        <Style.Setters>
-                                                            <Setter Property="Margin" Value="10 4"/>
-                                                        </Style.Setters>
-                                                    </Style>
-                                                </TextBlock.Style>
+                                                    <materialDesign:PackIcon
+                                                        Foreground="#777"
+                                                        Grid.Column="1"
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Center"
+                                                        Width="22"
+                                                        Margin="9 0 0 0"
+                                                        Height="22"
+                                                        Kind="TrashCan"/>
+                                                </StackPanel>
                                             </TextBlock>
                                         </Button>
                                     </ListBox>
@@ -1678,16 +1560,16 @@
                                 
                                 
                                 <Button
-                                Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}"
-                                Command="{Binding DataContext.SaveEditItemCommand, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
-                                CommandParameter="{Binding .}"
-                                Margin="0 0 10 0"
-                                Focusable="False"
-                                Height="40"
-                                Grid.Column="2"
-                                Grid.Row="0"
-                                HorizontalAlignment="Right"
-                                IsEnabled="{Binding DataContext.CanSaveItemEdit, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}">
+                                    Visibility="{Binding IsEditing, Converter={StaticResource BooleanVisibilityConverter}}"
+                                    Command="{Binding DataContext.SaveEditItemCommand, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}"
+                                    CommandParameter="{Binding .}"
+                                    Margin="0 0 10 0"
+                                    Focusable="False"
+                                    Height="40"
+                                    Grid.Column="2"
+                                    Grid.Row="0"
+                                    HorizontalAlignment="Right"
+                                    IsEnabled="{Binding DataContext.CanSaveItemEdit, RelativeSource={RelativeSource AncestorType={x:Type views:MvxWpfView}}}">
                                     <Button.Style>
                                         <Style TargetType="Button" BasedOn="{StaticResource BorderlessButton}">
                                             <Style.Triggers>

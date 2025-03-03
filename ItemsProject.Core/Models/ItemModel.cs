@@ -130,6 +130,5 @@ namespace ItemsProject.Core.Models
                 SetProperty(ref _isPopupOpened, value);
             }
         }
-
     }
 }

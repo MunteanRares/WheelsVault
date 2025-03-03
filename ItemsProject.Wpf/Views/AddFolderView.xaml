@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:ItemsProject.Wpf.Views"
+    xmlns:materialDesign=""
     mc:Ignorable="d" 
     Title="Add a New Folder"
     Height="250"
@@ -16,6 +17,13 @@
     Background="#09203F"
     FontFamily="pack://application:,,,/WheelsVault;component/Assets/Fonts/#Fredoka Medium"
     d:DesignHeight="250" d:DesignWidth="300" WindowStartupLocation="CenterScreen">
+    
+    <views:MvxWindow.Resources>
+        <ResourceDictionary>
+            <
+        </ResourceDictionary>    
+    </views:MvxWindow.Resources>
+    
     <Grid Margin="15">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>

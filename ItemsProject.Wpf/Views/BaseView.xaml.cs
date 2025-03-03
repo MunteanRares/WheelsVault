@@ -4,8 +4,10 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using DevExpress.DataAccess.Wizard.Services;
 using ItemsProject.Core.Messages;
 using ItemsProject.Wpf.Helper_Functions;
+using MaterialDesignThemes.Wpf;
 using MvvmCross;
 using MvvmCross.Platforms.Wpf.Views;
 using MvvmCross.Plugin.Messenger;
@@ -126,5 +128,15 @@ namespace ItemsProject.Wpf.Views
             }
         }
 
+        private void comboBoxChooseFolder_DropDownClosed(object sender, EventArgs e)
+        {
+            foreach (PopupBox popup in FindChildrenInTemplates.FindVisualChildren<PopupBox>(this))
+            {
+                if (popup.Name == "popupBoxMenu")
+                {
+                    popup.IsPopupOpen = false;
+                }
+            }
+        }
     }
 }

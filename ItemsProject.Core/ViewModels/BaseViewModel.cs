@@ -49,10 +49,10 @@ namespace ItemsProject.Core.ViewModels
 			OpenAddItemWindowCommand = new OpenAddItemWindow(_nav, () => SelectedFolder, ClearSearchText, SetWindowStateToFalse);
 			OpenAddFolderWindowCommand = new OpenAddFolderWindow(_nav, SetWindowStateToFalse);
 			OpenDeleteFolderConfirmationCommand = new OpenConfirmationWindow(_nav, DeleteFolderConfirmationMessage, "Confirm Deletion", "pack://application:,,,/Assets/Icons/question-mark.png", SetWindowStateToFalse);
-			OpenPopupCommand = new OpenPopupCommand(_dataService, SetSelectedItemFolderIds, SetIsCheckedIfItemInFolder);
+			OpenPopupCommand = new OpenPopupCommand(SetSelectedItemFolderIds, SetIsCheckedIfItemInFolder);
 
-			// Folder Commands
-			DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
+            // Folder Commands
+            DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
 			EditModeFoldersCommand = new EditModeFolders(ChangeFolderEditMode);
 			CancelFolderEditCommand = new CancelFolderEdit(CancelFolderEditing);
 			SaveEditFolderCommand = new SaveEditFolder(_dataService, () => EditingFolderName, SaveFolderEdit);
@@ -92,8 +92,8 @@ namespace ItemsProject.Core.ViewModels
 		public ICommand OpenDeleteFolderConfirmationCommand { get; }
 		public ICommand OpenPopupCommand { get; }
 
-		// Folder Commands
-		public ICommand DeleteFolderCommand { get; }
+        // Folder Commands
+        public ICommand DeleteFolderCommand { get; }
 		public ICommand EditModeFoldersCommand { get; }
 		public ICommand CancelFolderEditCommand { get; }
 		public ICommand SaveEditFolderCommand { get; }
@@ -215,7 +215,8 @@ namespace ItemsProject.Core.ViewModels
             TotalFolderCarsCount = FolderItems.Count();
         }
 
-		public void ChangeEditMode<T>(T passedModel, bool isEditing, Action<T> setEditAction, Action<T, bool> setEditingFlag)
+
+        public void ChangeEditMode<T>(T passedModel, bool isEditing, Action<T> setEditAction, Action<T, bool> setEditingFlag)
 		{
 			if (isEditing)
 			{
@@ -552,8 +553,8 @@ namespace ItemsProject.Core.ViewModels
 		}
 
 
-		// WHEN CLOSING APP
-		public override void ViewDestroy(bool viewFinishing = true)
+        // WHEN CLOSING APP
+        public override void ViewDestroy(bool viewFinishing = true)
 		{
             UnsubscribeMessages();
             base.ViewDestroy(viewFinishing);

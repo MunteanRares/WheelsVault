@@ -8,4 +8,5 @@ begin
 	from Items
 	join FolderItems on Items.Id = FolderItems.itemId
 	where FolderItems.folderId = @folderId
+	order by Items.Id DESC;
 end

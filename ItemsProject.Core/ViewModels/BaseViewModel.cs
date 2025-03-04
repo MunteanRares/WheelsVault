@@ -178,7 +178,7 @@ namespace ItemsProject.Core.ViewModels
             }
         }
 
-        public string DeleteFolderConfirmationMessage(string folderName)
+		public string DeleteFolderConfirmationMessage(string folderName)
         {
             string output = string.Empty;
             output = $"Are you sure you want to delete the '{folderName}' folder?";

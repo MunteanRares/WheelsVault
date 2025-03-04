@@ -893,15 +893,16 @@
                             </ListBox>
                         </materialDesign:PopupBox>
 
-                        <Button 
-                        FontSize="20"
-                        MinHeight="35"
-                        Padding="30 0 30 0"
-                        IsEnabled="{Binding IsFolderSelected}"
-                        materialDesign:ButtonAssist.CornerRadius="5"
-                        HorizontalAlignment="Right"
-                        Margin="0 0 0 0"
-                        mvx:Bi.nd="Command OpenAddItemWindowCommand">
+                        <Button
+                            Visibility="Collapsed"
+                            FontSize="20"
+                            MinHeight="35"
+                            Padding="30 0 30 0"
+                            IsEnabled="{Binding IsFolderSelected}"
+                            materialDesign:ButtonAssist.CornerRadius="5"
+                            HorizontalAlignment="Right"
+                            Margin="0 0 0 0"
+                            mvx:Bi.nd="Command OpenAddItemWindowCommand">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
                                     <Style.Triggers>

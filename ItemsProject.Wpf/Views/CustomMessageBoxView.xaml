@@ -5,30 +5,110 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Title="{Binding Title}" Height="200" Width="400"
         FontFamily="pack://application:,,,/WheelsVault;component/Assets/Fonts/#Fredoka Medium"
         FontSize="18"
         Background="#fff"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="ToolWindow">
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <views:MvxWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Shadows.xaml" />
+                <materialDesign:CustomColorTheme BaseTheme="Light" PrimaryColor="#00AEEF" SecondaryColor="#2C84C7"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </views:MvxWindow.Resources>
 
-        <StackPanel Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Image Source="{Binding IconSource}" Width="48" Height="48" Margin="0,0,15,0"/>
-            <TextBlock Text="{Binding Message}" Width="270" TextWrapping="Wrap" FontSize="15" Foreground="#09203F" VerticalAlignment="Center"/>
-        </StackPanel>
+    <materialDesign:Card>
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Width="80" Margin="10 0 10 0" Command="{Binding ConfirmCommand}">
-                <TextBlock Text="Yes" Foreground="#09203F"/>
-            </Button>
-            <Button Width="80" Margin="10 0 10 0" Command="{Binding CancelCommand}">
-                <TextBlock Text="No" Foreground="#09203F"/>
-            </Button>
-        </StackPanel>
-    </Grid>
+            <StackPanel Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Image Source="{Binding IconSource}" Width="48" Height="48" Margin="0,0,15,0"/>
+                <TextBlock Text="{Binding Message}" Width="270" TextWrapping="Wrap" FontSize="16" Foreground="#09203F" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button
+                    materialDesign:ShadowAssist.ShadowAnimationDuration="10"
+                    Width="80"
+                    Margin="10 0 10 0"
+                    Command="{Binding ConfirmCommand}">
+                    <Button.Resources>
+                        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
+                            <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp3"/>
+                            <Style.Triggers>
+                                <EventTrigger RoutedEvent="MouseEnter">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                                To="#33bef2" Duration="0:0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+
+                                <EventTrigger RoutedEvent="MouseLeave">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation 
+                                                Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                                To="#00aeef" 
+                                                Duration="0:0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Resources>
+                    <TextBlock 
+                        Foreground="#333"
+                        FontSize="18"
+                        Text="Yes"/>
+                </Button>
+                
+                <Button
+                    materialDesign:ShadowAssist.ShadowAnimationDuration="1"
+                    Width="80" 
+                    Margin="10 0 10 0"
+                    Command="{Binding CancelCommand}">
+                    <Button.Resources>
+                        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
+                            <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp3"/>
+                            <Style.Triggers>
+                                <EventTrigger RoutedEvent="MouseEnter">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                                To="#33bef2" Duration="0:0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+
+                                <EventTrigger RoutedEvent="MouseLeave">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation 
+                                                Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                                To="#00aeef" 
+                                                Duration="0:0:0:0.2"/>                  
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Resources>
+                    <TextBlock
+                        Foreground="#333"
+                        FontSize="18"
+                        Text="No"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </materialDesign:Card>
 </views:MvxWindow>

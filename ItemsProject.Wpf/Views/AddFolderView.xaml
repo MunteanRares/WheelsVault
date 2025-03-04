@@ -7,59 +7,110 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:ItemsProject.Wpf.Views"
-    xmlns:materialDesign=""
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     mc:Ignorable="d" 
     Title="Add a New Folder"
     Height="250"
     Width="300"
     FontSize="18"
     ResizeMode="NoResize"
-    Background="#09203F"
     FontFamily="pack://application:,,,/WheelsVault;component/Assets/Fonts/#Fredoka Medium"
     d:DesignHeight="250" d:DesignWidth="300" WindowStartupLocation="CenterScreen">
     
     <views:MvxWindow.Resources>
         <ResourceDictionary>
-            <
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Shadows.xaml" />
+                <materialDesign:CustomColorTheme BaseTheme="Light" PrimaryColor="#00AEEF" SecondaryColor="#2C84C7"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign2.Defaults.xaml" />
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>    
     </views:MvxWindow.Resources>
-    
-    <Grid Margin="15">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="auto"/>
-        </Grid.RowDefinitions>
 
-        <TextBlock Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0 20 0 10" Text="Folder Name"></TextBlock>
-        <TextBox
-            Text="{Binding FolderName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-            Grid.Row="1" 
-            Grid.ColumnSpan="2" 
-            Width="200"
-            MaxLength="50">
-            <TextBox.InputBindings>
-                <KeyBinding
-                    Key="Enter"
-                    Command="{Binding AddFolderCommand}" />
-            </TextBox.InputBindings>
-        </TextBox>
-        <Button Command="{Binding CancelAddFolderCommand}" Height="30" Width="80" Margin="10 0 10 20" Grid.Row="3" Grid.Column="0">
-            <TextBlock Text="Cancel" Foreground="#09203F">
-            </TextBlock>
-        </Button>
-        <Button 
-            Command="{Binding AddFolderCommand}" 
-            Margin="10 0 10 20" Grid.Row="3" 
-            Grid.Column="1"
-            IsEnabled="{Binding CanAddFolder}">
-            <TextBlock Text="Add Folder" Foreground="#09203F"></TextBlock>
-        </Button>
+    <materialDesign:Card>
+        <Grid
+            Margin="15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
 
-    </Grid>
+            <TextBlock
+                Grid.ColumnSpan="2"
+                Foreground="#333"
+                FontSize="22"
+                HorizontalAlignment="Center"
+                Margin="0 15 0 18"
+                Text="Folder Name"/>
+            <TextBox
+                Style="{StaticResource MaterialDesignFilledTextBox}"
+                Text="{Binding FolderName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                Grid.Row="1" 
+                Grid.ColumnSpan="2" 
+                Width="200"
+                Padding="5 0"
+                Foreground="Black"
+                materialDesign:TextFieldAssist.CharacterCounterVisibility="Visible"
+                materialDesign:TextFieldAssist.TextFieldCornerRadius="4"
+                materialDesign:TextFieldAssist.UnderlineCornerRadius="6"
+                Height="35"
+                MaxLength="50">
+                <materialDesign:TextFieldAssist.CharacterCounterStyle>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignCharacterCounterTextBlock}">
+                        <Setter Property="Foreground" Value="#333"/>
+                    </Style>
+                </materialDesign:TextFieldAssist.CharacterCounterStyle>
+
+                <TextBox.InputBindings>
+                    <KeyBinding
+                        Key="Enter"
+                        Command="{Binding AddFolderCommand}" />
+                </TextBox.InputBindings>
+            </TextBox>
+
+            <Button
+                materialDesign:ButtonAssist.CornerRadius="4"
+                Command="{Binding CancelAddFolderCommand}"
+                FontSize="18"
+                Margin="10 0 10 20"
+                Grid.Row="3"
+                Grid.Column="0">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatDarkBgButton}">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#4d95d5"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <TextBlock Text="Cancel"/>
+            </Button>
+
+            <Button 
+                materialDesign:ButtonAssist.CornerRadius="4"
+                Command="{Binding AddFolderCommand}" 
+                Margin="10 0 10 20" Grid.Row="3" 
+                Grid.Column="1"
+                FontSize="18"
+                IsEnabled="{Binding CanAddFolder}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatDarkBgButton}">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#4d95d5"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <TextBlock Text="Add Folder"/>
+            </Button>
+        </Grid>
+    </materialDesign:Card>
 </views:MvxWindow>

@@ -82,15 +82,39 @@
                 Grid.Row="3"
                 Grid.Column="0">
                 <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatDarkBgButton}">
+                    <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
+                        <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp2"/>
+                        <Setter Property="materialDesign:ShadowAssist.ShadowAnimationDuration" Value="10"/>
                         <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#4d95d5"/>
-                            </Trigger>
+                            <EventTrigger
+                                RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation
+                                            Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                            To="#4dc6f4"
+                                            Duration="0:0:0:0.21"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+
+                            <EventTrigger
+                                    RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation
+                                            Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                            To="#00aeef"
+                                            Duration="0:0:0:0.20"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
                         </Style.Triggers>
                     </Style>
                 </Button.Style>
-                <TextBlock Text="Cancel"/>
+                <TextBlock
+                    Foreground="#333"
+                    Text="Cancel"/>
             </Button>
 
             <Button 
@@ -101,15 +125,37 @@
                 FontSize="18"
                 IsEnabled="{Binding CanAddFolder}">
                 <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatDarkBgButton}">
+                    <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
                         <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#4d95d5"/>
-                            </Trigger>
+                            <EventTrigger
+                                    RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation
+                                            Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                            To="#4dc6f4"
+                                            Duration="0:0:0:0.21"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+
+                            <EventTrigger
+                                 RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation
+                                            Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                            To="#00aeef"
+                                            Duration="0:0:0:0.20"/>             
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
                         </Style.Triggers>
                     </Style>
                 </Button.Style>
-                <TextBlock Text="Add Folder"/>
+                <TextBlock
+                    Foreground="#333"
+                    Text="Add Folder"/>
             </Button>
         </Grid>
     </materialDesign:Card>

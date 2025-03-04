@@ -128,11 +128,12 @@ namespace ItemsProject.Wpf.Views
             }
         }
 
+        //COMBOBOX HANDLERS   
         private void comboBoxChooseFolder_DropDownClosed(object sender, EventArgs e)
         {
             foreach (PopupBox popup in FindChildrenInTemplates.FindVisualChildren<PopupBox>(this))
             {
-                if (popup.Name == "popupBoxMenu")
+                if (popup.Name == "popupBoxMenu" && popup.IsMouseDirectlyOver)
                 {
                     popup.IsPopupOpen = false;
                 }

@@ -346,19 +346,41 @@
                     Margin="0 30 0 0"
                     HorizontalContentAlignment="Stretch"
                     materialDesign:ButtonAssist.CornerRadius="5"
-                    materialDesign:ElevationAssist.Elevation="Dp2"
+                    materialDesign:ElevationAssist.Elevation="Dp3"
+                    materialDesign:ShadowAssist.ShadowAnimationDuration="10"
                     Command="{Binding OpenAddFolderWindowCommand}">
                     <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
+                        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
                             <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#217bca"/>
-                                </Trigger>
+                                <EventTrigger
+                                        RoutedEvent="MouseEnter">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation
+                                                Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                                To="#4dc6f4"
+                                                Duration="0:0:0:0.21"/>                     
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+
+                                <EventTrigger
+                                     RoutedEvent="MouseLeave">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation
+                                                Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                                To="#00aeef"
+                                                Duration="0:0:0:0.20"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
                     <TextBlock>
                             <TextBlock
+                                Foreground="#333"
                                 VerticalAlignment="Center"
                                 Text="+ Add Folder"/>
                     </TextBlock>
@@ -973,6 +995,7 @@
                     </StackPanel>
                 </WrapPanel>
 
+                
                 <ListView
                     x:Name="carCollectionList"
                     HorizontalContentAlignment="Stretch"

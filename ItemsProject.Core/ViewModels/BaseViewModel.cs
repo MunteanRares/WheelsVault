@@ -116,23 +116,7 @@ namespace ItemsProject.Core.ViewModels
         /// <summary>
         ///	FUNCTIONS THAT CALL WHENEVER THIS VIEWMODEL GETS MESSAGES
         /// </summary>
-        /// 
-        private void DebounceTimer_Tick()
-		{
-			_debounceTimer.Stop();
-			if (SearchhwText != "Add HotWheels..." && SearchhwText.Length > 2)
-			{
-                SearchhwResult = _dataService.SearchHotWheels(SearchhwText);
-            }
-			if ((SearchhwText.Length < 3 || string.IsNullOrWhiteSpace(SearchhwText) || SearchhwText == "Add HotWheels...") && SearchhwResult != null)
-			{
-				if (_uiContext != null)
-				{
-                    _uiContext.Send(x => SearchhwResult = null, null);
-                }
-            }
-		}
-
+        ///
 		private void OnAddedItemMessage(AddedItemMessage addedItemMessage)
 		{
 			UpdateFolders(addedItemMessage.NewItem);
@@ -153,10 +137,73 @@ namespace ItemsProject.Core.ViewModels
 			IsWindowEnabled = changeWindowStateMessage.ChangeWindowState;
 		}
 
-		/// <summary>
-		/// GENERAL HELPER FUNCTIONS
-		/// </summary>
-		private void UnsubscribeMessages()
+        /// <summary>
+        /// GENERAL HELPER FUNCTIONS
+        /// </summary>
+        /// 
+        public void CancelEdit<T>(T model, Action<T> revertEditAction, Action<bool> setEditingFlag)
+        {
+            revertEditAction(model);
+            setEditingFlag(false);
+        }
+
+        public void ClearSearchText()
+        {
+            SearchText = string.Empty;
+        }
+
+        public void ChangeEditMode<T>(T passedModel, bool isEditing, Action<T> setEditAction, Action<T, bool> setEditingFlag)
+        {
+            if (isEditing)
+            {
+                setEditAction(passedModel);
+            }
+
+            setEditingFlag(passedModel, isEditing);
+        }
+
+        private void DebounceTimer_Tick()
+        {
+            _debounceTimer.Stop();
+            if (SearchhwText != "Add HotWheels..." && SearchhwText.Length > 2)
+            {
+                SearchhwResult = _dataService.SearchHotWheels(SearchhwText);
+            }
+            if ((SearchhwText.Length < 3 || string.IsNullOrWhiteSpace(SearchhwText) || SearchhwText == "Add HotWheels...") && SearchhwResult != null)
+            {
+                if (_uiContext != null)
+                {
+                    _uiContext.Send(x => SearchhwResult = null, null);
+                }
+            }
+        }
+
+        public string DeleteFolderConfirmationMessage(string folderName)
+        {
+            string output = string.Empty;
+            output = $"Are you sure you want to delete the '{folderName}' folder?";
+            return output;
+        }
+
+        public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
+        {
+            _allFolderItems = updatedItems;
+            FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
+
+            UpdateCarCounts();
+        }
+
+        public void ExecuteFolderRemoved(List<FolderModel> updatedFolders)
+        {
+            Folders = _dataService.UpdateFolders(updatedFolders, Folders);
+        }
+
+        public void SetWindowStateToFalse()
+        {
+            IsWindowEnabled = false;
+        }
+
+        private void UnsubscribeMessages()
 		{
 			foreach (MvxSubscriptionToken token in _tokens)
 			{
@@ -178,36 +225,6 @@ namespace ItemsProject.Core.ViewModels
 			UpdateCarCounts();
         }
 
-		public void ClearSearchText()
-		{
-			SearchText = string.Empty;
-		}
-
-		public string DeleteFolderConfirmationMessage(string folderName)
-		{
-			string output = string.Empty;
-			output = $"Are you sure you want to delete the '{folderName}' folder?";
-			return output;
-		}
-
-		public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
-		{
-			_allFolderItems = updatedItems;
-			FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
-
-			UpdateCarCounts();
-        }
-
-		public void ExecuteFolderRemoved(List<FolderModel> updatedFolders)
-		{
-			Folders = _dataService.UpdateFolders(updatedFolders, Folders);
-		}
-
-		public void SetWindowStateToFalse()
-		{
-			IsWindowEnabled = false;
-		}
-
 		private void UpdateCarCounts()
 		{
             TotalHotWheelsCount = _dataService.GetAllHotWheelsCount();
@@ -215,25 +232,22 @@ namespace ItemsProject.Core.ViewModels
             TotalFolderCarsCount = FolderItems.Count();
         }
 
+        // FUNCTIONS - FOLDER EDITING
+        public void CancelFolderEditing(FolderModel passedFolderModel)
+        {
+            CancelEdit<FolderModel>(
+                passedFolderModel,
+                model =>
+                {
+                    EditingFolderName = model.Name;
+                },
+                (flag) =>
+                {
+                    SelectedFolder.IsEditing = flag;
+                });
+        }
 
-        public void ChangeEditMode<T>(T passedModel, bool isEditing, Action<T> setEditAction, Action<T, bool> setEditingFlag)
-		{
-			if (isEditing)
-			{
-				setEditAction(passedModel);
-			}
-
-			setEditingFlag(passedModel, isEditing);
-		}
-
-		public void CancelEdit<T>(T model, Action<T> revertEditAction, Action<bool> setEditingFlag)
-		{
-			revertEditAction(model);
-			setEditingFlag(false);
-		}
-
-		// FUNCTIONS - FOLDER EDITING
-		public void ChangeFolderEditMode(FolderModel passedFolder, bool isEditing)
+        public void ChangeFolderEditMode(FolderModel passedFolder, bool isEditing)
 		{
 			ChangeEditMode<FolderModel>(
 				passedFolder,
@@ -249,28 +263,37 @@ namespace ItemsProject.Core.ViewModels
 				});
 		}
 
-		public void CancelFolderEditing(FolderModel passedFolderModel)
-		{
-			CancelEdit<FolderModel>(
-				passedFolderModel,
-				model =>
-				{
-					EditingFolderName = model.Name;
-				},
-				(flag) =>
-				{
-					SelectedFolder.IsEditing = flag;
-				});
-		}
-
 		public void SaveFolderEdit()
 		{
 			SelectedFolder.Name = EditingFolderName.Capitalize();
 			SelectedFolder.IsEditing = false;
 		}
 
-		// FUNCTIONS - ITEM EDITING
-		public void EditModeItems(ItemModel selectedItem, bool value)
+        // FUNCTIONS - ITEM EDITING
+        public void BeginItemEdit(ItemModel selectedItem)
+        {
+            EditingItemName = selectedItem.ModelName;
+            EditingItemReleaseDate = selectedItem.YearProduced;
+            EditingItemCollectionName = selectedItem.SeriesName;
+        }
+        public void CancelItemEditing(ItemModel passedItemModel)
+        {
+            CancelEdit<ItemModel>(
+                passedItemModel,
+                model =>
+                {
+                    EditingItemName = model.ModelName;
+                    EditingItemReleaseDate = model.YearProduced;
+                    EditingItemCollectionName = model.SeriesName;
+                },
+                (flag) =>
+                {
+                    SelectedItem.IsEditing = flag;
+                }
+            );
+        }
+
+        public void EditModeItems(ItemModel selectedItem, bool value)
 		{
 			if (value)
 			{
@@ -279,32 +302,15 @@ namespace ItemsProject.Core.ViewModels
 			SelectedItem = selectedItem;
 			selectedItem.IsEditing = value;
 		}
+        public void SaveItemEdit()
+        {
+            SelectedItem.ModelName = EditingItemName.Capitalize();
+            SelectedItem.YearProduced = EditingItemReleaseDate;
+            SelectedItem.SeriesName = EditingItemCollectionName.ToUpper();
+            SelectedItem.IsEditing = false;
+        }
 
-		public void BeginItemEdit(ItemModel selectedItem)
-		{
-			EditingItemName = selectedItem.ModelName;
-			EditingItemReleaseDate = selectedItem.YearProduced;
-			EditingItemCollectionName = selectedItem.SeriesName;
-		}
-
-		public void CancelItemEditing(ItemModel passedItemModel)
-		{
-			CancelEdit<ItemModel>(
-				passedItemModel,
-				model =>
-				{
-					EditingItemName = model.ModelName;
-					EditingItemReleaseDate = model.YearProduced;
-					EditingItemCollectionName = model.SeriesName;
-				},
-				(flag) =>
-				{
-					SelectedItem.IsEditing = flag;
-				}
-			);
-		}
-
-		public void SetSelectedItemFolderIds(ItemModel passedItemModel)
+        public void SetSelectedItemFolderIds(ItemModel passedItemModel)
 		{
 			List<int> folderIds = _dataService.GetFolderIdsForItem(passedItemModel.Id);
 			SelectedItem = passedItemModel;
@@ -326,20 +332,12 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
-		public void SaveItemEdit()
-		{
-			SelectedItem.ModelName = EditingItemName.Capitalize();
-			SelectedItem.YearProduced = EditingItemReleaseDate;
-			SelectedItem.SeriesName = EditingItemCollectionName.ToUpper();
-			SelectedItem.IsEditing = false;
-		}
-
-		/// <summary>
-		/// LIST OF VALIDATION FUNCTIONS THAT CHANGE HOW THE UI RESPONDS
-		/// </summary>
-		public bool IsFolderSelected => SelectedFolder != null;
+        /// <summary>
+        /// LIST OF VALIDATION FUNCTIONS THAT CHANGE HOW THE UI RESPONDS
+        /// </summary>
 		public bool CanSaveItemEdit => !string.IsNullOrWhiteSpace(EditingItemName) && !string.IsNullOrWhiteSpace(EditingItemReleaseDate) && !string.IsNullOrWhiteSpace(EditingItemCollectionName);
-		public bool CanSaveFolderEdit => !string.IsNullOrWhiteSpace(EditingFolderName);
+        public bool CanSaveFolderEdit => !string.IsNullOrWhiteSpace(EditingFolderName);
+        public bool IsFolderSelected => SelectedFolder != null;
 		public bool IsFirstFolderSelected => SelectedFolder != null && SelectedFolder.Name == "All Cars";
 		public bool IsPopupHwOpened => SearchhwResult != null && SearchhwResult.Count > 0;
 
@@ -347,6 +345,19 @@ namespace ItemsProject.Core.ViewModels
         /// <summary>
         ///	BASE VIEWMODEL PROPERTIES
         /// </summary>
+
+        // GENERAL PROPERTIES
+        private string _appVersion;
+        public string AppVersion
+        {
+            get { return _appVersion; }
+            set
+            {
+                SetProperty(ref _appVersion, value);
+            }
+        }
+
+        /// COLLECTIONS PROPERTIES
         public ObservableCollection<ItemModel> FolderItems { get; private set; }
 
 		private ObservableCollection<FolderModel> _folders;
@@ -359,14 +370,54 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
-		public ObservableCollection<string> SortOptions { get; private set; } = new ObservableCollection<string>
+        private ObservableCollection<HotWheelsModel> _searchhwResult;
+        public ObservableCollection<HotWheelsModel> SearchhwResult
+        {
+            get { return _searchhwResult; }
+            set
+            {
+                SetProperty(ref _searchhwResult, value);
+                RaisePropertyChanged(() => IsPopupHwOpened);
+            }
+        }
+
+        public ObservableCollection<string> SortOptions { get; private set; } = new ObservableCollection<string>
 		{
 			"Date Added",
 			"A-Z",
 			"Z-A"
 		};
 
-		private string _selectedSortOption;
+
+        // SELECTED PROPERTIES
+        private ItemModel? _selectedItem;
+        public ItemModel? SelectedItem
+        {
+            get { return _selectedItem; }
+            set
+            {
+                SetProperty(ref _selectedItem, value);
+            }
+        }
+
+        private FolderModel _selectedFolder;
+        public FolderModel SelectedFolder
+        {
+            get { return _selectedFolder; }
+            set
+            {
+                SetProperty(ref _selectedFolder, value);
+                RaisePropertyChanged(() => IsFolderSelected);
+                SelectedItem = null;
+                SelectedSortOption = SortOptions[0];
+                _allFolderItems = _dataService.LoadItemsForFolder(SelectedFolder);
+                _searchResult = _dataService.FilterItems(SearchText, _allFolderItems);
+                FolderItems = _dataService.UpdateFolderItems(_searchResult, FolderItems);
+                TotalFolderCarsCount = FolderItems.Count();
+            }
+        }
+
+        private string _selectedSortOption;
 		public string SelectedSortOption
 		{
 			get { return _selectedSortOption; }
@@ -377,31 +428,9 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
-		private ObservableCollection<HotWheelsModel> _searchhwResult;
 
-		public ObservableCollection<HotWheelsModel> SearchhwResult
-		{
-			get { return _searchhwResult; }
-			set
-			{ 
-				SetProperty(ref _searchhwResult, value);
-				RaisePropertyChanged(() => IsPopupHwOpened);
-            }
-		}
-
-
-		private ItemModel? _selectedItem;
-		public ItemModel? SelectedItem
-		{
-			get { return _selectedItem; }
-			set 
-			{
-				SetProperty(ref _selectedItem, value);
-			}
-		}
-
+		// SEARCH PROPERTIES
 		private string _searchhwText = " Add HotWheels...";
-
 		public string SearchhwText
         {
 			get { return _searchhwText; }
@@ -413,23 +442,6 @@ namespace ItemsProject.Core.ViewModels
             }
 		}
 
-
-		private FolderModel _selectedFolder;
-		public FolderModel SelectedFolder
-		{
-			get { return _selectedFolder; }
-			set
-			{ 
-				SetProperty(ref _selectedFolder, value);
-				RaisePropertyChanged(() => IsFolderSelected);
-                SelectedItem = null;
-				SelectedSortOption = SortOptions[0];
-                _allFolderItems = _dataService.LoadItemsForFolder(SelectedFolder);
-				_searchResult = _dataService.FilterItems(SearchText, _allFolderItems);
-                FolderItems = _dataService.UpdateFolderItems(_searchResult, FolderItems);
-                TotalFolderCarsCount = FolderItems.Count();
-            }
-		}
 
 		private string _searchText = string.Empty;
 		public string SearchText
@@ -444,6 +456,8 @@ namespace ItemsProject.Core.ViewModels
             }
 		}
 
+
+		// BOOLEAN PROPERTIES
 		private bool _isWindowEnabled = true;
 		public bool IsWindowEnabled
         {
@@ -454,7 +468,30 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
-		private string _editingFolderName;
+        private bool _isLoadingFolders;
+        public bool IsLoadingFolders
+        {
+            get { return _isLoadingFolders; }
+            set
+            {
+                SetProperty(ref _isLoadingFolders, value);
+            }
+        }
+
+
+        // EDITING COLLECTION
+        private string _editingItemName;
+        public string EditingItemName
+        {
+            get { return _editingItemName; }
+            set
+            {
+                SetProperty(ref _editingItemName, value);
+                RaisePropertyChanged(() => CanSaveItemEdit);
+            }
+        }
+
+        private string _editingFolderName;
 		public string EditingFolderName
 		{
 			get { return _editingFolderName; }
@@ -464,18 +501,6 @@ namespace ItemsProject.Core.ViewModels
 				RaisePropertyChanged(() => CanSaveFolderEdit);
 			}
 		}
-
-		private string _editingItemName;
-		public string EditingItemName
-		{
-			get { return _editingItemName; }
-			set 
-			{
-				SetProperty(ref _editingItemName, value);
-				RaisePropertyChanged(() => CanSaveItemEdit);
-			}
-		}
-
 
 		private string _editingItemReleaseDate;
 		public string EditingItemReleaseDate
@@ -499,16 +524,8 @@ namespace ItemsProject.Core.ViewModels
             }
 		}
 
-		private bool _isLoadingData;
-		public bool IsLoadingData
-		{
-			get { return _isLoadingData; }
-			set 
-			{ 
-				SetProperty(ref _isLoadingData, value);
-            }
-		}
 
+		// COUNTING CARS PROPERTIES
 		private int _totalHotWheelsCount = 0;
 		public int TotalHotWheelsCount
         {
@@ -519,18 +536,6 @@ namespace ItemsProject.Core.ViewModels
                 SetProperty(ref _totalHotWheelsCount, value);
 			}
 		}
-
-		private string _appVersion;
-
-		public string AppVersion
-		{
-			get { return _appVersion; }
-			set 
-			{
-				SetProperty(ref _appVersion, value);
-			}
-		}
-
 
 		private int _totalCarsCount;
 		public int TotalCarsCount
@@ -551,7 +556,6 @@ namespace ItemsProject.Core.ViewModels
 				SetProperty(ref _totalFolderCarsCount, value);
 			}
 		}
-
 
         // WHEN CLOSING APP
         public override void ViewDestroy(bool viewFinishing = true)

@@ -23,12 +23,10 @@ namespace ItemsProject.Wpf.Views
 
         public BaseView()
         {
-            InitializeComponent();
             Window window = Application.Current.MainWindow;
-            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            window.WindowState = WindowState.Maximized;
-            window.MinHeight = 650;
-            window.MinWidth = 1200;
+            InitializeComponent();
+            window.Show();
+            window.ShowInTaskbar = true;
             _messenger = Mvx.IoCProvider?.Resolve<IMvxMessenger>();
             _tokens.Add(_messenger.Subscribe<CancelItemEditingMessage>(OnCancelItemEditingMessage));
         }

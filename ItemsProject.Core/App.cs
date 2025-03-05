@@ -1,5 +1,6 @@
 ﻿using ItemsProject.Core.Data;
 using ItemsProject.Core.Databases;
+using ItemsProject.Core.Messages;
 using ItemsProject.Core.Services;
 using ItemsProject.Core.ViewModels;
 using Microsoft.Extensions.Configuration;
@@ -37,10 +38,6 @@ namespace ItemsProject.Core
             Mvx.IoCProvider.RegisterType<ISqlDataAccess, SqlDataAccess>();
             Mvx.IoCProvider.RegisterType<ISqliteDataAccess, SqliteDataAccess>();
             Mvx.IoCProvider.RegisterType<IScrapeHotWheelsWiki, ScrapeHotWheelsWiki>();
-            //if (Mvx.IoCProvider.CanResolve<IDatabaseData>())
-            //{
-            //    AsyncContext.Run(Mvx.IoCProvider.Resolve<IDatabaseData>().DefaultHotwheelsDbPopulation);
-            //}
 
 
             Mvx.IoCProvider.RegisterType<IDataService, DataService>();
@@ -55,6 +52,8 @@ namespace ItemsProject.Core
             Mvx.IoCProvider.RegisterType<CustomMessageBoxViewModel>();
             Mvx.IoCProvider.RegisterType<AddItemViewModel>();
             Mvx.IoCProvider.RegisterType<SplashScreenViewModel>();
+            Mvx.IoCProvider.RegisterType<LoadListCollectionViewModel>();
+            Mvx.IoCProvider.RegisterType<HwListCollectionViewModel>();
 
             RegisterAppStart<SplashScreenViewModel>();
         }

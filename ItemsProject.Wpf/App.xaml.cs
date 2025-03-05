@@ -17,5 +17,4 @@ namespace ItemsProject.Wpf
             this.RegisterSetupType<Setup>();
         }
     }
-
 }

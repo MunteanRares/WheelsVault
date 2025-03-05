@@ -1,4 +1,4 @@
-﻿<views:MvxWpfView 
+﻿<views:MvxWindow 
     x:Class="ItemsProject.Wpf.Views.SplashScreenView"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -9,16 +9,17 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     mc:Ignorable="d"
     FontSize="22"
+    WindowStartupLocation="CenterScreen"
     FontFamily="pack://application:,,,/WheelsVault;component/Assets/Fonts/#Fredoka Medium"
-    d:DesignHeight="450" d:DesignWidth="800">
-    <views:MvxWpfView.Resources>
+    Height="450" Width="750">
+    <views:MvxWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <materialDesign:CustomColorTheme BaseTheme="Light" PrimaryColor="#2196F3" SecondaryColor="#1976D2"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-    </views:MvxWpfView.Resources>
+    </views:MvxWindow.Resources>
     
     <materialDesign:Card
         materialDesign:UniformCornerRadius="15">
@@ -61,4 +62,4 @@
             </TextBlock>
         </Grid>
     </materialDesign:Card>
-</views:MvxWpfView>
+</views:MvxWindow>

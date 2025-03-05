@@ -10,12 +10,31 @@
     xmlns:conv="clr-namespace:ItemsProject.Wpf.Converters"
     xmlns:helpers="clr-namespace:ItemsProject.Wpf.Helper_Functions"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:vm="clr-namespace:ItemsProject.Core.ViewModels;assembly=ItemsProject.Core"
     xmlns:local="clr-namespace:ItemsProject.Wpf.Views" xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.AeroLite"
     mc:Ignorable="d" 
     FontSize="22"
     x:Name="root"
     FontFamily="pack://application:,,,/WheelsVault;component/Assets/Fonts/#Fredoka Medium"        
     d:DesignHeight="1080" d:DesignWidth="1920" IsHitTestVisible="{Binding IsWindowEnabled}">
+
+    <views:MvxWpfView.Style>
+        <Style TargetType="views:MvxWpfView">
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation 
+                            Storyboard.TargetProperty="Opacity"
+                            From="0"
+                            To="1"
+                            Duration="0:0:0:0.7"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+    </views:MvxWpfView.Style>
 
     <views:MvxWpfView.Resources>
         <ResourceDictionary>
@@ -24,6 +43,14 @@
                 <materialDesign:CustomColorTheme BaseTheme="Light" PrimaryColor="#00AEEF" SecondaryColor="#2C84C7"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign2.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate DataType="{x:Type vm:LoadListCollectionViewModel}">
+                <local:LoadListCollectionView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:HwListCollectionViewModel}">
+                <local:HwListCollectionView/>
+            </DataTemplate>
 
             <conv:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
             <conv:BooleanInverseConverter x:Key="BooleanInverseConverter"/>
@@ -995,7 +1022,16 @@
                     </StackPanel>
                 </WrapPanel>
 
+                <Grid
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2">
+                    <ContentControl 
+                        Content="{Binding CurrentView}"/>
+                </Grid>
+
                 <ListView
+                    Visibility="Collapsed"
                     x:Name="carCollectionList"
                     HorizontalContentAlignment="Stretch"
                     Style="{StaticResource MaterialDesignNavigationListBox}"

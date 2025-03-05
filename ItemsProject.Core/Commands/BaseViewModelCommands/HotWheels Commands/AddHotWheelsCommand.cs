@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using DevExpress.Utils;
 using ItemsProject.Core.Commands.General;
+using ItemsProject.Core.Messages;
 using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;
+using MvvmCross.Plugin.Messenger;
 using WikiHotWheelsWebScraper.Models;
 
 namespace ItemsProject.Core.Commands.BaseViewModelCommands.HotWheels_Commands
@@ -14,13 +16,13 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands.HotWheels_Commands
     public class AddHotWheelsCommand : CommandBase
     {
         private readonly IDataService _dataService;
-        private readonly Action<ItemModel> _updateFolders;
         private readonly Func<FolderModel> _getSelectedFolder;
-        public AddHotWheelsCommand(IDataService dataService, Action<ItemModel> updateFolders, Func<FolderModel> getSelectedFolder)
+        private readonly IMvxMessenger _messenger;
+        public AddHotWheelsCommand(IDataService dataService, Func<FolderModel> getSelectedFolder, IMvxMessenger messenger)
         {
             _dataService = dataService;
-            _updateFolders = updateFolders;
             _getSelectedFolder = getSelectedFolder;
+            _messenger = messenger;
         }
 
         public override void Execute(object? parameter)
@@ -39,7 +41,8 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands.HotWheels_Commands
                                                                      itemModel.YearProducedNum,
                                                                      itemModel.ToyNum,
                                                                      itemModel.PhotoURL);
-                _updateFolders(addedItem);
+                AddedHwMessage message = new AddedHwMessage(this, addedItem);
+                _messenger.Publish(message);
             }
             else
             {
@@ -51,7 +54,8 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands.HotWheels_Commands
                                                                      hotwheels.YearProducedNum,
                                                                      hotwheels.ToyNum,
                                                                      hotwheels.PhotoURL);
-                _updateFolders(addedItem);
+                AddedHwMessage message = new AddedHwMessage(this, addedItem);
+                _messenger.Publish(message);
             }
         }
     }

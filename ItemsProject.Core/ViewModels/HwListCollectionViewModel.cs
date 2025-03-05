@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using ItemsProject.Core.Commands.BaseViewModelCommands;
 using ItemsProject.Core.Commands.BaseViewModelCommands.HotWheels_Commands;
@@ -33,6 +28,7 @@ namespace ItemsProject.Core.ViewModels
             _messenger = messenger;
 
             _tokens.Add(_messenger.Subscribe<AddedHwMessage>(OnAddedHwMessage));
+            _tokens.Add(_messenger.Subscribe<UpdateFolderItemsMessage>(OnUpdateFolderItemsMessage));
 
             FolderItems = new ObservableCollection<ItemModel>();
 
@@ -120,7 +116,6 @@ namespace ItemsProject.Core.ViewModels
             }
 
             FolderItems = _dataService.UpdateFolderItems(_dataService.LoadItemsForFolder(SelectedFolder), FolderItems);
-            UpdateCarCounts();
         }
 
         public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
@@ -128,14 +123,30 @@ namespace ItemsProject.Core.ViewModels
             _allFolderItems = updatedItems;
             FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
 
-            UpdateCarCounts();
         }
 
-        private void UpdateCarCounts()
+        private void UnsubscribeMessages()
         {
-            TotalHotWheelsCount = _dataService.GetAllHotWheelsCount();
-            TotalCarsCount = _dataService.GetAllCarsCount();
-            TotalFolderCarsCount = FolderItems.Count();
+            foreach (var token in _tokens)
+            {
+                token.Dispose();
+            }
+
+            _tokens.Clear();
+        }
+
+        private void OnUpdateFolderItemsMessage(UpdateFolderItemsMessage message)
+        {
+            if (message.MethodOption == "UpdateFolderItems")
+            {
+                List<ItemModel> updatedItems = message.Parameter as List<ItemModel>;
+                FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
+            }
+            else if (message.MethodOption == "SortItems")
+            {
+                string selectedSortOption = message.Parameter as string;
+                FolderItems = _dataService.SortItems(selectedSortOption, _allFolderItems, FolderItems);
+            }
         }
 
         public void SaveItemEdit()
@@ -186,16 +197,6 @@ namespace ItemsProject.Core.ViewModels
             selectedItem.IsEditing = value;
         }
 
-        private int _totalHotWheelsCount;
-        public int TotalHotWheelsCount
-        {
-            get { return _totalHotWheelsCount; }
-            set
-            { 
-               SetProperty(ref  _totalHotWheelsCount, value);   
-            }
-        }
-
         private ItemModel? _selectedItem;
         public ItemModel? SelectedItem
         {
@@ -227,7 +228,6 @@ namespace ItemsProject.Core.ViewModels
             }
         }
 
-
         private string _editingItemReleaseDate;
         public string EditingItemReleaseDate
         {
@@ -250,27 +250,6 @@ namespace ItemsProject.Core.ViewModels
             }
         }
 
-        private int _totalCarsCount;
-        public int TotalCarsCount
-        {
-            get { return _totalCarsCount; }
-            set
-            {
-                SetProperty(ref _totalCarsCount, value);
-            }
-        }
-
-        private int _totalFolderCarsCount;
-        public int TotalFolderCarsCount
-        {
-            get { return _totalFolderCarsCount; }
-            set
-            {
-                SetProperty(ref _totalFolderCarsCount, value);
-            }
-        }
-
-
         private FolderModel _selectedFolder;
         public FolderModel SelectedFolder
         {
@@ -289,6 +268,24 @@ namespace ItemsProject.Core.ViewModels
             { 
                 SetProperty(ref _folderItems, value);   
             }
+        }
+
+        public override void ViewDisappearing()
+        {
+            UnsubscribeMessages();
+            base.ViewDisappearing();
+        }
+
+        public override void ViewDestroy(bool viewFinishing = true)
+        {
+            UnsubscribeMessages();
+            base.ViewDestroy(viewFinishing);
+        }
+
+        public override void ViewDisappeared()
+        {
+            UnsubscribeMessages();
+            base.ViewDisappeared();
         }
     }
 }

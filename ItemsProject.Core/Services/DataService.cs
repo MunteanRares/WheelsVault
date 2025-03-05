@@ -8,6 +8,7 @@ using ItemsProject.Core.ViewModels;
 using MvvmCross;
 using MvvmCross.Navigation;
 using MvvmCross.Plugin.Messenger;
+using Nito.AsyncEx;
 using WikiHotWheelsWebScraper.Models;
 
 
@@ -17,10 +18,12 @@ namespace ItemsProject.Core.Services
     {
         private readonly IDatabaseData _db;
         private readonly IMvxMessenger _messenger;
+        private readonly SynchronizationContext _uiContext;
         public DataService(IDatabaseData db, IMvxNavigationService navigationService, IMvxMessenger messenger)
         {
             _db = db;
             _messenger = messenger;
+            _uiContext = SynchronizationContext.Current;
         }
 
         public List<ItemModel> LoadItemsForFolder(FolderModel selectedFolder)
@@ -60,10 +63,10 @@ namespace ItemsProject.Core.Services
 
         public ObservableCollection<ItemModel> UpdateFolderItems(List<ItemModel> iterateList, ObservableCollection<ItemModel> folderItems)
         {
-            folderItems.Clear();
+            _uiContext.Send(x => folderItems.Clear(), null);
             foreach (ItemModel item in iterateList)
             {
-                folderItems.Add(item);
+                _uiContext.Send(x => folderItems.Add(item), null);
             }
 
             return folderItems;

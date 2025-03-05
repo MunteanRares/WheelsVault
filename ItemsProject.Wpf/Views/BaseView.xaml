@@ -967,61 +967,6 @@
                     </StackPanel>
                 </Grid>
 
-                <WrapPanel
-                Grid.Row="1"
-                Margin="30 0 0 0"
-                VerticalAlignment="Top"
-                Orientation="Horizontal">
-                    <StackPanel
-                    Orientation="Horizontal">
-                        <TextBlock
-                        Foreground="#666"
-                        FontSize="18"
-                        Text="Unique HotWheels: "/>
-                        <TextBlock
-                        Foreground="#666"
-                        FontSize="18"
-                        Text="{Binding TotalHotWheelsCount}"/>
-                    </StackPanel>
-
-                    <StackPanel
-                    Margin="30 0 0 0"
-                    Orientation="Horizontal">
-                        <TextBlock
-                        Foreground="#666"
-                        FontSize="18"
-                        Text="Total Cars: "/>
-                        <TextBlock
-                        Foreground="#666"
-                        FontSize="18"
-                        Text="{Binding TotalCarsCount}"/>
-                    </StackPanel>
-
-                    <StackPanel 
-                    Visibility="{Binding IsFolderSelected, Converter={StaticResource BooleanVisibilityConverter}}"
-                    Margin="30 0 0 0"
-                    Orientation="Horizontal">
-                        <TextBlock
-                        Foreground="#666"
-                        FontSize="18">
-                        <Run
-                            Text="'"/>
-                        <Run
-                            Text="{Binding SelectedFolder.Name}"/>
-                        <Run
-                            Text="' "/>
-                        </TextBlock>
-                        <TextBlock
-                        Foreground="#666"
-                        FontSize="18"
-                        Text=" Count: "/>
-                        <TextBlock
-                        Foreground="#666"
-                        FontSize="18"
-                        Text="{Binding TotalFolderCarsCount}"/>
-                    </StackPanel>
-                </WrapPanel>
-
                 <Grid
                     Grid.Row="2"
                     Grid.Column="0"
@@ -1030,6 +975,7 @@
                         Content="{Binding CurrentView}"/>
                 </Grid>
 
+                <!--
                 <ListView
                     Visibility="Collapsed"
                     x:Name="carCollectionList"
@@ -1658,7 +1604,7 @@
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
-                </ListView>
+                </ListView> -->
             </Grid>
             <TextBlock
             Margin="0 10"

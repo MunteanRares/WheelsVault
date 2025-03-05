@@ -29,51 +29,56 @@ namespace ItemsProject.Core.ViewModels
 		private List<ItemModel> _allFolderItems = new List<ItemModel>();
 		private List<ItemModel> _searchResult = new List<ItemModel>();
 		private Timer _debounceTimer;
+        private Timer _debounceTimerSearchBox;
 		private SynchronizationContext? _uiContext;
 
         public BaseViewModel(IMvxNavigationService nav, IDataService dataService, IMvxMessenger messenger)
-		{
-			_dataService = dataService;
-			_nav = nav;
-			_messenger = messenger;
+        {
+            _dataService = dataService;
+            _nav = nav;
+            _messenger = messenger;
 
-			Folders = new ObservableCollection<FolderModel>(_dataService.GetAllFolders());
-			FolderItems = new ObservableCollection<ItemModel>();
+            Folders = new ObservableCollection<FolderModel>(_dataService.GetAllFolders());
 
-			// Messages
-			//_tokens.Add(_messenger.Subscribe<AddedItemMessage>(OnAddedItemMessage));
-			_tokens.Add(_messenger.Subscribe<AddedFolderMessage>(OnAddedFolderMessage));
-			_tokens.Add(_messenger.Subscribe<CanRemoveFolderMessage>(OnRemoveFolderMessage));
-			_tokens.Add(_messenger.Subscribe<ChangeWindowStateMessage>(OnChangeWindowStateMessage));
-			_tokens.Add(_messenger.Subscribe<LoadListCollectionMessage>(OnLoadListCollectionMessage));
+            // Messages
+            //_tokens.Add(_messenger.Subscribe<AddedItemMessage>(OnAddedItemMessage));
+            _tokens.Add(_messenger.Subscribe<AddedFolderMessage>(OnAddedFolderMessage));
+            _tokens.Add(_messenger.Subscribe<CanRemoveFolderMessage>(OnRemoveFolderMessage));
+            _tokens.Add(_messenger.Subscribe<ChangeWindowStateMessage>(OnChangeWindowStateMessage));
+            _tokens.Add(_messenger.Subscribe<LoadListCollectionMessage>(OnLoadListCollectionMessage));
 
-			// COMMANDS
-			// Opening Commands
-			OpenAddItemWindowCommand = new OpenAddItemWindow(_nav, () => SelectedFolder, ClearSearchText, SetWindowStateToFalse);
-			OpenAddFolderWindowCommand = new OpenAddFolderWindow(_nav, SetWindowStateToFalse);
-			OpenDeleteFolderConfirmationCommand = new OpenConfirmationWindow(_nav, DeleteFolderConfirmationMessage, "Confirm Deletion", "pack://application:,,,/Assets/Icons/question-mark.png", SetWindowStateToFalse);
+            // COMMANDS
+            // Opening Commands
+            OpenAddItemWindowCommand = new OpenAddItemWindow(_nav, () => SelectedFolder, ClearSearchText, SetWindowStateToFalse);
+            OpenAddFolderWindowCommand = new OpenAddFolderWindow(_nav, SetWindowStateToFalse);
+            OpenDeleteFolderConfirmationCommand = new OpenConfirmationWindow(_nav, DeleteFolderConfirmationMessage, "Confirm Deletion", "pack://application:,,,/Assets/Icons/question-mark.png", SetWindowStateToFalse);
 
             // Folder Commands
             DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
-			EditModeFoldersCommand = new EditModeFolders(ChangeFolderEditMode);
-			CancelFolderEditCommand = new CancelFolderEdit(CancelFolderEditing);
-			SaveEditFolderCommand = new SaveEditFolder(_dataService, () => EditingFolderName, SaveFolderEdit);
+            EditModeFoldersCommand = new EditModeFolders(ChangeFolderEditMode);
+            CancelFolderEditCommand = new CancelFolderEdit(CancelFolderEditing);
+            SaveEditFolderCommand = new SaveEditFolder(_dataService, () => EditingFolderName, SaveFolderEdit);
 
-			//// HotWheels Commands
-			AddHotWheelsCommand = new AddHotWheelsCommand(_dataService, () => SelectedFolder, _messenger);
+            //// HotWheels Commands
+            AddHotWheelsCommand = new AddHotWheelsCommand(_dataService, () => SelectedFolder, _messenger);
 
             // Setting Default Values
             SelectedSortOption = SortOptions[0];
-			Folders[0].IsDefault = true;
-			TotalHotWheelsCount = _dataService.GetAllHotWheelsCount();
-			TotalCarsCount = _dataService.GetAllCarsCount();
-			AppVersion = "1.1.5.0";
+            Folders[0].IsDefault = true;
+            TotalHotWheelsCount = _dataService.GetAllHotWheelsCount();
+            TotalCarsCount = _dataService.GetAllCarsCount();
+            AppVersion = "1.1.5.0";
 
             _uiContext = SynchronizationContext.Current;
+
+            _debounceTimerSearchBox = new Timer(600);
+            _debounceTimerSearchBox.Elapsed += (sender, e) => DebounceTimerSearchBox_Tick();
+            _debounceTimerSearchBox.AutoReset = false;
+
             _debounceTimer = new Timer(1000);
-			_debounceTimer.Elapsed += (sender, e) => DebounceTimer_Tick();
-			_debounceTimer.AutoReset = false;
-		}
+            _debounceTimer.Elapsed += (sender, e) => DebounceTimer_Tick();
+            _debounceTimer.AutoReset = false;
+        }
 
         /// <summary>
         /// COLLECTION OF COMMAND DECLARATION
@@ -164,7 +169,15 @@ namespace ItemsProject.Core.ViewModels
             }
         }
 
-		public string DeleteFolderConfirmationMessage(string folderName)
+        private void DebounceTimerSearchBox_Tick()
+        {
+            _debounceTimerSearchBox.Stop();
+            _searchResult = _dataService.FilterItems(SearchText, _allFolderItems);
+            UpdateFolderItemsMessage message = new UpdateFolderItemsMessage(this, _searchResult, "UpdateFolderItems");
+            _messenger.Publish(message);
+        }
+
+        public string DeleteFolderConfirmationMessage(string folderName)
         {
             string output = string.Empty;
             output = $"Are you sure you want to delete the '{folderName}' folder?";
@@ -174,9 +187,7 @@ namespace ItemsProject.Core.ViewModels
         public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
         {
             _allFolderItems = updatedItems;
-            FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
-
-            UpdateCarCounts();
+            UpdateFolderItemsMessage message = new UpdateFolderItemsMessage(this, updatedItems, "UpdateFolderItems");
         }
 
         public void ExecuteFolderRemoved(List<FolderModel> updatedFolders)
@@ -216,13 +227,6 @@ namespace ItemsProject.Core.ViewModels
 
 			_tokens.Clear();
 		}
-
-		private void UpdateCarCounts()
-		{
-            TotalHotWheelsCount = _dataService.GetAllHotWheelsCount();
-            TotalCarsCount = _dataService.GetAllCarsCount();
-            TotalFolderCarsCount = FolderItems.Count();
-        }
 
         // FUNCTIONS - FOLDER EDITING
         public void CancelFolderEditing(FolderModel passedFolderModel)
@@ -304,17 +308,6 @@ namespace ItemsProject.Core.ViewModels
         }
 
         /// COLLECTIONS PROPERTIES
-        public ObservableCollection<ItemModel> FolderItems { get; private set; }
-
-		private ObservableCollection<FolderModel> _folders;
-		public ObservableCollection<FolderModel> Folders
-		{
-			get { return _folders; }
-			set
-			{
-				SetProperty(ref _folders, value);
-			}
-		}
 
         private ObservableCollection<HotWheelsModel> _searchhwResult;
         public ObservableCollection<HotWheelsModel> SearchhwResult
@@ -356,8 +349,19 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
+        private ObservableCollection<FolderModel> _folders;
+        public ObservableCollection<FolderModel> Folders
+        {
+            get { return _folders; }
+            set 
+            { 
+                SetProperty(ref _folders, value);
+                RaisePropertyChanged(() => IsPopupHwOpened);
+            }
+        }
 
-		private FolderModel _selectedFolder;
+
+        private FolderModel _selectedFolder;
         public FolderModel SelectedFolder
         {
             get { return _selectedFolder; }
@@ -370,9 +374,7 @@ namespace ItemsProject.Core.ViewModels
                 SelectedSortOption = SortOptions[0];
                 _allFolderItems = _dataService.LoadItemsForFolder(SelectedFolder);
                 _searchResult = _dataService.FilterItems(SearchText, _allFolderItems);
-                FolderItems = _dataService.UpdateFolderItems(_searchResult, FolderItems);
 				NavigateAndLoadListCollection();
-                TotalFolderCarsCount = FolderItems.Count();
             }
         }
 
@@ -383,7 +385,8 @@ namespace ItemsProject.Core.ViewModels
 			set
 			{
 				SetProperty(ref _selectedSortOption, value);
-				FolderItems = _dataService.SortItems(SelectedSortOption, _allFolderItems, FolderItems);
+                UpdateFolderItemsMessage message = new UpdateFolderItemsMessage(this, SelectedSortOption, "SortItems");
+                _messenger.Publish(message);
 			}
 		}
 
@@ -410,8 +413,8 @@ namespace ItemsProject.Core.ViewModels
 			{ 
 				SetProperty(ref _searchText, value);
 				SelectedItem = null;
-				_searchResult = _dataService.FilterItems(SearchText, _allFolderItems);
-                FolderItems = _dataService.UpdateFolderItems(_searchResult, FolderItems);
+                _debounceTimerSearchBox.Stop();
+                _debounceTimerSearchBox.Start();
             }
 		}
 

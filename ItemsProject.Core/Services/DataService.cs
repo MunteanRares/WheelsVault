@@ -63,10 +63,10 @@ namespace ItemsProject.Core.Services
 
         public ObservableCollection<ItemModel> UpdateFolderItems(List<ItemModel> iterateList, ObservableCollection<ItemModel> folderItems)
         {
-            _uiContext.Send(x => folderItems.Clear(), null);
+            folderItems.Clear();
             foreach (ItemModel item in iterateList)
             {
-                _uiContext.Send(x => folderItems.Add(item), null);
+                folderItems.Add(item);
             }
 
             return folderItems;

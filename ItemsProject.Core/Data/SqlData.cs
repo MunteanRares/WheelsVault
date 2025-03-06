@@ -185,7 +185,6 @@ namespace ItemsProject.Core.Data
         {
             _db.SaveData("dbo.Items_AddHotWheelsModel", new { folderId, modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL, isCustom = 0 }, connectionStringName, true);
             ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetUnique", new { modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL, isCustom = 0 }, connectionStringName, true).First();
-            //ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetLast", new { }, connectionStringName, true).First();
             return output;
         }
 

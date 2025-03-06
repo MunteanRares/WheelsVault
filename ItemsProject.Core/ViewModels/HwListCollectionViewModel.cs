@@ -11,6 +11,7 @@ using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;
 using MvvmCross.Plugin.Messenger;
 using MvvmCross.ViewModels;
+using Nito.AsyncEx;
 
 namespace ItemsProject.Core.ViewModels
 {
@@ -37,8 +38,8 @@ namespace ItemsProject.Core.ViewModels
 
             // Item Commands
             CancelItemEditCommand = new CancelItemEdit(CancelItemEditing);
-            DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems, () => SelectedFolder);
-            DeleteAllItemsCommand = new DeleteAllItemsCommand(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
+            DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => FolderItems, () => SelectedFolder, _messenger);
+            DeleteAllItemsCommand = new DeleteAllItemsCommand(_dataService, ExecuteUpdateFolderItems, () => FolderItems, _messenger);
             EditModeItemCommand = new EditItemFromFolder(EditModeItems);
             LoseItemFocusCommand = new CancelItemEditingCommand(_dataService);
             SaveEditItemCommand = new SaveEditItem(_dataService, () => EditingItemName, () => EditingItemReleaseDate, () => EditingItemCollectionName, SaveItemEdit);
@@ -122,7 +123,6 @@ namespace ItemsProject.Core.ViewModels
         {
             _allFolderItems = updatedItems;
             FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
-
         }
 
         private void UnsubscribeMessages()
@@ -268,12 +268,6 @@ namespace ItemsProject.Core.ViewModels
             { 
                 SetProperty(ref _folderItems, value);   
             }
-        }
-
-        public override void ViewDisappearing()
-        {
-            UnsubscribeMessages();
-            base.ViewDisappearing();
         }
 
         public override void ViewDestroy(bool viewFinishing = true)

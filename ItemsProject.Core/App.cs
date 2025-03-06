@@ -54,6 +54,8 @@ namespace ItemsProject.Core
             Mvx.IoCProvider.RegisterType<SplashScreenViewModel>();
             Mvx.IoCProvider.RegisterType<LoadListCollectionViewModel>();
             Mvx.IoCProvider.RegisterType<HwListCollectionViewModel>();
+            Mvx.IoCProvider.RegisterType<SettingsViewModel>();
+            Mvx.IoCProvider.RegisterType<HomePageViewModel>();
 
             RegisterAppStart<SplashScreenViewModel>();
         }

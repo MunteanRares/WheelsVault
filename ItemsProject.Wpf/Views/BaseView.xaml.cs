@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using DevExpress.DataAccess.Wizard.Services;
 using ItemsProject.Core.Messages;
+using ItemsProject.Core.Messages.HwListVm_Messages;
 using ItemsProject.Wpf.Helper_Functions;
 using MaterialDesignThemes.Wpf;
 using MvvmCross;
@@ -38,11 +39,11 @@ namespace ItemsProject.Wpf.Views
             editTextBox.CaretIndex = editTextBox.Text.Length;
         }
 
-        private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex("[^0-9]+");
-            e.Handled = regex.IsMatch(e.Text);
-        }
+        //private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        //{
+        //    Regex regex = new Regex("[^0-9]+");
+        //    e.Handled = regex.IsMatch(e.Text);
+        //}
 
         private void OnCancelItemEditingMessage(CancelItemEditingMessage cancelItemEditingMessage)
         {
@@ -114,27 +115,6 @@ namespace ItemsProject.Wpf.Views
             if (!hotWheelsPopup.IsMouseOver)
             {
                 mainGrid.Focus();
-            }
-        }
-
-        //POPUP HANDLERS    
-        private void hotWheelsPopup_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (!hotwheelsAddTextBox.IsMouseOver)
-            {
-                mainGrid.Focus();
-            }
-        }
-
-        //COMBOBOX HANDLERS   
-        private void comboBoxChooseFolder_DropDownClosed(object sender, EventArgs e)
-        {
-            foreach (PopupBox popup in FindChildrenInTemplates.FindVisualChildren<PopupBox>(this))
-            {
-                if (popup.Name == "popupBoxMenu" && popup.IsMouseDirectlyOver)
-                {
-                    popup.IsPopupOpen = false;
-                }
             }
         }
     }

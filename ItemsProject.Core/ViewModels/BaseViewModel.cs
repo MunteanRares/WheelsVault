@@ -15,22 +15,25 @@ using WikiHotWheelsWebScraper.Models;
 using Timer = System.Timers.Timer;
 using ItemsProject.Core.Commands.BaseViewModelCommands.HotWheels_Commands;
 using MvvmCross;
+using DevExpress.Utils.Serializing.Helpers;
+using Nito.AsyncEx;
+using ItemsProject.Core.Messages.HwListVm_Messages;
 
 
 namespace ItemsProject.Core.ViewModels
 {
-	public class BaseViewModel : MvxViewModel
-	{
-		private readonly IMvxNavigationService _nav;
-		private readonly IDataService _dataService;
-		private readonly IMvxMessenger _messenger;
-		private readonly List<MvxSubscriptionToken> _tokens = new List<MvxSubscriptionToken>();
+    public class BaseViewModel : MvxViewModel
+    {
+        private readonly IMvxNavigationService _nav;
+        private readonly IDataService _dataService;
+        private readonly IMvxMessenger _messenger;
+        private readonly List<MvxSubscriptionToken> _tokens = new List<MvxSubscriptionToken>();
 
-		private List<ItemModel> _allFolderItems = new List<ItemModel>();
-		private List<ItemModel> _searchResult = new List<ItemModel>();
-		private Timer _debounceTimer;
+        private List<ItemModel> _allFolderItems = new List<ItemModel>();
+        private List<ItemModel> _searchResult = new List<ItemModel>();
+        private Timer _debounceTimer;
         private Timer _debounceTimerSearchBox;
-		private SynchronizationContext? _uiContext;
+        private SynchronizationContext? _uiContext;
 
         public BaseViewModel(IMvxNavigationService nav, IDataService dataService, IMvxMessenger messenger)
         {
@@ -41,17 +44,20 @@ namespace ItemsProject.Core.ViewModels
             Folders = new ObservableCollection<FolderModel>(_dataService.GetAllFolders());
 
             // Messages
-            //_tokens.Add(_messenger.Subscribe<AddedItemMessage>(OnAddedItemMessage));
             _tokens.Add(_messenger.Subscribe<AddedFolderMessage>(OnAddedFolderMessage));
             _tokens.Add(_messenger.Subscribe<CanRemoveFolderMessage>(OnRemoveFolderMessage));
             _tokens.Add(_messenger.Subscribe<ChangeWindowStateMessage>(OnChangeWindowStateMessage));
-            _tokens.Add(_messenger.Subscribe<LoadListCollectionMessage>(OnLoadListCollectionMessage));
+            _tokens.Add(_messenger.Subscribe<ChangeCurrentViewMessage>(OnChangeCurrentViewMessage));
+            _tokens.Add(_messenger.Subscribe<WorkCompletedMessage>(OnWorkCompletedMessage));
 
             // COMMANDS
             // Opening Commands
             OpenAddItemWindowCommand = new OpenAddItemWindow(_nav, () => SelectedFolder, ClearSearchText, SetWindowStateToFalse);
             OpenAddFolderWindowCommand = new OpenAddFolderWindow(_nav, SetWindowStateToFalse);
             OpenDeleteFolderConfirmationCommand = new OpenConfirmationWindow(_nav, DeleteFolderConfirmationMessage, "Confirm Deletion", "pack://application:,,,/Assets/Icons/question-mark.png", SetWindowStateToFalse);
+            OpenSettingsCommand = new ToggleSettingsCommand(ToggleSettingsView);
+            GoHomePageCommand = new GoHomePageCommand(GoHomeView);
+
 
             // Folder Commands
             DeleteFolderCommand = new DeleteFolder(_dataService, ExecuteFolderRemoved, () => Folders.ToList());
@@ -86,52 +92,56 @@ namespace ItemsProject.Core.ViewModels
         /// 
         // Opening Commands
         public ICommand OpenAddItemWindowCommand { get; }
-		public ICommand OpenAddFolderWindowCommand { get; }
-		public ICommand OpenDeleteFolderConfirmationCommand { get; }
-		//public ICommand OpenPopupCommand { get; }
+        public ICommand OpenAddFolderWindowCommand { get; }
+        public ICommand OpenDeleteFolderConfirmationCommand { get; }
+        public ICommand OpenSettingsCommand { get; }
+        public ICommand GoHomePageCommand { get;  }
 
         // Folder Commands
         public ICommand DeleteFolderCommand { get; }
-		public ICommand EditModeFoldersCommand { get; }
-		public ICommand CancelFolderEditCommand { get; }
-		public ICommand SaveEditFolderCommand { get; }
+        public ICommand EditModeFoldersCommand { get; }
+        public ICommand CancelFolderEditCommand { get; }
+        public ICommand SaveEditFolderCommand { get; }
 
-		//// HotWheels Commands
-		public ICommand AddHotWheelsCommand { get; }
+        //// HotWheels Commands
+        public ICommand AddHotWheelsCommand { get; }
 
 
         /// <summary>
-        ///	FUNCTIONS THAT CALL WHENEVER THIS VIEWMODEL GETS MESSAGES
+        //////////////	FUNCTIONS THAT CALL WHENEVER THIS VIEWMODEL GETS MESSAGES
         /// </summary>
-        ///
-		//private void OnAddedItemMessage(AddedItemMessage addedItemMessage)
-		//{
-		//	UpdateFolders(addedItemMessage.NewItem);
-		//}
-
 		private void OnAddedFolderMessage(AddedFolderMessage addedFolderMessage)
-		{
-			Folders.Add(addedFolderMessage.NewFolder);
-		}
-
-		private void OnRemoveFolderMessage(CanRemoveFolderMessage message)
-		{
-			_dataService.ExecuteDeleteFolderCommand(message, DeleteFolderCommand);
-		}
-
-		private void OnChangeWindowStateMessage(ChangeWindowStateMessage changeWindowStateMessage)
-		{
-			IsWindowEnabled = changeWindowStateMessage.ChangeWindowState;
-		}
-        private void OnLoadListCollectionMessage(LoadListCollectionMessage message)
         {
-            CurrentView = message.HwListVm;
+            Folders.Add(addedFolderMessage.NewFolder);
+        }
+
+        private void OnRemoveFolderMessage(CanRemoveFolderMessage message)
+        {
+            _dataService.ExecuteDeleteFolderCommand(message, DeleteFolderCommand);
+        }
+
+        private void OnChangeWindowStateMessage(ChangeWindowStateMessage changeWindowStateMessage)
+        {
+            IsWindowEnabled = changeWindowStateMessage.ChangeWindowState;
+        }
+        private void OnChangeCurrentViewMessage(ChangeCurrentViewMessage message)
+        {
+            if (message.Sender.GetType() == typeof(SettingsViewModel))
+            {
+                SelectedFolder = null;
+            }
+
+            CurrentView = message.ViewModel;
+        }
+
+        private void OnWorkCompletedMessage(WorkCompletedMessage message)
+        {
+            NotLoadingItems = true;
         }
 
         /// <summary>
-        /// GENERAL HELPER FUNCTIONS
+        ///////////// GENERAL HELPER FUNCTIONS
         /// </summary>
-        /// 
         public void CancelEdit<T>(T model, Action<T> revertEditAction, Action<bool> setEditingFlag)
         {
             revertEditAction(model);
@@ -177,35 +187,29 @@ namespace ItemsProject.Core.ViewModels
             _messenger.Publish(message);
         }
 
-        public string DeleteFolderConfirmationMessage(string folderName)
+        public void GoHomeView()
         {
-            string output = string.Empty;
-            output = $"Are you sure you want to delete the '{folderName}' folder?";
-            return output;
+            if (CurrentView is not HomePageViewModel)
+            {
+                CurrentView = Mvx.IoCProvider.Resolve<HomePageViewModel>();
+                if (SelectedFolder != null)
+                {
+                    SelectedFolder = null;
+                }
+            }
         }
 
-        public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
+        public async Task NavigateAndLoadListCollection()
         {
-            _allFolderItems = updatedItems;
-            UpdateFolderItemsMessage message = new UpdateFolderItemsMessage(this, updatedItems, "UpdateFolderItems");
-        }
-
-        public void ExecuteFolderRemoved(List<FolderModel> updatedFolders)
-        {
-            Folders = _dataService.UpdateFolders(updatedFolders, Folders);
-        }
-
-        public void NavigateAndLoadListCollection()
-        {
-			LoadListCollectionPrepareModel param = new LoadListCollectionPrepareModel(SelectedFolder, Folders);
+            LoadListCollectionPrepareModel param = new LoadListCollectionPrepareModel(SelectedFolder, Folders);
 
             if (CurrentView is LoadListCollectionViewModel existingVm)
-			{
-				existingVm.Prepare(param);
-			}
+            {
+                existingVm.Prepare(param);
+            }
 
-			else
-			{
+            else
+            {
                 LoadListCollectionViewModel vm = Mvx.IoCProvider.Resolve<LoadListCollectionViewModel>();
                 vm.Prepare(param);
                 vm.Initialize();
@@ -218,17 +222,32 @@ namespace ItemsProject.Core.ViewModels
             IsWindowEnabled = false;
         }
 
+        private void ToggleSettingsView()
+        {
+            if (CurrentView == null || CurrentView is not SettingsViewModel)
+            {
+                CurrentView = Mvx.IoCProvider.Resolve<SettingsViewModel>();
+            }
+            else
+            {
+                SelectedFolder = null;
+                CurrentView = Mvx.IoCProvider.Resolve<HomePageViewModel>();
+            }
+        }
+
         private void UnsubscribeMessages()
-		{
-			foreach (MvxSubscriptionToken token in _tokens)
-			{
-				token.Dispose();
-			}
+        {
+            foreach (MvxSubscriptionToken token in _tokens)
+            {
+                token.Dispose();
+            }
 
-			_tokens.Clear();
-		}
+            _tokens.Clear();
+        }
 
-        // FUNCTIONS - FOLDER EDITING
+        /// <summary>
+        /// /////////// FOLDER FUNCTIONALITIES
+        /// </summary>
         public void CancelFolderEditing(FolderModel passedFolderModel)
         {
             CancelEdit<FolderModel>(
@@ -244,27 +263,47 @@ namespace ItemsProject.Core.ViewModels
         }
 
         public void ChangeFolderEditMode(FolderModel passedFolder, bool isEditing)
-		{
-			ChangeEditMode<FolderModel>(
-				passedFolder,
-				isEditing,
-				model =>
-				{
-					EditingFolderName = model.Name;
-				},
-				(model, isEditing) =>
-				{
-					SelectedFolder = model;
-					model.IsEditing = isEditing;
-			});
-		}
+        {
+            ChangeEditMode<FolderModel>(
+                passedFolder,
+                isEditing,
+                model =>
+                {
+                    EditingFolderName = model.Name;
+                },
+                (model, isEditing) =>
+                {
+                    SelectedFolder = model;
+                    model.IsEditing = isEditing;
+                });
+        }
 
-		public void SaveFolderEdit()
-		{
-			SelectedFolder.Name = EditingFolderName.Capitalize();
-			SelectedFolder.IsEditing = false;
-		}
+        public string DeleteFolderConfirmationMessage(string folderName)
+        {
+            string output = string.Empty;
+            output = $"Are you sure you want to delete the '{folderName}' folder?";
+            return output;
+        }
 
+        public void ExecuteFolderRemoved(List<FolderModel> updatedFolders)
+        {
+            Folders = _dataService.UpdateFolders(updatedFolders, Folders);
+        }
+
+        public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
+        {
+            _allFolderItems = updatedItems;
+            UpdateFolderItemsMessage message = new UpdateFolderItemsMessage(this, updatedItems, "UpdateFolderItems");
+        }
+
+        public void SaveFolderEdit()
+        {
+            SelectedFolder.Name = EditingFolderName.Capitalize();
+            SelectedFolder.IsEditing = false;
+        }
+        /// <summary>
+        /// ////////// ITEM FUNCTIONALITIES
+        /// </summary>
         public void CancelItemEditing(ItemModel passedItemModel)
         {
             CancelEdit<ItemModel>(
@@ -283,20 +322,18 @@ namespace ItemsProject.Core.ViewModels
         }
 
         /// <summary>
-        //////////////// LIST OF VALIDATION FUNCTIONS THAT CHANGE HOW THE UI RESPONDS
+        //////////////LIST OF VALIDATION FUNCTIONS THAT CHANGE HOW THE UI RESPONDS
         /// </summary>
 		public bool CanSaveItemEdit => !string.IsNullOrWhiteSpace(EditingItemName) && !string.IsNullOrWhiteSpace(EditingItemReleaseDate) && !string.IsNullOrWhiteSpace(EditingItemCollectionName);
         public bool CanSaveFolderEdit => !string.IsNullOrWhiteSpace(EditingFolderName);
         public bool IsFolderSelected => SelectedFolder != null;
-		public bool IsFirstFolderSelected => SelectedFolder != null && SelectedFolder.Name == "All Cars";
-		public bool IsPopupHwOpened => SearchhwResult != null && SearchhwResult.Count > 0;
+        public bool IsPopupHwOpened => SearchhwResult != null && SearchhwResult.Count > 0;
+        public bool IsSettingsViewOpen => CurrentView == null || CurrentView.GetType() != typeof(SettingsViewModel);
 
 
         /// <summary>
-        ///	BASE VIEWMODEL PROPERTIES
+        //////////////	BASE VIEWMODEL PROPERTIES
         /// </summary>
-
-        // GENERAL PROPERTIES
         private string _appVersion;
         public string AppVersion
         {
@@ -306,8 +343,6 @@ namespace ItemsProject.Core.ViewModels
                 SetProperty(ref _appVersion, value);
             }
         }
-
-        /// COLLECTIONS PROPERTIES
 
         private ObservableCollection<HotWheelsModel> _searchhwResult;
         public ObservableCollection<HotWheelsModel> SearchhwResult
@@ -328,7 +363,6 @@ namespace ItemsProject.Core.ViewModels
 		};
 
 
-        // SELECTED PROPERTIES
         private ItemModel? _selectedItem;
         public ItemModel? SelectedItem
         {
@@ -339,13 +373,14 @@ namespace ItemsProject.Core.ViewModels
             }
         }
 
-		private object _currentView;
-		public object CurrentView
+		private object? _currentView = Mvx.IoCProvider.Resolve<HomePageViewModel>();
+		public object? CurrentView
 		{
 			get { return _currentView; }
 			set
 			{ 
 				SetProperty(ref _currentView, value);
+                RaisePropertyChanged(() => IsSettingsViewOpen);
 			}
 		}
 
@@ -361,8 +396,8 @@ namespace ItemsProject.Core.ViewModels
         }
 
 
-        private FolderModel _selectedFolder;
-        public FolderModel SelectedFolder
+        private FolderModel? _selectedFolder;
+        public FolderModel? SelectedFolder
         {
             get { return _selectedFolder; }
             set
@@ -371,10 +406,12 @@ namespace ItemsProject.Core.ViewModels
                 SetProperty(ref _selectedFolder, value);
                 RaisePropertyChanged(() => IsFolderSelected);
                 SelectedItem = null;
+                if (_selectedFolder != null)
+                {
+                    NotLoadingItems = false;
+                    Task.Run(NavigateAndLoadListCollection);
+                }
                 SelectedSortOption = SortOptions[0];
-                _allFolderItems = _dataService.LoadItemsForFolder(SelectedFolder);
-                _searchResult = _dataService.FilterItems(SearchText, _allFolderItems);
-				NavigateAndLoadListCollection();
             }
         }
 
@@ -390,9 +427,7 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
-
-		// SEARCH PROPERTIES
-		private string _searchhwText = " Add HotWheels...";
+        private string _searchhwText = " Add HotWheels...";
 		public string SearchhwText
         {
 			get { return _searchhwText; }
@@ -418,9 +453,18 @@ namespace ItemsProject.Core.ViewModels
             }
 		}
 
+        private bool _isLoadingItems;
+        public bool IsLoadingItems
+        {
+            get { return _isLoadingItems; }
+            set
+            { 
+                SetProperty(ref _isLoadingItems, value);
+            }
+        }
 
-		// BOOLEAN PROPERTIES
-		private bool _isWindowEnabled = true;
+
+        private bool _isWindowEnabled = true;
 		public bool IsWindowEnabled
         {
 			get { return _isWindowEnabled; }
@@ -430,18 +474,17 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
-        private bool _isLoadingFolders;
-        public bool IsLoadingFolders
+        private bool _notLoadingItems = true;
+        public bool NotLoadingItems
         {
-            get { return _isLoadingFolders; }
+            get { return _notLoadingItems; }
             set
             {
-                SetProperty(ref _isLoadingFolders, value);
+                SetProperty(ref _notLoadingItems, value);
             }
         }
 
 
-        // EDITING COLLECTION
         private string _editingItemName;
         public string EditingItemName
         {
@@ -487,7 +530,9 @@ namespace ItemsProject.Core.ViewModels
 		}
 
 
-		// COUNTING CARS PROPERTIES
+		/// <summary>
+        /// ========== CARS STATS PROPERTIES
+        /// </summary>
 		private int _totalHotWheelsCount = 0;
 		public int TotalHotWheelsCount
         {
@@ -519,11 +564,19 @@ namespace ItemsProject.Core.ViewModels
 			}
 		}
 
-        // WHEN CLOSING APP
+        /// <sumamry>
+        /// ======== ON CLOSING VIEWMODEL FUNCTIONALITIES
+        /// <summary>
+        public override void ViewDisappeared()
+        {
+            UnsubscribeMessages();
+            base.ViewDisappeared();
+        }
+
         public override void ViewDestroy(bool viewFinishing = true)
-		{
+        {
             UnsubscribeMessages();
             base.ViewDestroy(viewFinishing);
-		}
+        }
     }
 }

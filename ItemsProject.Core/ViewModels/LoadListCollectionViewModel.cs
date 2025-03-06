@@ -13,19 +13,16 @@ using Nito.AsyncEx;
 using MvvmCross.Plugin.Messenger;
 using ItemsProject.Core.Messages;
 using System.Collections.ObjectModel;
+using ItemsProject.Core.Messages.HwListVm_Messages;
 
 namespace ItemsProject.Core.ViewModels
 {
     public class LoadListCollectionViewModel : MvxViewModel<LoadListCollectionPrepareModel>
     {
-        private readonly IDataService _dataService;
-        private readonly IMvxNavigationService _nav;
         private readonly IMvxMessenger _messenger;
         private HwListCollectionViewModel _hwListVm = Mvx.IoCProvider.Resolve<HwListCollectionViewModel>();
-        public LoadListCollectionViewModel(IDataService dataService, IMvxNavigationService nav, IMvxMessenger messenger)
+        public LoadListCollectionViewModel(IMvxMessenger messenger)
         {
-            _dataService = dataService;
-            _nav = nav;
             _messenger = messenger;
         }
 
@@ -45,35 +42,32 @@ namespace ItemsProject.Core.ViewModels
         }
 
         /// <summary>
-        ////////////////// WORKER FUNCTIONS
-        /// </summary>
-        private void Worker_DoWork(object? sender, DoWorkEventArgs e)
-        {
-            AsyncContext.Run(async () => await Task.Delay(500));
-            AsyncContext.Run(LoadItemsForFolder);
-        }
-
-        private void Worker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
-        {
-            LoadListCollectionMessage message = new LoadListCollectionMessage(this, _hwListVm);
-            _messenger.Publish(message);
-            _isWorkRunning = false;
-        }
-
-        /// <summary>
         ////////////////////////// OVERRIDE FUNCTIONS
         /// </summary>
-        public override Task Initialize()
+        /// 
+        private async Task RunWorkAsync()
         {
-            if(_isWorkRunning) return Task.CompletedTask;
+            await Task.Run(async () =>
+            {
+                await Task.Delay(500);
+                LoadListCollectionPrepareModel param = new LoadListCollectionPrepareModel(SelectedFolder, Folders);
+                _hwListVm.Prepare(param);
+            });
 
+            ChangeCurrentViewMessage message = new ChangeCurrentViewMessage(this, _hwListVm);
+            WorkCompletedMessage messageCompleted = new WorkCompletedMessage(this);
+            _messenger.Publish(message);
+            _messenger.Publish(messageCompleted);
+        }
+
+        public async override Task Initialize()
+        {
+            if(_isWorkRunning) return;
             _isWorkRunning = true;
 
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.DoWork += Worker_DoWork;
-            worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
-            worker.RunWorkerAsync();
-            return base.Initialize();
+            await RunWorkAsync();
+
+            await base.Initialize();
         }
 
         public override void Prepare(LoadListCollectionPrepareModel parameter)

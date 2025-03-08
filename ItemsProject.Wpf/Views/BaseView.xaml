@@ -941,11 +941,11 @@
                                                     VerticalAlignment="Center"
                                                     HorizontalAlignment="Center"
                                                     ToolTipService.InitialShowDelay="0"
-                                                    Source="{Binding PhotoURL}">
+                                                    Source="{Binding PhotoURL, Mode=OneWay, IsAsync=True}">
                                                     <Image.ToolTip>
                                                         <ToolTip
                                                             Placement="Left">
-                                                            <Image Source="{Binding PhotoURL}" Width="350"/>
+                                                            <Image Source="{Binding PhotoURL, Mode=OneWay, IsAsync=True}" Width="350"/>
                                                         </ToolTip>
                                                     </Image.ToolTip>
                                                 </Image>

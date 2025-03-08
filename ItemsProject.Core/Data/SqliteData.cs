@@ -194,5 +194,10 @@ namespace ItemsProject.Core.Data
         {
             throw new NotImplementedException();
         }
+
+        public Task<List<ItemModel>> GetLatestCars()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

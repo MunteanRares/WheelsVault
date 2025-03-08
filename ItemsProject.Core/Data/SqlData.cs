@@ -226,5 +226,16 @@ namespace ItemsProject.Core.Data
             List<FolderModel> output = await _db.LoadData<FolderModel, dynamic>("dbo.spFolders_GetDefault", new {}, connectionStringName, true);
             return output.First();
         }
+
+        public async Task<List<ItemModel>> GetLatestCars()
+        {
+            int currentYear = DateTime.Now.Year;
+            List<int> allYears = await _scrapeService.GetAllAvailableYears();
+            int lastYearHw = allYears.Last();
+
+            List<ItemModel> output = await _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetLatest", new { currentYear, lastYearHw }, connectionStringName, true);
+            output = output.Where(item => item.PhotoURL != null && !item.PhotoURL.Contains("Image_Not_Available")).ToList();
+            return output;
+        }
     }
 }

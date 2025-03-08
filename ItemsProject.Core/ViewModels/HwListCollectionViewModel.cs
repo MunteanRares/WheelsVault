@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
+using DevExpress.Data.Filtering.Helpers;
 using ItemsProject.Core.Commands.BaseViewModelCommands;
 using ItemsProject.Core.Commands.BaseViewModelCommands.HotWheels_Commands;
 using ItemsProject.Core.Commands.BaseViewModelCommands.Item_Commands;
@@ -7,6 +8,7 @@ using ItemsProject.Core.Commands.BaseViewModelCommands.Opening_Commands;
 using ItemsProject.Core.Commands.General;
 using ItemsProject.Core.Helper_Methods.String_Manipulation;
 using ItemsProject.Core.Messages;
+using ItemsProject.Core.Messages.HomePage_Messages;
 using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;
 using MvvmCross.Base;
@@ -32,6 +34,7 @@ namespace ItemsProject.Core.ViewModels
 
             _tokens.Add(_messenger.Subscribe<AddedHwMessage>(OnAddedHwMessage));
             _tokens.Add(_messenger.Subscribe<UpdateFolderItemsMessage>(OnUpdateFolderItemsMessage));
+            _tokens.Add(_messenger.Subscribe<AddCurrentItemMessage>(OnAddCurrentItemMessage));
 
             FolderItems = new ObservableCollection<ItemModel>();
 
@@ -70,18 +73,34 @@ namespace ItemsProject.Core.ViewModels
         /// </summary>
         public bool CanSaveItemEdit => !string.IsNullOrWhiteSpace(EditingItemName) && !string.IsNullOrWhiteSpace(EditingItemReleaseDate) && !string.IsNullOrWhiteSpace(EditingItemCollectionName);
 
+
+        /// <summary>
+        /// ========  MESSAGES
+        /// </summary>
+        /// <param name="message"></param>
         private void OnAddedHwMessage(AddedHwMessage message)
         {
             _ = UpdateFolders(message.NewItem);
         }
 
+        private void OnAddCurrentItemMessage(AddCurrentItemMessage message)
+        {
+
+            _ = UpdateFolders(message.NewItem);
+        }
+        
+
+        /// <summary>
+        /// ========= FUNCTIONS
+        /// </summary>
+        /// <param name="parameter"></param>
         public async override void Prepare(LoadListCollectionPrepareModel parameter)
         {
-            await _thread.ExecuteOnMainThreadAsync(() => SelectedFolder = parameter.SelectedFolder);
+            await AsyncDispatcher.ExecuteOnMainThreadAsync(() => SelectedFolder = parameter.SelectedFolder);
             Folders = parameter.Folders;
             _allFolderItems = await _dataService.LoadItemsForFolder(SelectedFolder);
 
-            await _thread.ExecuteOnMainThreadAsync(() =>
+            await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
             {
                 FolderItems = _dataService.UpdateFolderItems(_allFolderItems, FolderItems);
             });
@@ -141,18 +160,18 @@ namespace ItemsProject.Core.ViewModels
             if (message.MethodOption == "UpdateFolderItems")
             {
                 List<ItemModel> updatedItems = message.Parameter as List<ItemModel>;
-                _thread.ExecuteOnMainThreadAsync(() => FolderItems =  _dataService.UpdateFolderItems(updatedItems, FolderItems));
+                AsyncDispatcher.ExecuteOnMainThreadAsync(() => FolderItems =  _dataService.UpdateFolderItems(updatedItems, FolderItems));
             }
             else if (message.MethodOption == "SortItems")
             {
                 string selectedSortOption = message.Parameter as string;
-                _thread.ExecuteOnMainThreadAsync(() => FolderItems =  _dataService.SortItems(selectedSortOption, _allFolderItems, FolderItems));
+                AsyncDispatcher.ExecuteOnMainThreadAsync(() => FolderItems =  _dataService.SortItems(selectedSortOption, _allFolderItems, FolderItems));
             }
             else if (message.MethodOption == "SearchItems")
             {
                 string searchText = message.Parameter as string;
                 List<ItemModel> searchResult = _dataService.FilterItems(searchText, _allFolderItems);
-                _thread.ExecuteOnMainThreadAsync(() => FolderItems =  _dataService.UpdateFolderItems(searchResult, FolderItems));
+                AsyncDispatcher.ExecuteOnMainThreadAsync(() => FolderItems =  _dataService.UpdateFolderItems(searchResult, FolderItems));
             }
         }
 

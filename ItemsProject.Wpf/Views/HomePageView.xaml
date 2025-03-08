@@ -6,14 +6,18 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ItemsProject.Wpf.Views"
+                xmlns:conv="clr-namespace:ItemsProject.Wpf.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="1200" d:DesignWidth="2000">
     <views:MvxWpfView.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <materialDesign:CustomColorTheme BaseTheme="Light" PrimaryColor="#2196F3" SecondaryColor="#1976D2"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <conv:HomePageBoolToTextConverter x:Key="HomePageBoolToTextConverter"/>
+            <conv:HomePageBoolToColorConverter x:Key="HomePageBoolToColorConverter"/>
         </ResourceDictionary>
     </views:MvxWpfView.Resources>
 
@@ -145,6 +149,7 @@
                 </Button>
 
                 <materialDesign:Card
+                    MinWidth="300"
                     UniformCornerRadius="6"
                     Grid.Column="1"
                     Grid.Row="0"
@@ -198,12 +203,15 @@
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        
+
                         <Image
+                            MaxHeight="220"
                             VerticalAlignment="Top"
                             Grid.Row="0"
+                            Stretch="Uniform"
                             MaxWidth="320"
-                            Source="https://hwheadline.com/content/images/size/w1200/2025/02/BMW-635-CSi-1.jpg"/>
+                            CacheMode="BitmapCache"
+                            Source="{Binding CurrentDisplayedItem.PhotoURL, Mode=OneWay, IsAsync=True}"/>
                         <materialDesign:Card
                             Margin="15"
                             Padding="10 5"
@@ -215,8 +223,31 @@
                                 Height="auto"
                                 HorizontalAlignment="Center"
                                 FontSize="16"
-                                Foreground="black"
-                                Text="New 2025">
+                                Foreground="black">
+                                <Run
+                                    Text="New "/>
+                                <Run
+                                    Text="{Binding CurrentDisplayedItem.YearProduced, Mode=OneWay}"/>
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <EventTrigger
+                                                RoutedEvent="Loaded">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation
+                                                            Storyboard.TargetProperty="Opacity"
+                                                            From="0"
+                                                            To="1"
+                                                            Duration="0:0:0:0.7">
+
+                                                        </DoubleAnimation>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
                             </TextBlock>
                         </materialDesign:Card>
 
@@ -226,7 +257,7 @@
                             Grid.Row="2"
                             MaxWidth="320"
                             TextWrapping="Wrap"
-                            Text="BMW 635 CSI Wide Body Kit">
+                            Text="{Binding CurrentDisplayedItem.ModelName, Mode=OneWay}">
                         </TextBlock>
 
                         <TextBlock
@@ -237,9 +268,9 @@
                             <Run
                                 Text="Series: "/>
                             <Run 
-                                Text="Dream Garage"/>
+                                Text="{Binding CurrentDisplayedItem.SeriesName, Mode=OneWay}"/>
                         </TextBlock>
-                        
+
                         <TextBlock
                             Margin="15 5 0 0"
                             FontSize="16"
@@ -248,7 +279,7 @@
                             <Run
                                 Text="Series #: "/>
                             <Run 
-                                Text="9/10"/>
+                                Text="{Binding CurrentDisplayedItem.SeriesNum, Mode=OneWay}"/>
                         </TextBlock>
 
                         <TextBlock
@@ -259,7 +290,7 @@
                             <Run
                                 Text="Year #: "/>
                             <Run 
-                                Text="194"/>
+                                Text="{Binding CurrentDisplayedItem.YearProducedNum, Mode=OneWay}"/>
                         </TextBlock>
 
                         <Image
@@ -275,24 +306,48 @@
                         <Button
                             HorizontalAlignment="Right"
                             Grid.Row="6"
+                            VerticalContentAlignment="Center"
                             materialDesign:ButtonAssist.CornerRadius="6"
                             VerticalAlignment="Bottom"
+                            BorderBrush="{Binding IsCurrentItemInCollection, Converter={StaticResource HomePageBoolToColorConverter}}"
+                            Command="{Binding AddCurrentItemToCollectionCommand}"
                             Margin="0 5 15 15">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedLightButton}">
                                     <Setter Property="BorderThickness" Value="2"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCurrentItemInCollection, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                            <Setter Property="IsHitTestVisible" Value="False"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
                                 </Style>
                             </Button.Style>
                             <TextBlock
-                                Foreground="#00aeef"
+                                Foreground="{Binding IsCurrentItemInCollection, Converter={StaticResource HomePageBoolToColorConverter}}"
                                 FontSize="18"
                                 Grid.Column="1"
                                 Grid.Row="0"
-                                Text="Add to Collection"/>
+                                VerticalAlignment="top"
+                                Text="{Binding IsCurrentItemInCollection, Converter={StaticResource HomePageBoolToTextConverter}}">
+                            </TextBlock>
                         </Button>
                     </Grid>
-
                 </materialDesign:Card>
+
+                <ProgressBar
+                    Margin="46 35 15 15"
+                    Grid.Row="1"
+                    Background="#888"
+                    Foreground="Orange"
+                    BorderThickness="2"
+                    Value="{Binding CountDownValue}"
+                    BorderBrush="#888"
+                    HorizontalAlignment="Center"
+                    Width="{Binding ActualWidth, ElementName=newCarsCard}"
+                    Grid.Column="1"
+                    Style="{StaticResource MaterialDesignLinearProgressBar}">
+                    
+                </ProgressBar>
             </Grid>
         </Grid>
     </Grid>

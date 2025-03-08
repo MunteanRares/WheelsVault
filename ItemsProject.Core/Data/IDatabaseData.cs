@@ -26,5 +26,6 @@ namespace ItemsProject.Core.Data
         Task<int> GetAllQuantities();
         Task<ItemModel> RemoveOneQuantity(ItemModel? itemModel);
         Task<FolderModel> GetDefaultFolder();
+        Task<List<ItemModel>> GetLatestCars();
     }
 }

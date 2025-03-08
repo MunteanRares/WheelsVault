@@ -8,6 +8,9 @@
     
     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
     <views:MvxApplication.Resources>
+        <SolidColorBrush x:Key="CustomBlueBrush" Color="#00aeef"/>
+        <SolidColorBrush x:Key="CustomGreenBrush" Color="#28a745"/>
+        
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="#E0E9F2" />
         </Style>

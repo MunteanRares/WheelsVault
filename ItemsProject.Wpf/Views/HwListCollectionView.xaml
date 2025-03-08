@@ -64,6 +64,12 @@
             BorderThickness="0"
             Focusable="False"
             Margin="0 15 0 0">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel Orientation="Vertical" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"/>
+                </ItemsPanelTemplate>    
+            </ListBox.ItemsPanel>
+            
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -102,18 +108,18 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Image
-                            Margin="10 0 0 0"
-                            Grid.Column="0"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Source="{Binding PhotoURL}"
-                            ToolTipService.InitialShowDelay="0"
-                            Width="200">
+                                    Margin="10 0 0 0"
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Source="{Binding PhotoURL, Mode=OneWay, IsAsync=True}"
+                                    ToolTipService.InitialShowDelay="0"
+                                    Width="200">
                                     <Image.ToolTip>
                                         <ToolTip 
                                 Placement="Right">
                                             <Image
-                                    Source="{Binding PhotoURL}"
+                                    Source="{Binding PhotoURL, Mode=OneWay, IsAsync=True}"
                                     Width="350"/>
                                         </ToolTip>
                                     </Image.ToolTip>

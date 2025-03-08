@@ -10,16 +10,12 @@ using ItemsProject.Core.Commands.BaseViewModelCommands;
 using ItemsProject.Core.Commands.General;
 using ItemsProject.Core.Helper_Methods.String_Manipulation;
 using ItemsProject.Core.Commands.BaseViewModelCommands.Opening_Commands;
-using ItemsProject.Core.Commands.BaseViewModelCommands.Item_Commands;
 using WikiHotWheelsWebScraper.Models;
 using Timer = System.Timers.Timer;
 using ItemsProject.Core.Commands.BaseViewModelCommands.HotWheels_Commands;
 using MvvmCross;
-using DevExpress.Utils.Serializing.Helpers;
-using Nito.AsyncEx;
 using ItemsProject.Core.Messages.HwListVm_Messages;
 using ItemsProject.Core.Messages.HomePage_Messages;
-using static System.Net.Mime.MediaTypeNames;
 using MvvmCross.Base;
 using MvvmCross.Views;
 
@@ -32,11 +28,12 @@ namespace ItemsProject.Core.ViewModels
         private readonly IDataService _dataService;
         private readonly IMvxMessenger _messenger;
         private readonly List<MvxSubscriptionToken> _tokens = new List<MvxSubscriptionToken>();
+        private readonly IMvxMainThreadAsyncDispatcher _threadMvx;
 
         private Timer _debounceTimer;
         private Timer _debounceTimerSearchBox;
         private SynchronizationContext? _uiContext;
-        private readonly IMvxMainThreadAsyncDispatcher _threadMvx;
+        private HomePageViewModel? _defaultView;
 
         public BaseViewModel(IMvxNavigationService nav, IDataService dataService, IMvxMessenger messenger, IMvxMainThreadAsyncDispatcher threadMvx)
         {
@@ -74,9 +71,10 @@ namespace ItemsProject.Core.ViewModels
             AddHotWheelsCommand = new AddHotWheelsCommand(_dataService, () => SelectedFolder, _messenger);
 
             // Setting Default Values
+            _defaultView = Mvx.IoCProvider?.Resolve<HomePageViewModel>();
+            _defaultView?.Initialize();
+            CurrentView = _defaultView;
             SelectedSortOption = SortOptions[0];
-            //TotalHotWheelsCount = _dataService.GetAllHotWheelsCount();
-            //TotalCarsCount = _dataService.GetAllCarsCount();
             AppVersion = "1.1.5.0";
 
             _uiContext = SynchronizationContext.Current;
@@ -86,7 +84,7 @@ namespace ItemsProject.Core.ViewModels
             _debounceTimerSearchBox.AutoReset = false;
 
             _debounceTimer = new Timer(1000);
-            _debounceTimer.Elapsed += (sender, e) => DebounceTimer_Tick();
+            _debounceTimer.Elapsed += (sender, e) => _ = DebounceTimer_Tick();
             _debounceTimer.AutoReset = false;
         }
 
@@ -138,7 +136,7 @@ namespace ItemsProject.Core.ViewModels
                     SelectedFolder = null;
                 }
 
-                _threadMvx.ExecuteOnMainThreadAsync(() => 
+                AsyncDispatcher.ExecuteOnMainThreadAsync(() => 
                 {
                     CurrentView = message.ViewModel; 
                 });
@@ -206,7 +204,12 @@ namespace ItemsProject.Core.ViewModels
         {
             if (CurrentView is not HomePageViewModel)
             {
-                Task.Run( () => CurrentView = Mvx.IoCProvider.Resolve<HomePageViewModel>());
+                Task.Run(() =>
+                {
+                    HomePageViewModel vm = Mvx.IoCProvider.Resolve<HomePageViewModel>();
+                    vm.Initialize();
+                    CurrentView = vm;
+                });
 
                 if (SelectedFolder != null)
                 {
@@ -240,7 +243,9 @@ namespace ItemsProject.Core.ViewModels
             }
             else
             {
-                CurrentView = Mvx.IoCProvider.Resolve<HomePageViewModel>();
+                HomePageViewModel vm = Mvx.IoCProvider.Resolve<HomePageViewModel>();
+                vm.Initialize();
+                CurrentView = vm;
             }
         }
 
@@ -376,7 +381,7 @@ namespace ItemsProject.Core.ViewModels
             }
         }
 
-		private object? _currentView = Mvx.IoCProvider.Resolve<HomePageViewModel>();
+		private object? _currentView;
 		public object? CurrentView
 		{
 			get { return _currentView; }

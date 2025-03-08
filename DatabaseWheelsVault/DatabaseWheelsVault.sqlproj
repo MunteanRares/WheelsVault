@@ -99,6 +99,7 @@
     <Build Include="dbo\Store Procedures\spItems\spItems_AddHotWheelsModel.sql" />
     <Build Include="dbo\Store Procedures\spItems\spItems_RemoveOneQuantity.sql" />
     <Build Include="dbo\Store Procedures\spFolders\spFolders_GetDefault.sql" />
+    <Build Include="dbo\Store Procedures\spItems\spItems_GetLatest.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DatabaseWheelsVault.refactorlog" />

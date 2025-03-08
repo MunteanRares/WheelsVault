@@ -220,5 +220,11 @@ namespace ItemsProject.Core.Data
                                              true);
             return output.First();
         }
+
+        public async Task<FolderModel> GetDefaultFolder()
+        {
+            List<FolderModel> output = await _db.LoadData<FolderModel, dynamic>("dbo.spFolders_GetDefault", new {}, connectionStringName, true);
+            return output.First();
+        }
     }
 }

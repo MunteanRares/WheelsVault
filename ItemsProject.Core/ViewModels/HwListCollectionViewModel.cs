@@ -39,12 +39,8 @@ namespace ItemsProject.Core.ViewModels
             OpenPopupCommand = new OpenPopupCommand(SetSelectedItemFolderIds, SetIsCheckedIfItemInFolder);
 
             // Item Commands
-            CancelItemEditCommand = new CancelItemEdit(CancelItemEditing);
             DeleteItemFromFolderCommand = new DeleteItemFromFolder(_dataService, ExecuteUpdateFolderItems, () => FolderItems, () => SelectedFolder, _messenger);
             DeleteAllItemsCommand = new DeleteAllItemsCommand(_dataService, ExecuteUpdateFolderItems, () => FolderItems, _messenger);
-            EditModeItemCommand = new EditItemFromFolder(EditModeItems);
-            LoseItemFocusCommand = new CancelItemEditingCommand(_dataService);
-            SaveEditItemCommand = new SaveEditItem(_dataService, () => EditingItemName, () => EditingItemReleaseDate, () => EditingItemCollectionName, SaveItemEdit);
             ToggleItemInFolder = new ToggleItemInFolder(_dataService, ExecuteUpdateFolderItems, () => _allFolderItems);
 
             // HotWheels Commands
@@ -66,7 +62,6 @@ namespace ItemsProject.Core.ViewModels
         public ICommand ToggleItemInFolder { get; }
 
 
-
         // HotWheels Commands
         public ICommand AddHotWheelsCommand { get; }
 
@@ -77,7 +72,7 @@ namespace ItemsProject.Core.ViewModels
 
         private void OnAddedHwMessage(AddedHwMessage message)
         {
-            UpdateFolders(message.NewItem);
+            _ = UpdateFolders(message.NewItem);
         }
 
         public async override void Prepare(LoadListCollectionPrepareModel parameter)
@@ -146,18 +141,18 @@ namespace ItemsProject.Core.ViewModels
             if (message.MethodOption == "UpdateFolderItems")
             {
                 List<ItemModel> updatedItems = message.Parameter as List<ItemModel>;
-                FolderItems =  _dataService.UpdateFolderItems(updatedItems, FolderItems);
+                _thread.ExecuteOnMainThreadAsync(() => FolderItems =  _dataService.UpdateFolderItems(updatedItems, FolderItems));
             }
             else if (message.MethodOption == "SortItems")
             {
                 string selectedSortOption = message.Parameter as string;
-                FolderItems =  _dataService.SortItems(selectedSortOption, _allFolderItems, FolderItems);
+                _thread.ExecuteOnMainThreadAsync(() => FolderItems =  _dataService.SortItems(selectedSortOption, _allFolderItems, FolderItems));
             }
             else if (message.MethodOption == "SearchItems")
             {
                 string searchText = message.Parameter as string;
                 List<ItemModel> searchResult = _dataService.FilterItems(searchText, _allFolderItems);
-                FolderItems =  _dataService.UpdateFolderItems(searchResult, FolderItems);
+                _thread.ExecuteOnMainThreadAsync(() => FolderItems =  _dataService.UpdateFolderItems(searchResult, FolderItems));
             }
         }
 
@@ -168,7 +163,6 @@ namespace ItemsProject.Core.ViewModels
             SelectedItem.SeriesName = EditingItemCollectionName.ToUpper();
             SelectedItem.IsEditing = false;
         }
-
 
         public void CancelEdit<T>(T model, Action<T> revertEditAction, Action<bool> setEditingFlag)
         {

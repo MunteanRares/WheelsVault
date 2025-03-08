@@ -25,5 +25,6 @@ namespace ItemsProject.Core.Data
         Task<List<ItemModel>> GetAllNonCustom();
         Task<int> GetAllQuantities();
         Task<ItemModel> RemoveOneQuantity(ItemModel? itemModel);
+        Task<FolderModel> GetDefaultFolder();
     }
 }

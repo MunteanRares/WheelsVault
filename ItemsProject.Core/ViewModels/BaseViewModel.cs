@@ -150,9 +150,9 @@ namespace ItemsProject.Core.ViewModels
             NotLoadingItems = true;
         }
 
-        private void OnSelectDefaultMessage(SelectDefaultFolderMessage message)
+        private async void OnSelectDefaultMessage(SelectDefaultFolderMessage message)
         {
-            //SelectedFolder = 
+            SelectedFolder = await _dataService.GetDefaultFolder();
         }
 
         /// <summary>
@@ -219,28 +219,10 @@ namespace ItemsProject.Core.ViewModels
         public void NavigateAndLoadListCollection()
         {
             LoadListCollectionPrepareModel param = new LoadListCollectionPrepareModel(SelectedFolder, Folders);
-
-            //if (CurrentView is LoadListCollectionViewModel existingVm)
-            //{
-            //    existingVm.Prepare(param);
-            //}
-
-            //else
-            //{
-                //LoadListCollectionViewModel vm = Mvx.IoCProvider.Resolve<LoadListCollectionViewModel>();
-                //vm.Prepare(param);
-                //vm.Initialize();
-
-                //_threadMvx.ExecuteOnMainThreadAsync(() =>
-                //{
-                //    CurrentView = vm;
-                //});
-
             HwListCollectionViewModel vm = Mvx.IoCProvider.Resolve<HwListCollectionViewModel>();
             vm.Prepare(param);
             CurrentView = vm;
             NotLoadingItems = true;
-            //}
         }
 
         public void SetWindowStateToFalse()

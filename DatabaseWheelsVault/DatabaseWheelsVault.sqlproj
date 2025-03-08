@@ -98,6 +98,7 @@
     <Build Include="dbo\Store Procedures\spAppSettings\spAppSettings_SetDbToPopulated.sql" />
     <Build Include="dbo\Store Procedures\spItems\spItems_AddHotWheelsModel.sql" />
     <Build Include="dbo\Store Procedures\spItems\spItems_RemoveOneQuantity.sql" />
+    <Build Include="dbo\Store Procedures\spFolders\spFolders_GetDefault.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DatabaseWheelsVault.refactorlog" />

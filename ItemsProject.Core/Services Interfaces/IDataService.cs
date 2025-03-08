@@ -29,5 +29,6 @@ namespace ItemsProject.Core.Services
         Task<List<FolderModel>> GetAllFolders();
         Task<int> GetAllCarsCount();
         Task<ItemModel> RemoveOneQuantity(ItemModel? itemModel);
+        Task<FolderModel?> GetDefaultFolder();
     }
 }

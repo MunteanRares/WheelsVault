@@ -46,10 +46,6 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <DataTemplate DataType="{x:Type vm:LoadListCollectionViewModel}">
-                <local:LoadListCollectionView/>
-            </DataTemplate>
-
             <DataTemplate DataType="{x:Type vm:HwListCollectionViewModel}">
                 <local:HwListCollectionView/>
             </DataTemplate>

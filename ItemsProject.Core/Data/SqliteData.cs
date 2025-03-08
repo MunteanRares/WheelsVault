@@ -189,5 +189,10 @@ namespace ItemsProject.Core.Data
         {
             throw new NotImplementedException();
         }
+
+        public Task<FolderModel> GetDefaultFolder()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -206,5 +206,11 @@ namespace ItemsProject.Core.Services
             ItemModel output = await _db.RemoveOneQuantity(itemModel);
             return output;
         }
+
+        public async Task<FolderModel?> GetDefaultFolder()
+        {
+            FolderModel output = await _db.GetDefaultFolder();
+            return output;
+        }
     }
 }

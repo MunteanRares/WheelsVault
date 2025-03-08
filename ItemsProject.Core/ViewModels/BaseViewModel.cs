@@ -18,6 +18,10 @@ using MvvmCross;
 using DevExpress.Utils.Serializing.Helpers;
 using Nito.AsyncEx;
 using ItemsProject.Core.Messages.HwListVm_Messages;
+using ItemsProject.Core.Messages.HomePage_Messages;
+using static System.Net.Mime.MediaTypeNames;
+using MvvmCross.Base;
+using MvvmCross.Views;
 
 
 namespace ItemsProject.Core.ViewModels
@@ -29,19 +33,19 @@ namespace ItemsProject.Core.ViewModels
         private readonly IMvxMessenger _messenger;
         private readonly List<MvxSubscriptionToken> _tokens = new List<MvxSubscriptionToken>();
 
-        private List<ItemModel> _allFolderItems = new List<ItemModel>();
-        private List<ItemModel> _searchResult = new List<ItemModel>();
         private Timer _debounceTimer;
         private Timer _debounceTimerSearchBox;
         private SynchronizationContext? _uiContext;
+        private readonly IMvxMainThreadAsyncDispatcher _threadMvx;
 
-        public BaseViewModel(IMvxNavigationService nav, IDataService dataService, IMvxMessenger messenger)
+        public BaseViewModel(IMvxNavigationService nav, IDataService dataService, IMvxMessenger messenger, IMvxMainThreadAsyncDispatcher threadMvx)
         {
             _dataService = dataService;
             _nav = nav;
             _messenger = messenger;
+            _threadMvx = threadMvx;
 
-            Folders = new ObservableCollection<FolderModel>(_dataService.GetAllFolders());
+            //Folders = new ObservableCollection<FolderModel>(_dataService.GetAllFolders());
 
             // Messages
             _tokens.Add(_messenger.Subscribe<AddedFolderMessage>(OnAddedFolderMessage));
@@ -49,6 +53,7 @@ namespace ItemsProject.Core.ViewModels
             _tokens.Add(_messenger.Subscribe<ChangeWindowStateMessage>(OnChangeWindowStateMessage));
             _tokens.Add(_messenger.Subscribe<ChangeCurrentViewMessage>(OnChangeCurrentViewMessage));
             _tokens.Add(_messenger.Subscribe<WorkCompletedMessage>(OnWorkCompletedMessage));
+            _tokens.Add(_messenger.Subscribe<SelectDefaultFolderMessage>(OnSelectDefaultMessage));
 
             // COMMANDS
             // Opening Commands
@@ -70,9 +75,8 @@ namespace ItemsProject.Core.ViewModels
 
             // Setting Default Values
             SelectedSortOption = SortOptions[0];
-            Folders[0].IsDefault = true;
-            TotalHotWheelsCount = _dataService.GetAllHotWheelsCount();
-            TotalCarsCount = _dataService.GetAllCarsCount();
+            //TotalHotWheelsCount = _dataService.GetAllHotWheelsCount();
+            //TotalCarsCount = _dataService.GetAllCarsCount();
             AppVersion = "1.1.5.0";
 
             _uiContext = SynchronizationContext.Current;
@@ -85,6 +89,7 @@ namespace ItemsProject.Core.ViewModels
             _debounceTimer.Elapsed += (sender, e) => DebounceTimer_Tick();
             _debounceTimer.AutoReset = false;
         }
+
 
         /// <summary>
         /// COLLECTION OF COMMAND DECLARATION
@@ -126,17 +131,28 @@ namespace ItemsProject.Core.ViewModels
         }
         private void OnChangeCurrentViewMessage(ChangeCurrentViewMessage message)
         {
-            if (message.Sender.GetType() == typeof(SettingsViewModel))
+            Task.Run(() =>
             {
-                SelectedFolder = null;
-            }
+                if (message.Sender.GetType() == typeof(SettingsViewModel))
+                {
+                    SelectedFolder = null;
+                }
 
-            CurrentView = message.ViewModel;
+                _threadMvx.ExecuteOnMainThreadAsync(() => 
+                {
+                    CurrentView = message.ViewModel; 
+                });
+            });
         }
 
         private void OnWorkCompletedMessage(WorkCompletedMessage message)
         {
             NotLoadingItems = true;
+        }
+
+        private void OnSelectDefaultMessage(SelectDefaultFolderMessage message)
+        {
+            //SelectedFolder = 
         }
 
         /// <summary>
@@ -163,12 +179,12 @@ namespace ItemsProject.Core.ViewModels
             setEditingFlag(passedModel, isEditing);
         }
 
-        private void DebounceTimer_Tick()
+        private async Task DebounceTimer_Tick()
         {
             _debounceTimer.Stop();
             if (SearchhwText != "Add HotWheels..." && SearchhwText.Length > 2)
             {
-                SearchhwResult = _dataService.SearchHotWheels(SearchhwText);
+                SearchhwResult = await _dataService.SearchHotWheels(SearchhwText);
             }
             if ((SearchhwText.Length < 3 || string.IsNullOrWhiteSpace(SearchhwText) || SearchhwText == "Add HotWheels...") && SearchhwResult != null)
             {
@@ -182,8 +198,7 @@ namespace ItemsProject.Core.ViewModels
         private void DebounceTimerSearchBox_Tick()
         {
             _debounceTimerSearchBox.Stop();
-            _searchResult = _dataService.FilterItems(SearchText, _allFolderItems);
-            UpdateFolderItemsMessage message = new UpdateFolderItemsMessage(this, _searchResult, "UpdateFolderItems");
+            UpdateFolderItemsMessage message = new UpdateFolderItemsMessage(this, SearchText, "SearchItems");
             _messenger.Publish(message);
         }
 
@@ -191,30 +206,41 @@ namespace ItemsProject.Core.ViewModels
         {
             if (CurrentView is not HomePageViewModel)
             {
-                CurrentView = Mvx.IoCProvider.Resolve<HomePageViewModel>();
+                Task.Run( () => CurrentView = Mvx.IoCProvider.Resolve<HomePageViewModel>());
+
                 if (SelectedFolder != null)
                 {
+                    SearchText = "";
                     SelectedFolder = null;
                 }
             }
         }
 
-        public async Task NavigateAndLoadListCollection()
+        public void NavigateAndLoadListCollection()
         {
             LoadListCollectionPrepareModel param = new LoadListCollectionPrepareModel(SelectedFolder, Folders);
 
-            if (CurrentView is LoadListCollectionViewModel existingVm)
-            {
-                existingVm.Prepare(param);
-            }
+            //if (CurrentView is LoadListCollectionViewModel existingVm)
+            //{
+            //    existingVm.Prepare(param);
+            //}
 
-            else
-            {
-                LoadListCollectionViewModel vm = Mvx.IoCProvider.Resolve<LoadListCollectionViewModel>();
-                vm.Prepare(param);
-                vm.Initialize();
-                CurrentView = vm;
-            }
+            //else
+            //{
+                //LoadListCollectionViewModel vm = Mvx.IoCProvider.Resolve<LoadListCollectionViewModel>();
+                //vm.Prepare(param);
+                //vm.Initialize();
+
+                //_threadMvx.ExecuteOnMainThreadAsync(() =>
+                //{
+                //    CurrentView = vm;
+                //});
+
+            HwListCollectionViewModel vm = Mvx.IoCProvider.Resolve<HwListCollectionViewModel>();
+            vm.Prepare(param);
+            CurrentView = vm;
+            NotLoadingItems = true;
+            //}
         }
 
         public void SetWindowStateToFalse()
@@ -226,11 +252,12 @@ namespace ItemsProject.Core.ViewModels
         {
             if (CurrentView == null || CurrentView is not SettingsViewModel)
             {
+                SearchText = "";
+                SelectedFolder = null; 
                 CurrentView = Mvx.IoCProvider.Resolve<SettingsViewModel>();
             }
             else
             {
-                SelectedFolder = null;
                 CurrentView = Mvx.IoCProvider.Resolve<HomePageViewModel>();
             }
         }
@@ -288,12 +315,6 @@ namespace ItemsProject.Core.ViewModels
         public void ExecuteFolderRemoved(List<FolderModel> updatedFolders)
         {
             Folders = _dataService.UpdateFolders(updatedFolders, Folders);
-        }
-
-        public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
-        {
-            _allFolderItems = updatedItems;
-            UpdateFolderItemsMessage message = new UpdateFolderItemsMessage(this, updatedItems, "UpdateFolderItems");
         }
 
         public void SaveFolderEdit()
@@ -406,11 +427,14 @@ namespace ItemsProject.Core.ViewModels
                 SetProperty(ref _selectedFolder, value);
                 RaisePropertyChanged(() => IsFolderSelected);
                 SelectedItem = null;
+
                 if (_selectedFolder != null)
                 {
                     NotLoadingItems = false;
-                    Task.Run(NavigateAndLoadListCollection);
+
+                    Task.Run(() => NavigateAndLoadListCollection());
                 }
+
                 SelectedSortOption = SortOptions[0];
             }
         }
@@ -567,6 +591,16 @@ namespace ItemsProject.Core.ViewModels
         /// <sumamry>
         /// ======== ON CLOSING VIEWMODEL FUNCTIONALITIES
         /// <summary>
+
+        public async override Task Initialize()
+        {
+            TotalHotWheelsCount = await _dataService.GetAllHotWheelsCount();
+            TotalCarsCount = await _dataService.GetAllCarsCount();
+            Folders = new ObservableCollection<FolderModel>(await _dataService.GetAllFolders());
+            Folders[0].IsDefault = true;
+            await base.Initialize();
+        }
+
         public override void ViewDisappeared()
         {
             UnsubscribeMessages();

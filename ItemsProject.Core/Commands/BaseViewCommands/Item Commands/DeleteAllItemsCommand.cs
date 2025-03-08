@@ -22,11 +22,11 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands.Item_Commands
             _messenger = messenger;
         }
 
-        public override void Execute(object? parameter)
+        public async override void Execute(object? parameter)
         {
             ItemModel item = (ItemModel)parameter!;
             List<ItemModel> allFolderItems = new List<ItemModel>(_getAllItemsInFolder());
-            ItemModel itemToRemoveCopy = _dataService.DeleteAllItemsFromFolder(item.Id);
+            ItemModel itemToRemoveCopy = await _dataService.DeleteAllItemsFromFolder(item.Id);
 
             ClosePopupBeforeDeletingItemMessage message = new ClosePopupBeforeDeletingItemMessage(this);
             _messenger.Publish(message);

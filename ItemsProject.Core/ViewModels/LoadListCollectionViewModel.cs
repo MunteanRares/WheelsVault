@@ -14,16 +14,19 @@ using MvvmCross.Plugin.Messenger;
 using ItemsProject.Core.Messages;
 using System.Collections.ObjectModel;
 using ItemsProject.Core.Messages.HwListVm_Messages;
+using MvvmCross.Base;
 
 namespace ItemsProject.Core.ViewModels
 {
     public class LoadListCollectionViewModel : MvxViewModel<LoadListCollectionPrepareModel>
     {
         private readonly IMvxMessenger _messenger;
-        private HwListCollectionViewModel _hwListVm = Mvx.IoCProvider.Resolve<HwListCollectionViewModel>();
-        public LoadListCollectionViewModel(IMvxMessenger messenger)
+        private readonly IMvxMainThreadAsyncDispatcher _thread;
+        private readonly HwListCollectionViewModel _hwListVm = Mvx.IoCProvider.Resolve<HwListCollectionViewModel>();
+        public LoadListCollectionViewModel(IMvxMessenger messenger, IMvxMainThreadAsyncDispatcher thread)
         {
             _messenger = messenger;
+            _thread = thread;
         }
 
         /// <summary>
@@ -31,43 +34,35 @@ namespace ItemsProject.Core.ViewModels
         /// </summary>
         private bool _isWorkRunning = false;
 
-
-        /// <summary>
-        //////////////////// GENERAL FUNCTIONS
-        /// </summary>
-        public void LoadItemsForFolder()
-        {
-            LoadListCollectionPrepareModel param = new LoadListCollectionPrepareModel(SelectedFolder, Folders);
-            _hwListVm.Prepare(param);
-        }
-
         /// <summary>
         ////////////////////////// OVERRIDE FUNCTIONS
         /// </summary>
         /// 
-        private async Task RunWorkAsync()
+        private void RunWorkAsync()
         {
-            await Task.Run(async () =>
-            {
-                await Task.Delay(500);
-                LoadListCollectionPrepareModel param = new LoadListCollectionPrepareModel(SelectedFolder, Folders);
-                _hwListVm.Prepare(param);
-            });
+            HwListCollectionViewModel hwlistvm = Mvx.IoCProvider.Resolve<HwListCollectionViewModel>();
+            LoadListCollectionPrepareModel param = new LoadListCollectionPrepareModel(SelectedFolder, Folders);
+            _hwListVm.Prepare(param);
 
-            ChangeCurrentViewMessage message = new ChangeCurrentViewMessage(this, _hwListVm);
-            WorkCompletedMessage messageCompleted = new WorkCompletedMessage(this);
-            _messenger.Publish(message);
-            _messenger.Publish(messageCompleted);
+            SendMessages(_hwListVm);
         }
 
-        public async override Task Initialize()
+        public void SendMessages(HwListCollectionViewModel hwlistvm)
         {
-            if(_isWorkRunning) return;
+            ChangeCurrentViewMessage message = new ChangeCurrentViewMessage(this, hwlistvm);
+            WorkCompletedMessage messageCompleted = new WorkCompletedMessage(this);
+            _messenger.Publish(messageCompleted);
+            _messenger.Publish(message);
+        }
+
+        public override Task Initialize()
+        {
+            if(_isWorkRunning) return Task.CompletedTask;
             _isWorkRunning = true;
 
-            await RunWorkAsync();
+            RunWorkAsync();
 
-            await base.Initialize();
+            return base.Initialize();
         }
 
         public override void Prepare(LoadListCollectionPrepareModel parameter)

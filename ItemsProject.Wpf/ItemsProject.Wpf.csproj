@@ -42,6 +42,7 @@
     <None Remove="Assets\Fonts\Fredoka-Medium.ttf" />
     <None Remove="Assets\Icons\question-mark.png" />
     <None Remove="Assets\Icons\warning-sign.png" />
+    <None Remove="Assets\Pngs\Hotwheels.png" />
     <None Remove="Assets\Pngs\logo.png" />
   </ItemGroup>
 
@@ -73,6 +74,7 @@
     <Resource Include="Assets\Fonts\Fredoka-Medium.ttf" />
     <Resource Include="Assets\Icons\question-mark.png" />
     <Resource Include="Assets\Icons\warning-sign.png" />
+    <Resource Include="Assets\Pngs\Hotwheels.png" />
     <Resource Include="Assets\Pngs\logo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

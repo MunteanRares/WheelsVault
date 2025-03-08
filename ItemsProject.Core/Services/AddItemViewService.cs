@@ -7,19 +7,19 @@ using MvvmCross.Plugin.Messenger;
 
 namespace ItemsProject.Core.Services
 {
-    public class ItemDataService : IItemDataService
+    public class AddItemViewService : IItemDataService
     {
         private readonly IDatabaseData _db;
         private readonly IMvxMessenger _messenger;
-        public ItemDataService(IDatabaseData db, IMvxMessenger messenger)
+        public AddItemViewService(IDatabaseData db, IMvxMessenger messenger)
         {
             _db = db;
             _messenger = messenger;
         }
 
-        public void AddItem(int folderId, string modelName, string modelReleaseDate, string collectionName)
+        public async Task AddItem(int folderId, string modelName, string modelReleaseDate, string collectionName)
         {
-            ItemModel newItem = _db.CreateCustomItem(folderId, modelName, modelReleaseDate, collectionName);
+            ItemModel newItem = await _db.CreateCustomItem(folderId, modelName, modelReleaseDate, collectionName);
             var message = new AddedItemMessage(Mvx.IoCProvider.Resolve<AddItemViewModel>(), newItem);
             _messenger.Publish(message);
         }

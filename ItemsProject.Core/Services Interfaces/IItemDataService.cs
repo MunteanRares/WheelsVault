@@ -2,6 +2,6 @@
 {
     public interface IItemDataService
     {
-        void AddItem(int folderId, string modelName, string modelReleaseDate, string collectionName);
+        Task AddItem(int folderId, string modelName, string modelReleaseDate, string collectionName);
     }
 }

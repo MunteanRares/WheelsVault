@@ -20,7 +20,7 @@ namespace ItemsProject.Core.Data
 
         public async Task DefaultHotwheelsDbPopulation()
         {
-            int isDbPopulated = IsDbPopulated();
+            int isDbPopulated = await IsDbPopulated();
             if (isDbPopulated == 0)
             {
                 List<int> availableYears = await _scrapeService.GetAllAvailableYears();
@@ -43,7 +43,7 @@ namespace ItemsProject.Core.Data
                         }
 
 
-                        _db.SaveData("dbo.spHotwheelsCars_InsertCar",
+                        await _db.SaveData("dbo.spHotwheelsCars_InsertCar",
                                      new
                                      {
                                          modelName = car.ModelName,
@@ -59,151 +59,155 @@ namespace ItemsProject.Core.Data
                     }
                 }
 
-                SetDbToPopulated();
+                await SetDbToPopulated();
             }
             else
             {
                 List<int> availableYears = await _scrapeService.GetAllAvailableYears();
-                List<HotWheelsModel> hotWheelsModels = await _scrapeService.DefaultDataBasePopulation(availableYears.Last());
-                foreach (HotWheelsModel car in hotWheelsModels)
+                int currentYear = DateTime.Now.Year;
+                for (int year = currentYear; year <= availableYears.Last(); year++)
                 {
-                    _db.SaveData("dbo.spHotwheelsCars_UpdateCurrentYear",
-                                 new
-                                 {
-                                     modelName = car.ModelName,
-                                     seriesName = car.SeriesName,
-                                     seriesNum = car.SeriesNum,
-                                     photoUrl = car.PhotoURL,
-                                     yearProduced = car.YearProduced,
-                                     yearProducedNum = car.YearProducedNum,
-                                     toyNum = car.ToyNum
-                                 },
-                                 connectionStringName,
-                                 true);
+                    List<HotWheelsModel> hotWheelsModels = await _scrapeService.DefaultDataBasePopulation(year);
+                    foreach (HotWheelsModel car in hotWheelsModels)
+                    {
+                        await _db.SaveData("dbo.spHotwheelsCars_UpdateCurrentYear",
+                                     new
+                                     {
+                                         modelName = car.ModelName,
+                                         seriesName = car.SeriesName,
+                                         seriesNum = car.SeriesNum,
+                                         photoUrl = car.PhotoURL,
+                                         yearProduced = car.YearProduced,
+                                         yearProducedNum = car.YearProducedNum,
+                                         toyNum = car.ToyNum
+                                     },
+                                     connectionStringName,
+                                     true);
+                    }
                 }
             }
         }
 
-        public int IsDbPopulated()
+        public async Task<int> IsDbPopulated()
         {
-            int output = _db.LoadData<int, dynamic>("dbo.spAppSettings_IsDbPopulated", new { }, connectionStringName, true).First();
+            List<int> output = await _db.LoadData<int, dynamic>("dbo.spAppSettings_IsDbPopulated", new { }, connectionStringName, true);
+            return output.First();
+        }
+
+        public async Task SetDbToPopulated()
+        {
+            await _db.SaveData("dbo.spAppSettings_SetDbToPopulated", new { }, connectionStringName, true);
+        }
+
+        public async Task<List<ItemModel>> GetAllItems()
+        {
+            List<ItemModel> output = await _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetAll", new { }, connectionStringName, true);
             return output;
         }
 
-        public void SetDbToPopulated()
+        public async Task<List<FolderModel>> GetAllFolders()
         {
-            _db.SaveData("dbo.spAppSettings_SetDbToPopulated", new { }, connectionStringName, true);
-        }
-
-        public List<ItemModel> GetAllItems()
-        {
-            List<ItemModel> output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetAll", new { }, connectionStringName, true);
+            List<FolderModel> output = await _db.LoadData<FolderModel, dynamic>("dbo.spFolders_GetAll", new { }, connectionStringName, true);
             return output;
         }
 
-        public List<FolderModel> GetAllFolders()
+        public async Task<List<ItemModel>> GetItemsByFolderId(int folderId)
         {
-            List<FolderModel> output = _db.LoadData<FolderModel, dynamic>("dbo.spFolders_GetAll", new { }, connectionStringName, true);
+            List<ItemModel> output = await _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetByFolderId", new { folderId }, connectionStringName, true);
             return output;
         }
 
-        public List<ItemModel> GetItemsByFolderId(int folderId)
+        public async Task<ItemModel> CreateCustomItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName)
         {
-            List<ItemModel> output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetByFolderId", new { folderId }, connectionStringName, true);
+            await _db.SaveData("dbo.spItems_CreateItem", new { FolderId, ModelName = ModelName.Capitalize(), ModelReleaseDate, CollectionName = CollectionName.ToUpper(), IsCustom = 1 }, connectionStringName, true);
+            List<ItemModel> output = await _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetLast", new { }, connectionStringName, true);
+            return output.First();
+        }
+
+        public async Task<FolderModel> CreateNewFolder(string folderName)
+        {
+            await _db.SaveData("spFolders_CreateFolder", new { folderName = folderName.Capitalize() }, connectionStringName, true);
+            List<FolderModel> output = await _db.LoadData<FolderModel, dynamic>("dbo.spFolders_GetLast", new { }, connectionStringName, true);
+            return output.First();
+        }
+
+        public async Task<ItemModel> GetItemById(int itemId)
+        {
+            List<ItemModel> output = await _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetById", new { itemId }, connectionStringName, true);
+            return output.First();
+        }
+
+        public async Task DeleteItem(int itemId, int folderId)
+        {
+            await _db.SaveData("dbo.spItems_Remove", new { itemId, folderId }, connectionStringName, true);
+        }
+
+        public async Task<FolderModel> GetFolderById(int folderId)
+        {
+            List<FolderModel> output = await _db.LoadData<FolderModel, dynamic>("dbo.spFolders_GetById", new { folderId }, connectionStringName, true);
+            return output.First();
+        }
+
+        public async Task RemoveFolderById(int folderId)
+        {
+            await _db.SaveData("dbo.spFolders_Remove", new { folderId }, connectionStringName, true);
+        }
+
+        public async Task EditFolderName(string folderName, int folderId)
+        {
+            await _db.SaveData("dbo.spFolders_EditName", new { folderName, folderId }, connectionStringName, true);
+        }
+
+        public async Task EditItem(int itemId, string newName, string newReleaseDate, string newCollectionName)
+        {
+            await _db.SaveData("dbo.spItems_EditItem", new { itemId, newName, newReleaseDate, newCollectionName }, connectionStringName, true);
+        }
+
+        public async Task<List<int>> GetAllFolderIdsForItem(int selectedItemID)
+        {
+            List<int> output = await _db.LoadData<int, dynamic>("dbo.spFolders_GetAllFolderIdsForItem", new { selectedItemID }, connectionStringName, true);
             return output;
         }
 
-        public ItemModel CreateCustomItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName)
+        public async Task AddItemToFolder(int selectedItemId, int selectedFolderId)
         {
-            _db.SaveData("dbo.spItems_CreateItem", new { FolderId, ModelName = ModelName.Capitalize(), ModelReleaseDate, CollectionName = CollectionName.ToUpper(), IsCustom = 1 }, connectionStringName, true);
-            ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetLast", new { }, connectionStringName, true).First();
-            return output;
+            await _db.SaveData("dbo.spItems_AddToFolder", new { selectedItemId, selectedFolderId }, connectionStringName, true);
         }
 
-        public FolderModel CreateNewFolder(string folderName)
+        public async Task DeleteAllItemsFromFolder(int itemId)
         {
-            _db.SaveData("spFolders_CreateFolder", new { folderName = folderName.Capitalize() }, connectionStringName, true);
-            FolderModel output = _db.LoadData<FolderModel, dynamic>("dbo.spFolders_GetLast", new { }, connectionStringName, true).First();
-            return output;
+            await _db.SaveData("dbo.spItems_RemoveAllFromFolder", new { itemId }, connectionStringName, true);
         }
 
-        public ItemModel GetItemById(int itemId)
+        public async Task<List<HotWheelsModel>> SearchHotWheels(string searchhwText)
         {
-            ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetById", new { itemId }, connectionStringName, true).First();
-            return output;
-        }
-
-        public void DeleteItem(int itemId, int folderId)
-        {
-            _db.SaveData("dbo.spItems_Remove", new { itemId, folderId }, connectionStringName, true);
-        }
-
-        public FolderModel GetFolderById(int folderId)
-        {
-            FolderModel output = _db.LoadData<FolderModel, dynamic>("dbo.spFolders_GetById", new { folderId }, connectionStringName, true).First();
-            return output;
-        }
-
-        public void RemoveFolderById(int folderId)
-        {
-            _db.SaveData("dbo.spFolders_Remove", new { folderId }, connectionStringName, true);
-        }
-
-        public void EditFolderName(string folderName, int folderId)
-        {
-            _db.SaveData("dbo.spFolders_EditName", new { folderName, folderId }, connectionStringName, true);
-        }
-
-        public void EditItem(int itemId, string newName, string newReleaseDate, string newCollectionName)
-        {
-            _db.SaveData("dbo.spItems_EditItem", new { itemId, newName, newReleaseDate, newCollectionName }, connectionStringName, true);
-        }
-
-        public List<int> GetAllFolderIdsForItem(int selectedItemID)
-        {
-            List<int> output = _db.LoadData<int, dynamic>("dbo.spFolders_GetAllFolderIdsForItem", new { selectedItemID }, connectionStringName, true);
-            return output;
-        }
-
-        public void AddItemToFolder(int selectedItemId, int selectedFolderId)
-        {
-            _db.SaveData("dbo.spItems_AddToFolder", new { selectedItemId, selectedFolderId }, connectionStringName, true);
-        }
-
-        public void DeleteAllItemsFromFolder(int itemId)
-        {
-            _db.SaveData("dbo.spItems_RemoveAllFromFolder", new { itemId }, connectionStringName, true);
-        }
-
-        public List<HotWheelsModel> SearchHotWheels(string searchhwText)
-        {
-            List<HotWheelsModel> searchResult = _db.LoadData<HotWheelsModel, dynamic>("dbo.spHotwheelsCars_FindCarByText", new { searchhwText }, connectionStringName, true);
+            List<HotWheelsModel> searchResult = await _db.LoadData<HotWheelsModel, dynamic>("dbo.spHotwheelsCars_FindCarByText", new { searchhwText }, connectionStringName, true);
             return searchResult;
         }
 
-        public ItemModel AddHotWheelsModel(int folderId, string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
+        public async Task<ItemModel> AddHotWheelsModel(int folderId, string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
         {
-            _db.SaveData("dbo.Items_AddHotWheelsModel", new { folderId, modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL, isCustom = 0 }, connectionStringName, true);
-            ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetUnique", new { modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL, isCustom = 0 }, connectionStringName, true).First();
+            await _db.SaveData("dbo.Items_AddHotWheelsModel", new { folderId, modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL, isCustom = 0 }, connectionStringName, true);
+            List<ItemModel> output = await _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetUnique", new { modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL, isCustom = 0 }, connectionStringName, true);
+            return output.First();
+        }
+
+        public async Task<List<ItemModel>> GetAllNonCustom()
+        {
+            List<ItemModel> output = await _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetAllNonCustom", new {}, connectionStringName, true);
             return output;
         }
 
-        public List<ItemModel> GetAllNonCustom()
+        public async Task<int> GetAllQuantities()
         {
-            List<ItemModel> output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetAllNonCustom", new {}, connectionStringName, true);
-            return output;
+            List<int> output = await _db.LoadData<int, dynamic>("dbo.spItems_GetAllQuantities", new { }, connectionStringName, true);
+            return output.FirstOrDefault();
         }
 
-        public int GetAllQuantities()
+        public async Task<ItemModel> RemoveOneQuantity(ItemModel? itemModel)
         {
-            int output = _db.LoadData<int, dynamic>("dbo.spItems_GetAllQuantities", new { }, connectionStringName, true).FirstOrDefault();
-            return output;
-        }
-
-        public ItemModel RemoveOneQuantity(ItemModel? itemModel)
-        {
-            _db.SaveData("dbo.spItems_RemoveOneQuantity", new { itemId = itemModel.Id }, connectionStringName, true);
-            ItemModel output = _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetUnique",
+            await _db.SaveData("dbo.spItems_RemoveOneQuantity", new { itemId = itemModel.Id }, connectionStringName, true);
+            List<ItemModel> output = await _db.LoadData<ItemModel, dynamic>("dbo.spItems_GetUnique",
                                              new { modelName = itemModel.ModelName,
                                                  seriesName = itemModel.SeriesName,
                                                  seriesNum = itemModel.SeriesNum,
@@ -213,8 +217,8 @@ namespace ItemsProject.Core.Data
                                                  photoURL = itemModel.PhotoURL,
                                                  isCustom = 0 },
                                              connectionStringName,
-                                             true).First();
-            return output;
+                                             true);
+            return output.First();
         }
     }
 }

@@ -37,7 +37,7 @@
     </views:MvxWpfView.Style>
 
     <Grid
-        Margin="40 0 0 0">
+        Margin="40 0 80 0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
@@ -45,14 +45,254 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.1*" MinHeight="60"/>
+            <RowDefinition Height="auto" MinHeight="60"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <TextBlock
             Grid.Row="1"
-            FontSize="40"
+            FontSize="48"
             Grid.Column="0"
             Foreground="#666"
             Text="Home Page"/>
+        <Separator
+            Background="#00aeef"
+            Margin="0 10 0 0"
+            Grid.Row="2"
+            Grid.ColumnSpan="3">
+        </Separator>
+
+        <Grid
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Grid.Row="3"
+            Grid.RowSpan="2">
+            <Grid
+                Margin="40 0 40 0"
+                HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60*"/>
+                    <ColumnDefinition Width="40*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Column="0"
+                    FontSize="22"
+                    Foreground="#777"
+                    Margin="0 20 0 0"
+                    HorizontalAlignment="Center"
+                    TextWrapping="Wrap">
+                    <Run
+                        FontSize="34"
+                        Foreground="#666"
+                        Text="Welcome to WheelsVault!"/>
+                    <LineBreak/>
+                    This is a simple and intuitive application designed to help users organize and manage their <Run Foreground="#00aeef" Text="Hot Wheels"/> collection.
+                    <LineBreak/>
+                    <LineBreak/>
+                    Users can:
+                    <LineBreak/>
+                    <Run
+                        Foreground="#00aeef"
+                        Text="✔"/> Select folders to <Run Foreground="#00aeef" Text="categorize"/> their collection
+                    <LineBreak/>
+                    <Run
+                        Foreground="#00aeef"
+                        Text="✔"/> <Run Foreground="#00aeef" Text="Search"/> for Hot Wheels models and add them to their list
+                    <LineBreak/>
+                    <Run
+                        Foreground="#00aeef"
+                        Text="✔"/> Manage their collection with <Run Foreground="#00aeef" Text="sorting"/> and filtering options
+                    <LineBreak/>
+                    <Run
+                        Foreground="#00aeef"
+                        Text="✔"/> Navigate between different pages for better <Run Foreground="#00aeef" Text="organization"/>
+                    <LineBreak/>
+                    <LineBreak/>
+                    The app provides a clean and minimalistic UI, ensuring a smooth experience while managing and expanding your Hot Wheels collection.
+                    <LineBreak/>
+                    <LineBreak/>
+                </TextBlock>
+
+                <Button
+                    HorizontalAlignment="Left"
+                    Margin="0 0 0 30"
+                    VerticalAlignment="Bottom"
+                    materialDesign:ElevationAssist.Elevation="Dp2"
+                    materialDesign:ButtonAssist.CornerRadius="6"
+                    materialDesign:ShadowAssist.ShadowAnimationDuration="10"
+                    Grid.Row="0">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedLightButton}">
+                            <Setter Property="BorderThickness" Value="2"/>
+                        </Style>
+                    </Button.Style>
+                    <TextBlock>
+                    <TextBlock
+                        FontSize="18"
+                        Foreground="#00aeef"
+                        VerticalAlignment="Center"
+                        Text="My Collection"/>       
+                    </TextBlock>
+                </Button>
+
+                <materialDesign:Card
+                    UniformCornerRadius="6"
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="30 25 0 0"
+                    x:Name="newCarsCard">
+                    <materialDesign:Card.Effect>
+                        <DropShadowEffect
+                            Opacity="0.15"
+                            BlurRadius="15"
+                            ShadowDepth="2"/>
+                    </materialDesign:Card.Effect>
+
+                    
+                    <materialDesign:Card.Style>
+                        <Style TargetType="materialDesign:Card">
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <TranslateTransform X="200"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <EventTrigger
+                                    RoutedEvent="Loaded">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)"
+                                                From="200"
+                                                To="0"
+                                                Duration="0:0:0:1">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </materialDesign:Card.Style>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <Image
+                            VerticalAlignment="Top"
+                            Grid.Row="0"
+                            MaxWidth="320"
+                            Source="https://hwheadline.com/content/images/size/w1200/2025/02/BMW-635-CSi-1.jpg"/>
+                        <materialDesign:Card
+                            Margin="15"
+                            Padding="10 5"
+                            Background="Orange"
+                            HorizontalAlignment="Left"
+                            Grid.Row="1"
+                            UniformCornerRadius="6">
+                            <TextBlock
+                                Height="auto"
+                                HorizontalAlignment="Center"
+                                FontSize="16"
+                                Foreground="black"
+                                Text="New 2025">
+                            </TextBlock>
+                        </materialDesign:Card>
+
+                        <TextBlock
+                            Foreground="#444"
+                            Margin="15"
+                            Grid.Row="2"
+                            MaxWidth="320"
+                            TextWrapping="Wrap"
+                            Text="BMW 635 CSI Wide Body Kit">
+                        </TextBlock>
+
+                        <TextBlock
+                            Margin="15 5 0 0"
+                            FontSize="16"
+                            Foreground="#444"
+                            Grid.Row="3">
+                            <Run
+                                Text="Series: "/>
+                            <Run 
+                                Text="Dream Garage"/>
+                        </TextBlock>
+                        
+                        <TextBlock
+                            Margin="15 5 0 0"
+                            FontSize="16"
+                            Foreground="#444"
+                            Grid.Row="4">
+                            <Run
+                                Text="Series #: "/>
+                            <Run 
+                                Text="9/10"/>
+                        </TextBlock>
+
+                        <TextBlock
+                            Margin="15 5 0 0"
+                            FontSize="16"
+                            Foreground="#444"
+                            Grid.Row="5">
+                            <Run
+                                Text="Year #: "/>
+                            <Run 
+                                Text="194"/>
+                        </TextBlock>
+
+                        <Image
+                            Margin="13 10 0 10"
+                            HorizontalAlignment="left"
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            RenderOptions.EdgeMode="Aliased"
+                            Grid.Row="6"
+                            Width="80"
+                            Source="/Assets/Pngs/Hotwheels.png">
+                        </Image>
+
+                        <Button
+                            HorizontalAlignment="Right"
+                            Grid.Row="6"
+                            materialDesign:ButtonAssist.CornerRadius="6"
+                            VerticalAlignment="Bottom"
+                            Margin="0 5 15 15">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedLightButton}">
+                                    <Setter Property="BorderThickness" Value="2"/>
+                                </Style>
+                            </Button.Style>
+                            <TextBlock
+                                Foreground="#00aeef"
+                                FontSize="18"
+                                Grid.Column="1"
+                                Grid.Row="0"
+                                Text="Add to Collection"/>
+                        </Button>
+                    </Grid>
+
+                </materialDesign:Card>
+            </Grid>
+        </Grid>
     </Grid>
 </views:MvxWpfView>

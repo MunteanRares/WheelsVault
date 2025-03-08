@@ -6,10 +6,10 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands.Opening_Commands
 {
     public class OpenPopupCommand : CommandBase
     {
-        private readonly Action<ItemModel> _setSelectedItemFolderIds;   
+        private readonly Func<ItemModel, Task> _setSelectedItemFolderIds;   
         private readonly Action<ItemModel> _setCheckedToFolders;
 
-        public OpenPopupCommand(Action<ItemModel> setSelectedItemFolderIds, Action<ItemModel> setCheckedToFolders)
+        public OpenPopupCommand(Func<ItemModel, Task> setSelectedItemFolderIds, Action<ItemModel> setCheckedToFolders)
         {
             _setSelectedItemFolderIds = setSelectedItemFolderIds;
             _setCheckedToFolders = setCheckedToFolders;

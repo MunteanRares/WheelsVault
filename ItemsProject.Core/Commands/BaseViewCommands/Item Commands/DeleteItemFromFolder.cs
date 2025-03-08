@@ -31,7 +31,7 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands
             _messenger = messenger;
         }
 
-        public override void Execute(object? parameter)
+        public async override void Execute(object? parameter)
         {
             ItemModel valuePassedInFromButton = parameter as ItemModel;
             FolderModel selectedFolder = _getSelectedFolder();
@@ -40,7 +40,7 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands
             ClosePopupBeforeDeletingItemMessage message = new ClosePopupBeforeDeletingItemMessage(this);
             _messenger.Publish(message);    
 
-            ItemModel itemToRemoveCopy = _dataService.RemoveItemFromFolder(valuePassedInFromButton.Id,
+            ItemModel itemToRemoveCopy = await _dataService.RemoveItemFromFolder(valuePassedInFromButton.Id,
                                                                            selectedFolder.Id);
             ItemModel itemToRemove = allFolderItems.Where(i => i.Id == itemToRemoveCopy.Id).FirstOrDefault();
 

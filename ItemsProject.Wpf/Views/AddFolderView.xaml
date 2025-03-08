@@ -27,6 +27,12 @@
         </ResourceDictionary>    
     </views:MvxWindow.Resources>
 
+    <views:MvxWindow.Style>
+        <Style TargetType="views:MvxWindow" BasedOn="{StaticResource MaterialDesignWindow}">
+            <Setter Property="WindowStyle" Value="SingleBorderWindow"/>
+        </Style>
+    </views:MvxWindow.Style>
+
     <materialDesign:Card>
         <Grid
             Margin="15">

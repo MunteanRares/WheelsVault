@@ -25,7 +25,7 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands.HotWheels_Commands
             _messenger = messenger;
         }
 
-        public override void Execute(object? parameter)
+        public async override void Execute(object? parameter)
         {
             HotWheelsModel? hotwheels = parameter as HotWheelsModel;
             int folderId = _getSelectedFolder().Id;
@@ -33,7 +33,7 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands.HotWheels_Commands
             if (hotwheels == null)
             {
                 ItemModel itemModel = parameter as ItemModel;
-                ItemModel addedItem = _dataService.AddHotWheelsModel(folderId,
+                ItemModel addedItem = await _dataService.AddHotWheelsModel(folderId,
                                                                      itemModel.ModelName,
                                                                      itemModel.SeriesName,
                                                                      itemModel.SeriesNum,
@@ -46,7 +46,7 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands.HotWheels_Commands
             }
             else
             {
-                ItemModel addedItem = _dataService.AddHotWheelsModel(folderId,
+                ItemModel addedItem = await _dataService.AddHotWheelsModel(folderId,
                                                                      hotwheels.ModelName,
                                                                      hotwheels.SeriesName,
                                                                      hotwheels.SeriesNum,

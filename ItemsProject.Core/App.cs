@@ -41,9 +41,9 @@ namespace ItemsProject.Core
 
 
             Mvx.IoCProvider.RegisterType<IDataService, DataService>();
-            Mvx.IoCProvider.RegisterType<IFolderDataService, FolderDataService>();
+            Mvx.IoCProvider.RegisterType<IFolderDataService, AddFolderViewService>();
             Mvx.IoCProvider.RegisterType<IMessageBoxDataService, MessageBoxDataService>();
-            Mvx.IoCProvider.RegisterType<IItemDataService, ItemDataService>();
+            Mvx.IoCProvider.RegisterType<IItemDataService, AddItemViewService>();
 
 
             // ViewModels

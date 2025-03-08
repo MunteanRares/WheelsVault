@@ -16,12 +16,12 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands
             _upateFolders = updateFolders;
         }
 
-        public override void Execute(object? parameter)
+        public async override void Execute(object? parameter)
         {
             FolderModel passedInFolder = parameter as FolderModel;
 
             var allFolders = _getAllFolders();
-            FolderModel folderToRemoveCopy = _dataService.RemoveFolder(passedInFolder.Id);
+            FolderModel folderToRemoveCopy = await _dataService.RemoveFolder(passedInFolder.Id);
             FolderModel folderToRemove = allFolders.Where(i => i.Id == folderToRemoveCopy.Id).First();
 
             allFolders.Remove(folderToRemove);

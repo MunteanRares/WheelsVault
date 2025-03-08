@@ -13,7 +13,7 @@ namespace ItemsProject.Core.Databases
             _config = config;
         }
 
-        public List<T> LoadData<T, U>(string sqlStatement, U parameters, string connectionStringName, bool isStoreProcedure = false)
+        public async Task<List<T>> LoadData<T, U>(string sqlStatement, U parameters, string connectionStringName, bool isStoreProcedure = false)
         {
             string connectionString = _config.GetConnectionString(connectionStringName);
             CommandType commandType = CommandType.Text;
@@ -24,12 +24,12 @@ namespace ItemsProject.Core.Databases
 
             using (IDbConnection connection = new SqlConnection(connectionString))
             {
-                List<T> rows = connection.Query<T>(sqlStatement, parameters, commandType: commandType).ToList();
-                return rows;
+                IEnumerable<T> rows = await connection.QueryAsync<T>(sqlStatement, parameters, commandType: commandType);
+                return rows.ToList();
             }
         }
 
-        public void SaveData<T>(string sqlStatement, T parameters, string connectionStringName, bool isStoreProcedurue = false)
+        public async Task SaveData<T>(string sqlStatement, T parameters, string connectionStringName, bool isStoreProcedurue = false)
         {
             string connectionString = _config.GetConnectionString(connectionStringName);
             CommandType commandType = CommandType.Text;
@@ -40,7 +40,7 @@ namespace ItemsProject.Core.Databases
 
             using (IDbConnection connection = new SqlConnection(connectionString))
             {
-                connection.Execute(sqlStatement, parameters, commandType: commandType);
+                await connection.ExecuteAsync(sqlStatement, parameters, commandType: commandType);
             }
         }
     }

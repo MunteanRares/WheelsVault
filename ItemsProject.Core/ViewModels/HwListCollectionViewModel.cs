@@ -9,9 +9,9 @@ using ItemsProject.Core.Helper_Methods.String_Manipulation;
 using ItemsProject.Core.Messages;
 using ItemsProject.Core.Models;
 using ItemsProject.Core.Services;
+using MvvmCross.Base;
 using MvvmCross.Plugin.Messenger;
 using MvvmCross.ViewModels;
-using Nito.AsyncEx;
 
 namespace ItemsProject.Core.ViewModels
 {
@@ -22,11 +22,13 @@ namespace ItemsProject.Core.ViewModels
         private List<ItemModel> _allFolderItems = new List<ItemModel>();
         private List<MvxSubscriptionToken> _tokens = new List<MvxSubscriptionToken>();
         private readonly IMvxMessenger _messenger;
+        private readonly IMvxMainThreadAsyncDispatcher _thread;
 
-        public HwListCollectionViewModel(IDataService dataService, IMvxMessenger messenger)
+        public HwListCollectionViewModel(IDataService dataService, IMvxMessenger messenger, IMvxMainThreadAsyncDispatcher thread)
         {
             _dataService = dataService;
             _messenger = messenger;
+            _thread = thread;
 
             _tokens.Add(_messenger.Subscribe<AddedHwMessage>(OnAddedHwMessage));
             _tokens.Add(_messenger.Subscribe<UpdateFolderItemsMessage>(OnUpdateFolderItemsMessage));
@@ -78,17 +80,21 @@ namespace ItemsProject.Core.ViewModels
             UpdateFolders(message.NewItem);
         }
 
-        public override void Prepare(LoadListCollectionPrepareModel parameter)
+        public async override void Prepare(LoadListCollectionPrepareModel parameter)
         {
-            SelectedFolder = parameter.SelectedFolder;
+            await _thread.ExecuteOnMainThreadAsync(() => SelectedFolder = parameter.SelectedFolder);
             Folders = parameter.Folders;
-            _allFolderItems = _dataService.LoadItemsForFolder(SelectedFolder);
-            FolderItems = _dataService.UpdateFolderItems(_allFolderItems, FolderItems);
+            _allFolderItems = await _dataService.LoadItemsForFolder(SelectedFolder);
+
+            await _thread.ExecuteOnMainThreadAsync(() =>
+            {
+                FolderItems = _dataService.UpdateFolderItems(_allFolderItems, FolderItems);
+            });
         }
 
-        public void SetSelectedItemFolderIds(ItemModel passedItemModel)
+        public async Task SetSelectedItemFolderIds(ItemModel passedItemModel)
         {
-            List<int> folderIds = _dataService.GetFolderIdsForItem(passedItemModel.Id);
+            List<int> folderIds = await _dataService.GetFolderIdsForItem(passedItemModel.Id);
             SelectedItem = passedItemModel;
             SelectedItem.FolderIds = folderIds;
         }
@@ -108,7 +114,7 @@ namespace ItemsProject.Core.ViewModels
             }
         }
 
-        private void UpdateFolders(ItemModel newItem)
+        private async Task UpdateFolders(ItemModel newItem)
         {
             if (newItem.Quantity == 1)
             {
@@ -116,13 +122,13 @@ namespace ItemsProject.Core.ViewModels
                 FolderItems.Add(newItem);
             }
 
-            FolderItems = _dataService.UpdateFolderItems(_dataService.LoadItemsForFolder(SelectedFolder), FolderItems);
+            FolderItems =  _dataService.UpdateFolderItems(await _dataService.LoadItemsForFolder(SelectedFolder), FolderItems);
         }
 
-        public void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
+        public  void ExecuteUpdateFolderItems(List<ItemModel> updatedItems)
         {
             _allFolderItems = updatedItems;
-            FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
+            FolderItems =  _dataService.UpdateFolderItems(updatedItems, FolderItems);
         }
 
         private void UnsubscribeMessages()
@@ -140,12 +146,18 @@ namespace ItemsProject.Core.ViewModels
             if (message.MethodOption == "UpdateFolderItems")
             {
                 List<ItemModel> updatedItems = message.Parameter as List<ItemModel>;
-                FolderItems = _dataService.UpdateFolderItems(updatedItems, FolderItems);
+                FolderItems =  _dataService.UpdateFolderItems(updatedItems, FolderItems);
             }
             else if (message.MethodOption == "SortItems")
             {
                 string selectedSortOption = message.Parameter as string;
-                FolderItems = _dataService.SortItems(selectedSortOption, _allFolderItems, FolderItems);
+                FolderItems =  _dataService.SortItems(selectedSortOption, _allFolderItems, FolderItems);
+            }
+            else if (message.MethodOption == "SearchItems")
+            {
+                string searchText = message.Parameter as string;
+                List<ItemModel> searchResult = _dataService.FilterItems(searchText, _allFolderItems);
+                FolderItems =  _dataService.UpdateFolderItems(searchResult, FolderItems);
             }
         }
 

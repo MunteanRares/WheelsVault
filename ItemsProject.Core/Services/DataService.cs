@@ -6,6 +6,7 @@ using ItemsProject.Core.Messages;
 using ItemsProject.Core.Models;
 using ItemsProject.Core.ViewModels;
 using MvvmCross;
+using MvvmCross.Base;
 using MvvmCross.Navigation;
 using MvvmCross.Plugin.Messenger;
 using Nito.AsyncEx;
@@ -18,15 +19,15 @@ namespace ItemsProject.Core.Services
     {
         private readonly IDatabaseData _db;
         private readonly IMvxMessenger _messenger;
-        private readonly SynchronizationContext _uiContext;
-        public DataService(IDatabaseData db, IMvxNavigationService navigationService, IMvxMessenger messenger)
+        private readonly IMvxMainThreadAsyncDispatcher _thread;
+        public DataService(IDatabaseData db, IMvxNavigationService navigationService, IMvxMessenger messenger, IMvxMainThreadAsyncDispatcher thread)
         {
             _db = db;
             _messenger = messenger;
-            _uiContext = SynchronizationContext.Current;
+            _thread = thread;
         }
 
-        public List<ItemModel> LoadItemsForFolder(FolderModel selectedFolder)
+        public async Task<List<ItemModel>> LoadItemsForFolder(FolderModel selectedFolder)
         {
             List<ItemModel> allFolderItems = new List<ItemModel>();
 
@@ -34,7 +35,7 @@ namespace ItemsProject.Core.Services
             {
                 return allFolderItems;
             }
-            allFolderItems = _db.GetItemsByFolderId(selectedFolder.Id);
+            allFolderItems = await _db.GetItemsByFolderId(selectedFolder.Id);
 
             return allFolderItems;
         }
@@ -63,13 +64,16 @@ namespace ItemsProject.Core.Services
 
         public ObservableCollection<ItemModel> UpdateFolderItems(List<ItemModel> iterateList, ObservableCollection<ItemModel> folderItems)
         {
-            folderItems.Clear();
+            List<ItemModel> temp = new List<ItemModel>(folderItems);
+            temp.Clear();
             foreach (ItemModel item in iterateList)
             {
-                folderItems.Add(item);
+                temp.Add(item);
             }
 
-            return folderItems;
+            ObservableCollection<ItemModel> output = new ObservableCollection<ItemModel>(temp);
+
+            return output;
         }
 
         public ObservableCollection<FolderModel> UpdateFolders(List<FolderModel> updatedFolders, ObservableCollection<FolderModel> folders)
@@ -83,18 +87,18 @@ namespace ItemsProject.Core.Services
             return folders;
         }
 
-        public ItemModel RemoveItemFromFolder(int itemId, int folderId)
+        public async Task<ItemModel> RemoveItemFromFolder(int itemId, int folderId)
         {
-            ItemModel itemToRemove = _db.GetItemById(itemId);
-            _db.DeleteItem(itemId, folderId);
+            ItemModel itemToRemove = await _db.GetItemById(itemId);
+            await _db.DeleteItem(itemId, folderId);
 
             return itemToRemove;
         }
 
-        public FolderModel RemoveFolder(int folderId)
+        public async Task<FolderModel> RemoveFolder(int folderId)
         {
-            FolderModel folderToRemove = _db.GetFolderById(folderId);
-            _db.RemoveFolderById(folderId);
+            FolderModel folderToRemove = await _db.GetFolderById(folderId);
+            await _db.RemoveFolderById(folderId);
             return folderToRemove;
         }
 
@@ -106,14 +110,14 @@ namespace ItemsProject.Core.Services
             }
         }
 
-        public void EditFolderName(string folderName, int folderId)
+        public async Task EditFolderName(string folderName, int folderId)
         {
-            _db.EditFolderName(folderName, folderId);
+            await _db.EditFolderName(folderName, folderId);
         }
 
-        public void EditItem(int itemId, string newName, string newReleaseDate, string newCollectionName)
+        public async Task EditItem(int itemId, string newName, string newReleaseDate, string newCollectionName)
         {
-            _db.EditItem(itemId, newName, newReleaseDate, newCollectionName);
+            await _db.EditItem(itemId, newName, newReleaseDate, newCollectionName);
         }
 
         public ObservableCollection<ItemModel> SortItems(string sortOption, List<ItemModel> allFolderItems, ObservableCollection<ItemModel> folderItems)
@@ -122,17 +126,17 @@ namespace ItemsProject.Core.Services
             {
                 if (sortOption == "Date Added")
                 {
-                    folderItems = UpdateFolderItems(allFolderItems, folderItems);
+                    folderItems =  UpdateFolderItems(allFolderItems, folderItems);
                 }
                 else if (sortOption == "A-Z")
                 {
                     allFolderItems = allFolderItems.OrderBy(item => item.ModelName).ToList();
-                    folderItems = UpdateFolderItems(allFolderItems, folderItems);
+                    folderItems =  UpdateFolderItems(allFolderItems, folderItems);
                 }
                 else if (sortOption == "Z-A")
                 {
                     allFolderItems = allFolderItems.OrderByDescending(item => item.ModelName).ToList();
-                    folderItems = UpdateFolderItems(allFolderItems, folderItems);
+                    folderItems =  UpdateFolderItems(allFolderItems, folderItems);
                 }
             }
             catch (NullReferenceException ex)
@@ -149,57 +153,57 @@ namespace ItemsProject.Core.Services
             _messenger.Publish(message);
         }
 
-        public List<int> GetFolderIdsForItem(int selectedItemID)
+        public async Task<List<int>> GetFolderIdsForItem(int selectedItemID)
         {
-            List<int> output = _db.GetAllFolderIdsForItem(selectedItemID);
+            List<int> output = await _db.GetAllFolderIdsForItem(selectedItemID);
             return output;        
         }
 
-        public void AddItemToFolder(int selectedItemId, int selectedFolderId)
+        public async Task AddItemToFolder(int selectedItemId, int selectedFolderId)
         {
-            _db.AddItemToFolder(selectedItemId, selectedFolderId);
+            await _db.AddItemToFolder(selectedItemId, selectedFolderId);
         }
 
-        public ItemModel DeleteAllItemsFromFolder(int itemId)
+        public async Task<ItemModel> DeleteAllItemsFromFolder(int itemId)
         {
-            ItemModel itemToRemove = _db.GetItemById(itemId);
-            _db.DeleteAllItemsFromFolder(itemId);
+            ItemModel itemToRemove = await _db.GetItemById(itemId);
+            await _db.DeleteAllItemsFromFolder(itemId);
             return itemToRemove;
         }
 
-        public ObservableCollection<HotWheelsModel> SearchHotWheels(string searchhwText)
+        public async Task<ObservableCollection<HotWheelsModel>> SearchHotWheels(string searchhwText)
         {
-            ObservableCollection<HotWheelsModel> searchResult = new ObservableCollection<HotWheelsModel>(_db.SearchHotWheels(searchhwText));
+            ObservableCollection<HotWheelsModel> searchResult = new ObservableCollection<HotWheelsModel>(await _db.SearchHotWheels(searchhwText));
             return searchResult;
         }
 
-        public ItemModel AddHotWheelsModel(int folderId, string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
+        public async Task<ItemModel> AddHotWheelsModel(int folderId, string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
         {
-            ItemModel output =  _db.AddHotWheelsModel(folderId, modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL);
+            ItemModel output = await _db.AddHotWheelsModel(folderId, modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL);
             return output;   
         }
 
-        public int GetAllHotWheelsCount()
+        public async Task<int> GetAllHotWheelsCount()
         {
-            int output = _db.GetAllNonCustom().Count;
+            List<ItemModel> output = await _db.GetAllNonCustom();
+            return output.Count();
+        }
+
+        public async Task<List<FolderModel>> GetAllFolders()
+        {
+            List<FolderModel> output = await _db.GetAllFolders();
             return output;
         }
 
-        public List<FolderModel> GetAllFolders()
+        public async Task<int> GetAllCarsCount()
         {
-            List<FolderModel> output = _db.GetAllFolders();
+            int output = await _db.GetAllQuantities();
             return output;
         }
 
-        public int GetAllCarsCount()
+        public async Task<ItemModel> RemoveOneQuantity(ItemModel? itemModel)
         {
-            int output = _db.GetAllQuantities();
-            return output;
-        }
-
-        public ItemModel RemoveOneQuantity(ItemModel? itemModel)
-        {
-            ItemModel output = _db.RemoveOneQuantity(itemModel);
+            ItemModel output = await _db.RemoveOneQuantity(itemModel);
             return output;
         }
     }

@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using DevExpress.DataAccess.Wizard.Services;
 using ItemsProject.Core.Messages;
 using ItemsProject.Core.Messages.HwListVm_Messages;
@@ -26,7 +27,7 @@ namespace ItemsProject.Wpf.Views
         {
             Window window = Application.Current.MainWindow;
             InitializeComponent();
-            window.Show();
+            Dispatcher.CurrentDispatcher.BeginInvoke(() => window.Show());
             window.ShowInTaskbar = true;
             _messenger = Mvx.IoCProvider?.Resolve<IMvxMessenger>();
             _tokens.Add(_messenger.Subscribe<CancelItemEditingMessage>(OnCancelItemEditingMessage));

@@ -15,150 +15,152 @@ namespace ItemsProject.Core.Data
             SqliteDatabaseInitializer.SetDefaultFolder(_db, connectionStringName);
         }
 
-        public void AddItemToFolder(int selectedItemId, int selectedFolderId)
+        public async Task AddItemToFolder(int selectedItemId, int selectedFolderId)
         {
             string sqlStatement = "insert into FolderItems (folderId, itemId) values (@selectedFolderId, @selectedItemId)";
-            _db.SaveData(sqlStatement, new { selectedItemId, selectedFolderId }, connectionStringName);
+            await _db.SaveData(sqlStatement, new { selectedItemId, selectedFolderId }, connectionStringName);
         }
 
-        public FolderModel CreateNewFolder(string folderName)
+        public async Task<FolderModel> CreateNewFolder(string folderName)
         {
             string sqlStatement = "insert into Folders (name) " +
                                   "values (@folderName)";
-            _db.SaveData(sqlStatement, new { folderName = folderName.Capitalize() }, connectionStringName);
+            await _db.SaveData(sqlStatement, new { folderName = folderName.Capitalize() }, connectionStringName);
 
-            //sqlStatement = "select Folders.* from Folders order by Folders.Id desc limit 1";
             sqlStatement = "select * from Folders order by Id desc limit 1";    
-            FolderModel output = _db.LoadData<FolderModel, dynamic>(sqlStatement, new { }, connectionStringName).First();
-            return output;
+            List<FolderModel>  output = await _db.LoadData<FolderModel, dynamic>(sqlStatement, new { }, connectionStringName);
+            return output.First();
         }
 
-        public ItemModel CreateCustomItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName)
+        public async Task<ItemModel> CreateCustomItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName)
         {
             string sqlStatement = "select Id from Folders where IsDefault = 1";
-            int defaultFolderId = _db.LoadData<int, dynamic>(sqlStatement, new { }, connectionStringName).First();
+            List<int> defaultFolderIdList = await _db.LoadData<int, dynamic>(sqlStatement, new { }, connectionStringName);
+            int defaultFolderId = defaultFolderIdList.First();
 
             sqlStatement = @"insert into Items (modelName, modelReleaseDate, collectionName)
                                     values (@ModelName, @ModelReleaseDate, @CollectionName)";
-            _db.SaveData(sqlStatement, new { ModelName = ModelName.Capitalize(), ModelReleaseDate, CollectionName = CollectionName.ToUpper() }, connectionStringName);
+            await _db.SaveData(sqlStatement, new { ModelName = ModelName.Capitalize(), ModelReleaseDate, CollectionName = CollectionName.ToUpper() }, connectionStringName);
 
             sqlStatement = "select * from Items order by Id desc limit 1;";
-            int addedItemId = _db.LoadData<int, dynamic>(sqlStatement, new { }, connectionStringName).First();
+            List<int> addedItemIdList = await _db.LoadData<int, dynamic>(sqlStatement, new { }, connectionStringName);
+            int addedItemId = addedItemIdList.First();
 
             sqlStatement = "insert into FolderItems (folderId, itemId) values (@defaultFolderId, @addedItemId)";
-            _db.SaveData(sqlStatement, new { defaultFolderId, addedItemId }, connectionStringName);
+            await _db.SaveData(sqlStatement, new { defaultFolderId, addedItemId }, connectionStringName);
 
             if (defaultFolderId != FolderId)
             {
                 sqlStatement = "insert into FolderItems (folderId, itemId) values (@FolderId, @addedItemId)";
-                _db.SaveData(sqlStatement, new { FolderId, addedItemId }, connectionStringName);
+                await _db.SaveData(sqlStatement, new { FolderId, addedItemId }, connectionStringName);
             }
 
             sqlStatement = "select Items.* from Items " +
                            "join FolderItems on Items.Id = FolderItems.itemId " +
                            "order by Items.Id desc limit 1";
-            ItemModel output = _db.LoadData<ItemModel, dynamic>(sqlStatement, new { }, connectionStringName).First();
-            return output;
+            List<ItemModel> output = await _db.LoadData<ItemModel, dynamic>(sqlStatement, new { }, connectionStringName);
+            return output.First();
         }
 
-        public void DeleteAllItemsFromFolder(int itemId)
+        public async Task DeleteAllItemsFromFolder(int itemId)
         {
             string sqlStatement = "delete from Items where Items.Id = @itemId";
-            _db.SaveData(sqlStatement, new { itemId }, connectionStringName);
+            await _db.SaveData(sqlStatement, new { itemId }, connectionStringName);
         }
 
-        public void DeleteItem(int itemId, int folderId)
+        public async Task DeleteItem(int itemId, int folderId)
         {
             string sqlStatement = "select Id from Folders where IsDefault = 1";
-            int defaultFolderId = _db.LoadData<int, dynamic>(sqlStatement, new { }, connectionStringName).First();
+            List<int> defaultFolderIdList = await _db.LoadData<int, dynamic>(sqlStatement, new { }, connectionStringName);
+            int defaultFolderId = defaultFolderIdList.First();
 
             if (defaultFolderId == folderId)
             {
                 sqlStatement = "delete from Items where Id = @itemId";
-                _db.SaveData(sqlStatement, new { itemId }, connectionStringName);
+                await _db.SaveData(sqlStatement, new { itemId }, connectionStringName);
             }
             else
             {
                 sqlStatement = "delete from FolderItems where FolderItems.folderId = @folderId and FolderItems.itemId = @itemId";
-                _db.SaveData(sqlStatement, new { itemId, folderId }, connectionStringName);
+                await _db.SaveData(sqlStatement, new { itemId, folderId }, connectionStringName);
             }            
         }
 
-        public void EditFolderName(string folderName, int folderId)
+        public async Task EditFolderName(string folderName, int folderId)
         {
             string sqlStatement = "update Folders set name = @folderName where Folders.Id = @folderId";
-            _db.SaveData(sqlStatement, new { folderName, folderId }, connectionStringName);
+            await _db.SaveData(sqlStatement, new { folderName, folderId }, connectionStringName);
         }
 
-        public void EditItem(int itemId, string newName, string newReleaseDate, string newCollectionName)
+        public async Task EditItem(int itemId, string newName, string newReleaseDate, string newCollectionName)
         {
             string sqlStatement = "update Items set modelName = @newName, modelReleaseDate = @newReleaseDate, collectionName = @newCollectionName where Items.Id = @itemId";
-            _db.SaveData(sqlStatement, new { itemId, newName, newReleaseDate, newCollectionName }, connectionStringName);
+            await _db.SaveData(sqlStatement, new { itemId, newName, newReleaseDate, newCollectionName }, connectionStringName);
         }
 
-        public List<int> GetAllFolderIdsForItem(int selectedItemId)
+        public async Task<List<int>> GetAllFolderIdsForItem(int selectedItemId)
         {
             string sqlStatement = "select folderId from FolderItems where FolderItems.itemId = @selectedItemId";
-            List<int> output = _db.LoadData<int, dynamic>(sqlStatement, new { selectedItemId }, connectionStringName);
+            List<int> output = await _db.LoadData<int, dynamic>(sqlStatement, new { selectedItemId }, connectionStringName);
 
             return output;
         }
 
-        public List<FolderModel> GetAllFolders()
+        public async Task<List<FolderModel>> GetAllFolders()
         {
             string sqlStatement = @"select *
                                    from Folders";
-            List<FolderModel> output = _db.LoadData<FolderModel, dynamic>(sqlStatement, new { }, connectionStringName);
+            List<FolderModel> output = await _db.LoadData<FolderModel, dynamic>(sqlStatement, new { }, connectionStringName);
 
             return output;
         }
 
-        public List<ItemModel> GetAllItems()
+        public async Task<List<ItemModel>> GetAllItems()
         {
             string sqlStatement = @"select *
                                    from Items";
-            List<ItemModel> output = _db.LoadData<ItemModel, dynamic>(sqlStatement, new { }, connectionStringName);
+            List<ItemModel> output = await _db.LoadData<ItemModel, dynamic>(sqlStatement, new { }, connectionStringName);
 
             return output;
         }
 
-        public FolderModel GetFolderById(int folderId)
+        public async Task<FolderModel> GetFolderById(int folderId)
         {
             string sqlStatement = "select * from Folders where Id = @folderId";
-            FolderModel output = _db.LoadData<FolderModel, dynamic>(sqlStatement, new { folderId }, connectionStringName).First();
+            List<FolderModel> output = await _db.LoadData<FolderModel, dynamic>(sqlStatement, new { folderId }, connectionStringName);
 
-            return output;
+            return output.First();
         }
 
-        public ItemModel GetItemById(int itemId)
+        public async Task<ItemModel> GetItemById(int itemId)
         {
             string sqlStatement = @"select Items.*
                                    from Items
                                    join FolderItems on Items.Id = FolderItems.ItemId
                                    where Items.Id = @itemId";
-            ItemModel output = _db.LoadData<ItemModel, dynamic>(sqlStatement, new { itemId }, connectionStringName).First();
+            List<ItemModel> output = await _db.LoadData<ItemModel, dynamic>(sqlStatement, new { itemId }, connectionStringName);
 
-            return output;
+            return output.First();
         }
 
-        public List<ItemModel> GetItemsByFolderId(int folderId)
+        public async Task<List<ItemModel>> GetItemsByFolderId(int folderId)
         {
             string sqlStatement = @"select Items.*
                                    from Items
                                    join FolderItems on Items.Id = FolderItems.itemId
                                    where FolderItems.folderId = @folderId";
-            List<ItemModel> output = _db.LoadData<ItemModel, dynamic>(sqlStatement, new { folderId }, connectionStringName);
+            List<ItemModel> output = await _db.LoadData<ItemModel, dynamic>(sqlStatement, new { folderId }, connectionStringName);
 
             return output;
         }
 
-        public void RemoveFolderById(int folderId)
+        public async Task RemoveFolderById(int folderId)
         {
             string sqlStatement = "select * from Folders where Folders.Id = @folderId";
-            _db.SaveData(sqlStatement, new { folderId }, connectionStringName);
+            await _db.SaveData(sqlStatement, new { folderId }, connectionStringName);
         }
 
-        public List<HotWheelsModel> SearchHotWheels(string searchhwText)
+        public async Task<List<HotWheelsModel>> SearchHotWheels(string searchhwText)
         {
             throw new NotImplementedException();
         }
@@ -168,22 +170,22 @@ namespace ItemsProject.Core.Data
             throw new NotImplementedException();
         }
 
-        public ItemModel AddHotWheelsModel(int folderId, string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
+        public async Task<ItemModel> AddHotWheelsModel(int folderId, string modelName, string seriesName, string seriesNum, string yearProduced, string yearProducedNum, string toyNum, string photoURL)
         {
             throw new NotImplementedException();
         }
 
-        public List<ItemModel> GetAllNonCustom()
+        public async Task<List<ItemModel>> GetAllNonCustom()
         {
             throw new NotImplementedException();
         }
 
-        public int GetAllQuantities()
+        public async Task<int> GetAllQuantities()
         {
             throw new NotImplementedException();
         }
 
-        public ItemModel RemoveOneQuantity(ItemModel? itemModel)
+        public async Task<ItemModel> RemoveOneQuantity(ItemModel? itemModel)
         {
             throw new NotImplementedException();
         }

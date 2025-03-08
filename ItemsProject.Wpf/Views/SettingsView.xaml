@@ -37,7 +37,7 @@
     </views:MvxWpfView.Style>
     
     <Grid
-        Margin="40 0 0 0">
+        Margin="40 0 80 0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
@@ -45,6 +45,8 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.1*" MinHeight="60"/>
+            <RowDefinition Height="auto" MinHeight="60"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -85,9 +87,15 @@
             Grid.Column="0"
             Grid.Row="1"
             Foreground="#666"  
-            FontSize="40"
+            FontSize="48"
             Text="Settings">
-
         </TextBlock>
+        
+        <Separator
+            Background="#00aeef"
+            Margin="0 10 0 0"
+            Grid.Row="2"
+            Grid.ColumnSpan="3">
+        </Separator>
     </Grid>
 </views:MvxWpfView>

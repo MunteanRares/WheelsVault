@@ -2,6 +2,6 @@
 {
     public interface IFolderDataService
     {
-        void AddFolder(string FolderName);
+        Task AddFolder(string FolderName);
     }
 }

@@ -12,7 +12,7 @@ namespace ItemsProject.Core.Data
         public Task<FolderModel> CreateNewFolder(string folderName);
         public Task<ItemModel> GetItemById(int itemId);
         public Task DeleteItem(int itemId, int folderId);
-        Task RemoveFolderById(int folderId);
+        void RemoveFolderById(int folderId);
         Task<FolderModel> GetFolderById(int folderId);
         Task EditFolderName(string folderName, int folderId);
         public Task EditItem(int itemId, string newName, string newReleaseDate, string newCollectionName);

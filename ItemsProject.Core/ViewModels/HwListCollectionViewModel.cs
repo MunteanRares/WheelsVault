@@ -111,6 +111,7 @@ namespace ItemsProject.Core.ViewModels
             List<int> folderIds = await _dataService.GetFolderIdsForItem(passedItemModel.Id);
             SelectedItem = passedItemModel;
             SelectedItem.FolderIds = folderIds;
+            SetIsCheckedIfItemInFolder(passedItemModel);
         }
 
         public void SetIsCheckedIfItemInFolder(ItemModel passedItemModel)

@@ -19,6 +19,13 @@ namespace ItemsProject.Core.Databases
 
             using (IDbConnection connection = new SQLiteConnection(connectionString))
             {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "PRAGMA foreign_keys=ON;";
+                    command.ExecuteNonQuery();
+                }
+
                 IEnumerable<T> rows = await connection.QueryAsync<T>(sqlStatement, parameters);
                 return rows.ToList();
             }
@@ -30,6 +37,13 @@ namespace ItemsProject.Core.Databases
 
             using (IDbConnection connection = new SQLiteConnection(connectionString))
             {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "PRAGMA foreign_keys=ON;";
+                    command.ExecuteNonQuery();
+                }
+
                 await connection.ExecuteAsync(sqlStatement, parameters);
             }
         }

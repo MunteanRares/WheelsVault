@@ -121,6 +121,7 @@ namespace ItemsProject.Core.ViewModels
         private void OnRemoveFolderMessage(CanRemoveFolderMessage message)
         {
             _dataService.ExecuteDeleteFolderCommand(message, DeleteFolderCommand);
+            CurrentView = _defaultView;
         }
 
         private void OnChangeWindowStateMessage(ChangeWindowStateMessage changeWindowStateMessage)

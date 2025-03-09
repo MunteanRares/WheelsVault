@@ -141,7 +141,7 @@ namespace ItemsProject.Core.Data
             return output.First();
         }
 
-        public async Task RemoveFolderById(int folderId)
+        public async void RemoveFolderById(int folderId)
         {
             await _db.SaveData("spFolders_Remove", new { folderId }, connectionStringName, true);
         }
@@ -182,6 +182,7 @@ namespace ItemsProject.Core.Data
         {
             await _db.SaveData("Items_AddHotWheelsModel", new { folderId, modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL, isCustom = 0 }, connectionStringName, true);
             List<ItemModel> output = await _db.LoadData<ItemModel, dynamic>("spItems_GetUnique", new { modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL, isCustom = 0 }, connectionStringName, true);
+            await _db.SaveData("Items_AddToFolderIfNotDefault", new { folderId, itemId = output.First().Id }, connectionStringName, true);
             return output.First();
         }
 

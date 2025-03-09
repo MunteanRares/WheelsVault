@@ -19,14 +19,14 @@ begin
 	where isDefault = 1	
 
 	if not exists(
-	select 1 from dbo.Items
-	where modelName = @modelName
-	and seriesName = @seriesName
-	and seriesNum = @seriesNum
-	and yearProduced = @yearProduced
-	and toyNum = @toyNum
-	and photoUrl = @photoURL
-	and isCustom = 0 )
+		select 1 from dbo.Items
+			where modelName = @modelName
+			and seriesName = @seriesName
+			and seriesNum = @seriesNum
+			and yearProduced = @yearProduced
+			and toyNum = @toyNum
+			and photoUrl = @photoURL
+			and isCustom = 0 )
 	begin
 		insert into dbo.Items (modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL, isCustom, quantity)
 		values(@modelName, @seriesName, @seriesNum, @yearProduced, @yearProducedNum, @toyNum, @photoURL, @isCustom, 1)
@@ -38,7 +38,7 @@ begin
 		if (@defaultFolderId != @folderId)
 		begin
 			insert into dbo.FolderItems (folderId, itemId)
-			values (@folderId, @addedItemID)
+			values (@folderId, @addedItemId)
 		end
 	end
 	else

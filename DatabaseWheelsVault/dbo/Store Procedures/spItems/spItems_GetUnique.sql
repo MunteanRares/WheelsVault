@@ -6,7 +6,7 @@
 	@yearProducedNum nvarchar(15),
 	@toyNum nvarchar(15),
 	@photoURL nvarchar(1000),
-	@isCustom int
+	@isCustom bit
 AS
 begin
 	set nocount on;

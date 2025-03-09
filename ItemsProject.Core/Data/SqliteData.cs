@@ -2,6 +2,7 @@
 using ItemsProject.Core.Databases;
 using ItemsProject.Core.Helper_Methods.String_Manipulation;
 using ItemsProject.Core.Models;
+using Nito.AsyncEx.Synchronous;
 using WikiHotWheelsWebScraper.Models;
 using WikiHotWheelsWebScraper.Services;
 
@@ -68,7 +69,7 @@ namespace ItemsProject.Core.Data
 
         public async Task DeleteAllItemsFromFolder(int itemId)
         {
-            string sqlStatement = "delete from Items where Items.Id = @itemId";
+            string sqlStatement = "delete from Items where Id = @itemId";
             await _db.SaveData(sqlStatement, new { itemId }, connectionStringName);
         }
 
@@ -158,9 +159,12 @@ namespace ItemsProject.Core.Data
             return output;
         }
 
-        public async Task RemoveFolderById(int folderId)
+        public async void RemoveFolderById(int folderId)
         {
-            string sqlStatement = "select * from Folders where Folders.Id = @folderId";
+            string sqlStatement = """
+                    delete from Folders
+                    where Folders.Id = @folderId
+                """;
             await _db.SaveData(sqlStatement, new { folderId }, connectionStringName);
         }
 
@@ -332,14 +336,35 @@ namespace ItemsProject.Core.Data
                 {
                     sqlStatement = """
                             insert into FolderItems (folderId, itemId)
-                            values (@folderId, @addedItemID)
+                            values (@folderId, @addedItemId)
                         """;
-                    await _db.SaveData(sqlStatement, new { folderId, addedItemId = lastAddedItem }, connectionStringName);
+                    await _db.SaveData(sqlStatement, new { folderId, addedItemId = lastAddedItem.Id }, connectionStringName);
                 }
             }
             else
             {
+                ItemModel itemUnique = await GetUniqueItem(modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL);
+
                 sqlStatement = """
+                        select 1 from FolderItems
+                        where itemId = @itemId and folderId = @folderId
+                    """;
+                var resultList = await _db.LoadData<ItemModel, dynamic>(sqlStatement, new { folderId, itemId = itemUnique.Id }, connectionStringName);
+                var result = resultList.FirstOrDefault();
+                if (result == null)
+                {
+                    if (defaultFolderId != folderId)
+                    {
+                        sqlStatement = """
+                            insert into FolderItems (folderId, itemId)
+                            values (@folderId, @itemId)
+                        """;
+                        await _db.SaveData(sqlStatement, new { folderId, itemId = itemUnique.Id }, connectionStringName);
+                    }
+                }
+                else
+                {
+                    sqlStatement = """
                         update Items
                         set quantity = quantity + 1
                         where modelName = @modelName
@@ -350,7 +375,8 @@ namespace ItemsProject.Core.Data
                         and photoUrl = @photoURL
                         and isCustom = 0
                     """;
-                await _db.SaveData(sqlStatement, new { modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL }, connectionStringName);
+                    await _db.SaveData(sqlStatement, new { modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL }, connectionStringName);
+                }
             }
 
             ItemModel output = await GetUniqueItem(modelName, seriesName, seriesNum, yearProduced, yearProducedNum, toyNum, photoURL);

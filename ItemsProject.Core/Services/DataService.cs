@@ -98,7 +98,7 @@ namespace ItemsProject.Core.Services
         public async Task<FolderModel> RemoveFolder(int folderId)
         {
             FolderModel folderToRemove = await _db.GetFolderById(folderId);
-            await _db.RemoveFolderById(folderId);
+             _db.RemoveFolderById(folderId);
             return folderToRemove;
         }
 

@@ -24,7 +24,6 @@ namespace ItemsProject.Core.Commands.BaseViewModelCommands
             _clearSearchText();
             _changeWindowState();
             FolderModel folderToAddTo = _getSelectedFolder();
-            _nav.Navigate<AddItemViewModel, FolderModel>(folderToAddTo);
         }
     }
 }

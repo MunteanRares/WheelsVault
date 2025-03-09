@@ -42,7 +42,7 @@
                     Command="{Binding ConfirmCommand}">
                     <Button.Resources>
                         <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
-                            <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp3"/>
+                            <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp2"/>
                             <Style.Triggers>
                                 <EventTrigger RoutedEvent="MouseEnter">
                                     <BeginStoryboard>
@@ -79,7 +79,7 @@
                     Command="{Binding CancelCommand}">
                     <Button.Resources>
                         <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
-                            <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp3"/>
+                            <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp2"/>
                             <Style.Triggers>
                                 <EventTrigger RoutedEvent="MouseEnter">
                                     <BeginStoryboard>

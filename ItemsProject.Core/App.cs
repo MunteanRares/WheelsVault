@@ -43,19 +43,20 @@ namespace ItemsProject.Core
             Mvx.IoCProvider.RegisterType<IDataService, DataService>();
             Mvx.IoCProvider.RegisterType<IFolderDataService, AddFolderViewService>();
             Mvx.IoCProvider.RegisterType<IMessageBoxDataService, MessageBoxDataService>();
-            Mvx.IoCProvider.RegisterType<IItemDataService, AddItemViewService>();
-            Mvx.IoCProvider.RegisterType<IHomePageService, HomePageService>();  
+            Mvx.IoCProvider.RegisterType<IHomePageService, HomePageService>();
+            Mvx.IoCProvider.RegisterType<ISettingsService, SettingsService>();
 
 
             // ViewModels
             Mvx.IoCProvider.RegisterType<BaseViewModel>();
             Mvx.IoCProvider.RegisterType<AddFolderViewModel>();
             Mvx.IoCProvider.RegisterType<CustomMessageBoxViewModel>();
-            Mvx.IoCProvider.RegisterType<AddItemViewModel>();
             Mvx.IoCProvider.RegisterType<SplashScreenViewModel>();
             Mvx.IoCProvider.RegisterType<HwListCollectionViewModel>();
             Mvx.IoCProvider.RegisterType<SettingsViewModel>();
             Mvx.IoCProvider.RegisterType<HomePageViewModel>();
+            Mvx.IoCProvider.RegisterType<ErrorMessageBoxViewModel>();
+            Mvx.IoCProvider.RegisterType<SuccessNotificationViewModel>();
 
             RegisterAppStart<SplashScreenViewModel>();
         }

@@ -28,23 +28,26 @@ namespace ItemsProject.Core.Commands.HomePageCommands
 
         public async override void Execute(object? parameter)
         {
-            ItemModel currentItem =  _getCurrentItem();
-            FolderModel defaultFolder = await _dataService.GetDefaultFolder();
-            int defaultFolderId = defaultFolder.Id;
+            ItemModel? currentItem =  _getCurrentItem();
+            if (currentItem != null)
+            {
+                FolderModel defaultFolder = await _dataService.GetDefaultFolder();
+                int defaultFolderId = defaultFolder.Id;
 
-            await _dataService.AddHotWheelsModel(defaultFolderId,
-                                                    currentItem.ModelName,
-                                                    currentItem.SeriesName,
-                                                    currentItem.SeriesNum,
-                                                    currentItem.YearProduced,
-                                                    currentItem.YearProducedNum,
-                                                    currentItem.ToyNum,
-                                                    currentItem.PhotoURL);
+                await _dataService.AddHotWheelsModel(defaultFolderId,
+                                                        currentItem.ModelName,
+                                                        currentItem.SeriesName,
+                                                        currentItem.SeriesNum,
+                                                        currentItem.YearProduced,
+                                                        currentItem.YearProducedNum,
+                                                        currentItem.ToyNum,
+                                                        currentItem.PhotoURL);
 
-            await _updateCurrentItemCollectionAsync(currentItem);
+                await _updateCurrentItemCollectionAsync(currentItem);
 
-            AddCurrentItemMessage message = new AddCurrentItemMessage(this, currentItem);
-            _messenger.Publish(message);
+                AddCurrentItemMessage message = new AddCurrentItemMessage(this, currentItem);
+                _messenger.Publish(message);
+            }
         }
     }
 }

@@ -389,6 +389,7 @@
                     <Button
                         Grid.Column="0"
                         Grid.Row="0"
+                        Foreground="#333"
                         HorizontalAlignment="Left"
                         Height="{Binding ActualHeight, ElementName=addFolderButton}"
                         IsEnabled="{Binding NotLoadingItems}"
@@ -440,7 +441,8 @@
                         Command="{Binding OpenSettingsCommand}"
                         materialDesign:ElevationAssist.Elevation="Dp2"
                         materialDesign:ShadowAssist.ShadowAnimationDuration="10"
-                        VerticalAlignment="Bottom">
+                        VerticalAlignment="Bottom"
+                        Foreground="#333">
                         <materialDesign:PackIcon>
                             <materialDesign:PackIcon.Style>
                                 <Style TargetType="materialDesign:PackIcon">

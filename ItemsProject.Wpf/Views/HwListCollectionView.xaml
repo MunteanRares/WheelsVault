@@ -142,7 +142,7 @@
                                 Foreground="#217bca"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Bottom"
-                                Text="{Binding ModelName}"/>
+                                Text="{Binding ModelName, IsAsync=True}"/>
                                 </StackPanel>
 
                                 <StackPanel
@@ -160,7 +160,7 @@
                             Foreground="#217bca"
                             VerticalAlignment="Bottom"
                             HorizontalAlignment="Center"
-                            Text="{Binding YearProduced}"/>
+                            Text="{Binding YearProduced, IsAsync=True}"/>
                                 </StackPanel>
 
                                 <StackPanel
@@ -180,7 +180,7 @@
                                 TextWrapping="Wrap"
                                 VerticalAlignment="Bottom"
                                 HorizontalAlignment="Center"
-                                Text="{Binding SeriesName}"/>
+                                Text="{Binding SeriesName, IsAsync=True}"/>
                                 </StackPanel>
 
                                 <StackPanel
@@ -198,7 +198,7 @@
                             VerticalAlignment="Bottom"
                                 Foreground="#217bca"
                             HorizontalAlignment="Center"
-                            Text="{Binding SeriesNum}"/>
+                            Text="{Binding SeriesNum, IsAsync=True}"/>
                                 </StackPanel>
 
                                 <StackPanel
@@ -216,7 +216,7 @@
                             VerticalAlignment="Bottom"
                                 Foreground="#217bca"
                             HorizontalAlignment="Center"
-                            Text="{Binding ToyNum}"/>
+                            Text="{Binding ToyNum, IsAsync=True}"/>
                                 </StackPanel>
 
                                 <StackPanel
@@ -234,7 +234,7 @@
                             VerticalAlignment="Bottom"
                                 Foreground="#217bca"
                             HorizontalAlignment="Center"
-                            Text="{Binding YearProducedNum}"/>
+                            Text="{Binding YearProducedNum, IsAsync=True}"/>
                                 </StackPanel>
 
                                 <Button 
@@ -297,7 +297,7 @@
                                 Foreground="#888"
                                 Margin="10 0 10 0"
                                 VerticalAlignment="Center"
-                                Text="{Binding Quantity}">
+                                Text="{Binding Quantity, IsAsync=True}">
                                     </TextBlock>
 
                                     <Button

@@ -25,7 +25,7 @@ namespace ItemsProject.Wpf.Views
         public AddFolderView()
         {
             InitializeComponent();
-            _messenger = _messenger = Mvx.IoCProvider.Resolve<IMvxMessenger>();
+            _messenger = Mvx.IoCProvider.Resolve<IMvxMessenger>();
         }
 
         protected override void OnInitialized(EventArgs e)

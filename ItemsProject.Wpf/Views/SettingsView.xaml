@@ -47,41 +47,11 @@
             <RowDefinition Height="0.1*" MinHeight="60"/>
             <RowDefinition Height="auto" MinHeight="60"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
-        <Button            
-            Grid.Column="0"
-            Grid.Row="0"
-            FontSize="16"
-            Command="{Binding ToggleSettingsCommand}"
-            MaxWidth="200"
-            HorizontalContentAlignment="Stretch"
-            HorizontalAlignment="Left"
-            Padding="15 0 30 0"
-            VerticalAlignment="Top"
-            Margin="-30 15 0 0"
-            Style="{StaticResource MaterialDesignOutlinedLightButton}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.1*"/>
-                    <ColumnDefinition Width="0.9*"/>
-                </Grid.ColumnDefinitions>
-                
-                <materialDesign:PackIcon 
-                    VerticalAlignment="Center"
-                    Grid.Column="0"
-                    Grid.Row="0"
-                    Kind="ArrowBack"/>
-
-                <TextBlock
-                    Grid.Column="1"
-                    Grid.Row="0"
-                    Foreground="#00aeef"
-                    Margin="15 0 0 0"
-                    Text="Home"/>
-            </Grid>
-        </Button>
 
         <TextBlock
             Grid.Column="0"
@@ -97,5 +67,151 @@
             Grid.Row="2"
             Grid.ColumnSpan="3">
         </Separator>
+
+        <Button
+            Command="{Binding SaveDataToDeviceCommand}"
+            IsEnabled="{Binding IsButtonEnabled}"
+            FontSize="18"
+            Margin="0 30 0 0"
+            HorizontalAlignment="Left"
+            materialDesign:ElevationAssist.Elevation="Dp2"
+            materialDesign:ShadowAssist.ShadowAnimationDuration="10"
+            VerticalAlignment="Top"
+            Grid.Row="3">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
+                    <Style.Triggers>
+                        <EventTrigger
+                            RoutedEvent="MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation
+                                     Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                        To="#4dc6f4"
+                                        Duration="0:0:0:0.21"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+
+                        <EventTrigger
+                                RoutedEvent="MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation
+                                        Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                        To="#00aeef"
+                                        Duration="0:0:0:0.20"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+            <TextBlock
+                Text="Store Data on Device"
+                Foreground="#333">
+            </TextBlock>
+        </Button>
+
+        <Button
+            Command="{Binding ImportSaveData}"
+            FontSize="18"
+            Margin="0 30 0 0"
+            materialDesign:ElevationAssist.Elevation="Dp2"
+            materialDesign:ShadowAssist.ShadowAnimationDuration="10"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Left"
+            Grid.Row="4">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
+                    <Style.Triggers>
+                        <EventTrigger
+                             RoutedEvent="MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation
+                                        Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                        To="#4dc6f4"
+                                        Duration="0:0:0:0.21"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+
+                        <EventTrigger
+                                RoutedEvent="MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation
+                                        Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                        To="#00aeef"
+                                        Duration="0:0:0:0.20"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+            <TextBlock
+                Text="Import Save Data"
+                Foreground="#333">
+            </TextBlock>
+        </Button>
+
+        <Button
+            BorderBrush="pink"
+            Background="Transparent"
+            VerticalAlignment="Top"
+            Margin="0 30 0 0"
+            Grid.Row="5">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedSecondaryButton}">
+                    <Style.Triggers>
+                        <EventTrigger
+                                RoutedEvent="MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation
+                                        Storyboard.TargetProperty="(Button.BorderBrush).(SolidColorBrush.Color)"
+                                        To="#943126"
+                                        Duration="0:0:0:0.21"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+
+                        <EventTrigger
+                                 RoutedEvent="MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation
+                                        Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                        To="Transparent"
+                                        Duration="0:0:0:0.20"/>
+
+                                    <ColorAnimation
+                                        Storyboard.TargetProperty="(Button.BorderBrush).(SolidColorBrush.Color)"
+                                        To="pink"
+                                        Duration="0:0:0:0.20"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+            <TextBlock
+                FontSize="18"
+                Foreground="#333"
+                Text="Delete All Collection">
+            </TextBlock>
+        </Button>
+
+        <TextBlock
+            Grid.Row="6"
+            Foreground="#777"
+            VerticalAlignment="top"  
+            Text="(Work In Progress)">
+            
+        </TextBlock>
     </Grid>
 </views:MvxWpfView>

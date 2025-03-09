@@ -40,6 +40,7 @@
   <ItemGroup>
     <None Remove="Assets\Fonts\Font Awesome 6 Free-Solid-900.otf" />
     <None Remove="Assets\Fonts\Fredoka-Medium.ttf" />
+    <None Remove="Assets\Icons\check-mark-3280.png" />
     <None Remove="Assets\Icons\question-mark.png" />
     <None Remove="Assets\Icons\warning-sign.png" />
     <None Remove="Assets\Pngs\Hotwheels.png" />
@@ -72,6 +73,7 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Fonts\Fredoka-Medium.ttf" />
+    <Resource Include="Assets\Icons\check-mark-3280.png" />
     <Resource Include="Assets\Icons\question-mark.png" />
     <Resource Include="Assets\Icons\warning-sign.png" />
     <Resource Include="Assets\Pngs\Hotwheels.png" />

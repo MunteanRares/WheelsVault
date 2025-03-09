@@ -8,7 +8,7 @@ namespace ItemsProject.Core.Data
         Task<List<ItemModel>> GetAllItems();
         public Task<List<FolderModel>> GetAllFolders();
         public Task<List<ItemModel>> GetItemsByFolderId(int folderId);
-        public Task<ItemModel> CreateCustomItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName);
+        //public Task<ItemModel> CreateCustomItem(int FolderId, string ModelName, string ModelReleaseDate, string CollectionName);
         public Task<FolderModel> CreateNewFolder(string folderName);
         public Task<ItemModel> GetItemById(int itemId);
         public Task DeleteItem(int itemId, int folderId);

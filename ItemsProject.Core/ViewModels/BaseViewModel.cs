@@ -127,6 +127,7 @@ namespace ItemsProject.Core.ViewModels
         {
             IsWindowEnabled = changeWindowStateMessage.ChangeWindowState;
         }
+
         private void OnChangeCurrentViewMessage(ChangeCurrentViewMessage message)
         {
             Task.Run(() =>
@@ -419,7 +420,7 @@ namespace ItemsProject.Core.ViewModels
                 {
                     NotLoadingItems = false;
 
-                    Task.Run(() => NavigateAndLoadListCollection());
+                    Task.Run(NavigateAndLoadListCollection);
                 }
 
                 SelectedSortOption = SortOptions[0];

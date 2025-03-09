@@ -15,6 +15,14 @@ namespace ItemsProject.Core.Data
                                    "select 'All Cars', 1 " +
                                    "where not exists (select 1 from Folders where isDefault = 1);";
             db.SaveData(sqlStatement, new { }, connectionStringName);
+
+            sqlStatement = """
+                    INSERT INTO AppSettings (isDbPopulated)
+                    SELECT 0
+                    WHERE NOT EXISTS (SELECT 1 FROM AppSettings);
+                """;
+
+            db.SaveData(sqlStatement, new { }, connectionStringName);
         }
     }
 }

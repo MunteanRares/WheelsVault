@@ -120,7 +120,7 @@
                         Text="✔"/> Navigate between different pages for better <Run Foreground="#00aeef" Text="organization"/>
                     <LineBreak/>
                     <LineBreak/>
-                    The app provides a clean and minimalistic UI, ensuring a smooth experience while managing and expanding your Hot Wheels collection.
+                        The app provides a not so clean and minimalistic UI, unfortunately kind of bugged but it is what it is.
                     <LineBreak/>
                     <LineBreak/>
                 </TextBlock>
@@ -257,7 +257,7 @@
                             Grid.Row="2"
                             MaxWidth="320"
                             TextWrapping="Wrap"
-                            Text="{Binding CurrentDisplayedItem.ModelName, Mode=OneWay}">
+                            Text="{Binding CurrentDisplayedItem.ModelName, Mode=OneWay, IsAsync=True}">
                         </TextBlock>
 
                         <TextBlock
@@ -268,7 +268,7 @@
                             <Run
                                 Text="Series: "/>
                             <Run 
-                                Text="{Binding CurrentDisplayedItem.SeriesName, Mode=OneWay}"/>
+                                Text="{Binding CurrentDisplayedItem.SeriesName, Mode=OneWay, IsAsync=True}"/>
                         </TextBlock>
 
                         <TextBlock
@@ -279,7 +279,7 @@
                             <Run
                                 Text="Series #: "/>
                             <Run 
-                                Text="{Binding CurrentDisplayedItem.SeriesNum, Mode=OneWay}"/>
+                                Text="{Binding CurrentDisplayedItem.SeriesNum, Mode=OneWay, IsAsync=True}"/>
                         </TextBlock>
 
                         <TextBlock
@@ -290,7 +290,7 @@
                             <Run
                                 Text="Year #: "/>
                             <Run 
-                                Text="{Binding CurrentDisplayedItem.YearProducedNum, Mode=OneWay}"/>
+                                Text="{Binding CurrentDisplayedItem.YearProducedNum, Mode=OneWay, IsAsync=True}"/>
                         </TextBlock>
 
                         <Image

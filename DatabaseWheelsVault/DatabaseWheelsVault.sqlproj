@@ -81,8 +81,6 @@
     <Build Include="dbo\Store Procedures\spItems\spItems_GetAllQuantities.sql" />
     <Build Include="dbo\Store Procedures\spItems\spItems_GetAllNonCustom.sql" />
     <Build Include="dbo\Store Procedures\spItems\spItems_GetAll.sql" />
-    <Build Include="dbo\Store Procedures\spItems\spItems_EditItem.sql" />
-    <Build Include="dbo\Store Procedures\spItems\spItems_CreateItem.sql" />
     <Build Include="dbo\Store Procedures\spItems\spItems_AddToFolder.sql" />
     <Build Include="dbo\Store Procedures\spFolders\spFolders_CreateFolder.sql" />
     <Build Include="dbo\Store Procedures\spFolders\spFolders_EditName.sql" />
